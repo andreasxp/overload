@@ -8,18 +8,15 @@ class OverloadedFunction:
 
         def function(*args, **kwargs):
             candidates = []
-            candidate_bargs = []
-
             fail_reasons = []
 
             for func in self.overloads:
                 try:
-                    ba = signature(func).bind(*args, **kwargs)
+                    signature(func).bind(*args, **kwargs)
                 except TypeError as error:
                     fail_reasons.append(str(error))
                 else:
                     candidates.append(func)
-                    candidate_bargs.append(ba)
             
             if len(candidates) == 0:
                 raise NoMatchingOverloadError(
@@ -35,8 +32,6 @@ class OverloadedFunction:
                 )
         
             func = candidates[0]
-            ba = candidate_bargs[0]
-            return func(*ba.args, **ba.kwargs)
+            return func(*args, **kwargs)
     
         self.function = function
-
