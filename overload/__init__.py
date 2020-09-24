@@ -1,2 +1,2 @@
-from .base import overloaded
+from .base import overload
 from .exception import OverloadError, NoMatchingOverloadError, AmbiguousOverloadError

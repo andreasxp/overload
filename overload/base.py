@@ -8,7 +8,7 @@ def _fullname(obj, /):
         return obj.__qualname__
     return module + "." + obj.__qualname__
 
-def overloaded(func):
+def overload(func):
     fullname = _fullname(func)
 
     if fullname not in registry:

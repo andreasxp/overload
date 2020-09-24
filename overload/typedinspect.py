@@ -1,4 +1,6 @@
 import inspect
+from pytypes import is_of_type
+
 
 class Signature(inspect.Signature):    
     def bind(self, *args, **kwargs):
@@ -11,7 +13,7 @@ class Signature(inspect.Signature):
             if expected_type == self.empty:
                 expected_type = object
 
-            if not isinstance(value, expected_type):
+            if not is_of_type(value, expected_type):
                 raise TypeError("argument '" + name + "' has unexpected type '" + type(value).__name__ + "'")
         
         return result
