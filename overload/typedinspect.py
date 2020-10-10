@@ -2,7 +2,11 @@ import inspect
 from pytypes import is_of_type
 
 
-class Signature(inspect.Signature):    
+class Signature(inspect.Signature):
+    """Signature object, derived from inspect.Signature.
+    Overloads the `bind` method to check the argument types using is_of_type function from pytypes.
+    is_of_type is different from isinstance in that is correctly works with type hints from `typing`. 
+    """
     def bind(self, *args, **kwargs):
         result = super().bind(*args, **kwargs)
 
@@ -20,4 +24,5 @@ class Signature(inspect.Signature):
 
 
 def signature(callable, *, follow_wrapped=True):
+    """Returns a Signature object from a callable."""
     return Signature.from_callable(callable, follow_wrapped=follow_wrapped)
