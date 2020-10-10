@@ -1,4 +1,4 @@
-from setuptools import setup, find_packages
+from setuptools import setup
 
 install_requires = ["pytypes"]
 extras_require = {}
@@ -13,5 +13,5 @@ setup(
     install_requires=install_requires,
     package_data={},
     extras_require=extras_require,
-    packages=find_packages(),
+    packages=["overload"],
 )
