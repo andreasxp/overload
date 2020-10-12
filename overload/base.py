@@ -6,24 +6,21 @@ This is how decorated functions communicate with each other to merge several fun
 Not for manual editing.
 """
 
-def _fullname(obj, /):
-    """Full name of the function, including the module it comes from."""
-    module = obj.__module__
-    if module is None:
-        return obj.__qualname__
-    return module + "." + obj.__qualname__
-
 def overload(func):
     """Decorator that makes the function overloaded.
     Add this to all functions with the same name in one scope (global or in class). When calling a function with this
     name, an appropriate overload will be picked based on the arguments you provide.
     """
-    fullname = _fullname(func)
+    if (func.__module__, func.__qualname__) not in registry:
+        ovl_func = OverloadedFunction()
+        ovl_func.__name__ = func.__name__
+        ovl_func.__qualname__ = func.__qualname__
+        ovl_func.__module__ = func.__module__
 
-    if fullname not in registry:
-        registry[fullname] = OverloadedFunction(fullname)
+        registry[func.__module__, func.__qualname__] = ovl_func
+    else:
+        ovl_func = registry[func.__module__, func.__qualname__]
     
-    ovlfunc = registry[fullname]
-    ovlfunc.overloads.append(func)
+    ovl_func.overloads.append(func)
 
-    return ovlfunc.function
+    return ovl_func

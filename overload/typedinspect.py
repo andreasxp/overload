@@ -18,7 +18,7 @@ class Signature(inspect.Signature):
                 expected_type = object
 
             if not is_of_type(value, expected_type):
-                raise TypeError("argument '" + name + "' has unexpected type '" + type(value).__qualname__ + "'")
+                raise TypeError("argument '{}' has unexpected type '{}'".format(name, type(value).__qualname__))
         
         return result
 
