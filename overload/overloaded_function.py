@@ -1,5 +1,6 @@
-from .typedinspect import signature
+from .inspect import signature
 from .exception import NoMatchingOverloadError, AmbiguousOverloadError
+
 
 class OverloadedFunction:
     """Container class for an overloaded function.  
@@ -11,7 +12,13 @@ class OverloadedFunction:
 
     def __init__(self):
         self.overloads = []
-        """A list of callable overloads."""
+        """A list of tuples, containing tuples of (function, binder object).
+        The function is one of the overloads, and the corresponding binder object is a callable that is used to
+        check if the passed argument can be bound to the type annotation. It is picked depending on which overloading
+        engine you used when creating overloaded functions.
+        Although the package permits using different overload engines in one overload functions, this is not recommended
+        because it can become difficult to reason about which overload will be picked.
+        """
 
         # Names that are inherited from the source functions
         self.__name__ = None
@@ -22,9 +29,9 @@ class OverloadedFunction:
         candidates = []
         fail_reasons = []
 
-        for func in self.overloads:
+        for func, binder in self.overloads:
             try:
-                signature(func).bind(*args, **kwargs)
+                signature(func, binder).bind(*args, **kwargs)
             except TypeError as error:
                 fail_reasons.append(str(error))
             else:

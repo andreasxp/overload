@@ -1,4 +1,5 @@
-from .typedinspect import signature
+from inspect import signature
+
 
 class OverloadError(Exception):
     """An exception that is raised when there was an error during overload resolution.  
@@ -13,6 +14,7 @@ class OverloadError(Exception):
         name = self.ovl_func.__module__ + self.ovl_func.__qualname__
 
         return "overload error during call to {}".format(name)
+
 
 class AmbiguousOverloadError(OverloadError):
     """An exception that is raised when arguments passed to a function match more that one overload."""
