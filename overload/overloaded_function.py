@@ -31,24 +31,16 @@ class OverloadedFunction:
 
         for func, binder in self.overloads:
             try:
-                signature(func, binder).bind(*args, **kwargs)
+                signature(func, binder=binder).bind(*args, **kwargs)
             except TypeError as error:
-                fail_reasons.append(str(error))
+                fail_reasons.append(error)
             else:
                 candidates.append(func)
         
         if len(candidates) == 0:
-            raise NoMatchingOverloadError(
-                self, 
-                (args, kwargs), 
-                fail_reasons
-            )
+            raise NoMatchingOverloadError(self, (args, kwargs), fail_reasons)
         if len(candidates) > 1:
-            raise AmbiguousOverloadError( 
-                self, 
-                (args, kwargs), 
-                candidates
-            )
+            raise AmbiguousOverloadError(self, (args, kwargs), candidates)
     
         func = candidates[0]
         return func(*args, **kwargs)

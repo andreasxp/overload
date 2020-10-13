@@ -25,11 +25,13 @@ class AmbiguousOverloadError(OverloadError):
         """A list of candidates that matched the arguments."""
     
     def __str__(self):
-        name = self.ovl_func.__module__ + self.ovl_func.__qualname__
         shortname = self.ovl_func.__name__
 
+        title = "ambiguous overloaded call to {}\nPossible candidates:\n".format(
+            self.ovl_func.__module__,
+            self.ovl_func.__qualname__
+        )
 
-        title = "ambiguous overloaded call to {}\nPossible candidates:\n".format(name)
         reasons = "\n".join("  {}{}".format(shortname, signature(candidate)) for candidate in self.candidates)
         
         return title + reasons
@@ -41,15 +43,20 @@ class NoMatchingOverloadError(OverloadError):
         super().__init__(ovl_func, arguments)
                 
         self.fail_reasons = fail_reasons
-        """A list of reasons why each function did not match the overload."""
+        """A list of reasons (TypeErrors) why each function did not match the overload."""
     
     def __str__(self):
-        name = self.ovl_func.__module__ + self.ovl_func.__qualname__
         shortname = self.ovl_func.__name__
 
-        title = "no matching overload found for {}\nReason:\n".format(name)
-        reasons = "\n".join("  {}{}: {}".format(shortname, signature(candidate), reason)
-            for candidate, reason in zip(self.ovl_func.overloads, self.fail_reasons)
+        title = "no matching overload found for {}.{}\nReason:\n".format(
+            self.ovl_func.__module__,
+            self.ovl_func.__qualname__
         )
+
+        def generate_reasons():
+            for candidate, reason in zip((x[0] for x in self.ovl_func.overloads), self.fail_reasons):
+                yield "  {}{}: {}".format(shortname, signature(candidate), reason)
+        
+        reasons = "\n".join(generate_reasons())
 
         return title + reasons

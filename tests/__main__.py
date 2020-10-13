@@ -1,6 +1,8 @@
 import unittest
 from unittest import TestCase
-from overload import overload, AmbiguousOverloadError, NoMatchingOverloadError
+from overload import overload_strict, AmbiguousOverloadError, NoMatchingOverloadError
+
+overload = overload_strict
 
 
 class TestBaseEncoder(TestCase):

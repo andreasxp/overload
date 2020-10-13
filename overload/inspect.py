@@ -1,5 +1,4 @@
 import inspect
-from pytypes import is_of_type
 
 
 class Signature(inspect.Signature):
@@ -20,7 +19,7 @@ class Signature(inspect.Signature):
             if expected_type == self.empty:
                 expected_type = object
 
-            if not result.binder(value, expected_type):
+            if not self.binder(value, expected_type):
                 raise TypeError("argument '{}' has unexpected type '{}'".format(name, type(value).__qualname__))
         
         return result
@@ -28,7 +27,7 @@ class Signature(inspect.Signature):
     @classmethod
     def from_callable(cls, callable, *, binder=isinstance, follow_wrapped=True):
         """Returns a Signature object from a callable, optionally providing a special binder object."""
-        result = super().from_callable(cls, callable, follow_wrapped=follow_wrapped)
+        result = super().from_callable(callable, follow_wrapped=follow_wrapped)
         result.binder = binder
         return result
 

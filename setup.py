@@ -1,6 +1,6 @@
 from setuptools import setup
 
-install_requires = ["pytypes"]
+install_requires = []
 extras_require = {}
 
 setup(

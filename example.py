@@ -1,5 +1,8 @@
 import sys
-from overload import overload, NoMatchingOverloadError
+from overload import overload_strict, NoMatchingOverloadError
+
+overload = overload_strict
+
 
 @overload
 def position_str(x, y):
