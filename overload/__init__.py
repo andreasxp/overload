@@ -137,3 +137,4 @@ def make_overload(binder):
     return overload
 
 overload_strict = make_overload(isinstance)
+overload = overload_strict  # To be changed in a future release

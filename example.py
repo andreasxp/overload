@@ -1,5 +1,5 @@
 import sys
-from overload import overload_strict as overload, NoMatchingOverloadError
+from overload import overload, NoMatchingOverloadError
 
 
 class Text:
