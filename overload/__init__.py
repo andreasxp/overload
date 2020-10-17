@@ -109,9 +109,10 @@ def make_overload(binder):
             ovl.__qualname__ = __qualname__
             ovl.__module__ = __module__
             
-            def __repr__():
-                return "<overloaded function {}.{} at {}>".format(__module__, __qualname__, id(ovl))
-            ovl.__repr__ = __repr__
+            # repr does not work :(
+            # def __repr__():
+            #     return "<overloaded function {}.{} at {}>".format(__module__, __qualname__, id(ovl))
+            # ovl.__repr__ = __repr__
             # ----------------------------------------------------------------------------------------------------------
 
             _registry[func.__module__, func.__qualname__] = ovl
