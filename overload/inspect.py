@@ -9,7 +9,7 @@ class Signature(inspect.Signature):
     The simplest case of such a binder is `isinstance`. Parameters that do not have annotations will use `object` as an
     annotation instead.
     """
-    def bind(self, *args, **kwargs):
+    def bind(self, binder, *args, **kwargs):
         result = super().bind(*args, **kwargs)
 
         for name in result.arguments:
@@ -19,18 +19,12 @@ class Signature(inspect.Signature):
             if expected_type == self.empty:
                 expected_type = object
 
-            if not self.binder(value, expected_type):
+            if not binder(value, expected_type):
                 raise TypeError("argument '{}' has unexpected type '{}'".format(name, type(value).__qualname__))
         
         return result
 
-    @classmethod
-    def from_callable(cls, callable, *, binder=isinstance, follow_wrapped=True):
-        """Returns a Signature object from a callable, optionally providing a special binder object."""
-        result = super().from_callable(callable, follow_wrapped=follow_wrapped)
-        result.binder = binder
-        return result
 
-def signature(callable, *, binder=isinstance, follow_wrapped=True):
+def signature(callable, *, follow_wrapped=True):
     """Returns a Signature object from a callable, optionally providing a special binder object."""
-    return Signature.from_callable(callable, binder=binder, follow_wrapped=follow_wrapped)
+    return Signature.from_callable(callable, follow_wrapped=follow_wrapped)
