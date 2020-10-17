@@ -36,11 +36,11 @@ Use it to overload functions or methods:
 ```python
 class Texture:
   @overload
-  def __init__(color: int):
+  def __init__(self, color: int):
     # create texture from a color code
   
   @overload
-  def __init__(image_path: str):
+  def __init__(self, image_path: str):
     # create texture from an image
 ```
 ```python
