@@ -21,6 +21,8 @@ class AmbiguousOverloadError(OverloadError):
         """A list of candidates that matched the arguments."""
     
     def __str__(self):
+        from inspect import signature
+
         shortname = self.qualname[self.qualname.rfind(".")+1:]
 
         title = f"ambiguous overloaded call to {self.module}.{self.qualname}\nPossible candidates:\n"
@@ -39,6 +41,8 @@ class NoMatchingOverloadError(OverloadError):
         """A list of reasons (TypeErrors) why each function did not match the overload."""
     
     def __str__(self):
+        from inspect import signature
+
         shortname = self.qualname[self.qualname.rfind(".")+1:]
 
         title = f"no matching overload found for {self.module}.{self.qualname}\nReason:\n"
