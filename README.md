@@ -8,7 +8,7 @@ def position(x, y):
 
 @overload
 def position(t: tuple):
-  print(f"({t[0]}, {y[1]})")
+  print(f"({t[0]}, {t[1]})")
 
 @overload
 def position(pos: QPoint):
