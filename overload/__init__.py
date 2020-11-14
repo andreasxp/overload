@@ -1,3 +1,25 @@
+"""Create overloaded functions using simple function decorators."""
+from itertools import count
+from inspect import signature
+from .inspect import signature as binder_signature
+from .bind import bind_strict, bind_annotated, _signature_cache
+
+__all__ = [
+    # Decorators
+    "overload",
+    "overload_strict",
+
+    # Decorator factory
+    "make_overload",
+
+    # Exceptions
+    "OverloadError",
+    "AmbiguousOverloadError",
+    "NoMatchingOverloadError",
+]
+
+
+# Exceptions ===========================================================================================================
 class OverloadError(TypeError):
     """An exception that is raised when there was an error during overload resolution.  
     This exception is not raised - it serves as a base class for AmbiguousOverloadError and NoMatchingOverloadError.
@@ -21,8 +43,6 @@ class AmbiguousOverloadError(OverloadError):
         """A list of candidates that matched the arguments."""
     
     def __str__(self):
-        from inspect import signature
-
         shortname = self.qualname[self.qualname.rfind(".")+1:]
 
         title = f"ambiguous overloaded call to {self.module}.{self.qualname}\nPossible candidates:\n"
@@ -41,8 +61,6 @@ class NoMatchingOverloadError(OverloadError):
         """A list of reasons (TypeErrors) why each function did not match the overload."""
     
     def __str__(self):
-        from inspect import signature
-
         shortname = self.qualname[self.qualname.rfind(".")+1:]
 
         title = f"no matching overload found for {self.module}.{self.qualname}\nReason:\n"
@@ -56,6 +74,7 @@ class NoMatchingOverloadError(OverloadError):
         return title + reasons
 
 
+# Overload decorators ==================================================================================================
 _registry = {}
 """A registry of all overloaded functions.  
 This is how decorated functions communicate with each other to merge several functions into one.
@@ -63,15 +82,12 @@ Not for manual editing.
 """
 
 
-def make_overload(binder):
+def make_overload(bind):
     def overload(func):
         """Decorator that makes the function overloaded.
         Add this to all functions with the same name in one scope (global or in class). When calling a function with 
         this name, an appropriate overload will be picked based on the arguments you provide.
         """
-        from .inspect import signature
-        from itertools import count
-
         if (func.__module__, func.__qualname__) not in _registry:
             overloads = []
 
@@ -84,9 +100,9 @@ def make_overload(binder):
                 candidates = []
                 fail_reasons = []
 
-                for func, binder in overloads:
+                for func, bind in overloads:
                     try:
-                        signature(func).bind(binder, *args, **kwargs)
+                        bind(func, *args, **kwargs)
                     except TypeError as error:
                         fail_reasons.append(error)
                     else:
@@ -119,7 +135,7 @@ def make_overload(binder):
         else:
             ovl = _registry[func.__module__, func.__qualname__]
 
-        ovl.overloads.append((func, binder))
+        ovl.overloads.append((func, bind))
 
         # Build documentation ------------------------------------------------------------------------------------------
         doc_decl = []
@@ -133,8 +149,12 @@ def make_overload(binder):
         ovl.__doc__ = "Overloaded function:\n" + "\n".join(doc_decl) + "\n\n" + "\n".join(doc_desc)
         # --------------------------------------------------------------------------------------------------------------
 
+        # Cache function signature to speed up binding
+        _signature_cache[func] = binder_signature(func)
+
         return ovl
     return overload
 
-overload_strict = make_overload(isinstance)
-overload = overload_strict  # To be changed in a future release
+
+overload = make_overload(bind_annotated)
+overload_strict = make_overload(bind_strict)
