@@ -1,8 +1,8 @@
 """Create overloaded functions using simple function decorators."""
 from itertools import count
 from inspect import signature
-from .inspect import signature as binder_signature
 from .bind import bind_strict, bind_annotated, _signature_cache
+from .inspect_bind import Signature as OptimizedSignature
 
 __all__ = [
     # Decorators
@@ -102,7 +102,7 @@ def make_overload(bind):
 
                 for func, bind in overloads:
                     try:
-                        bind(func, *args, **kwargs)
+                        bind(func, args, kwargs)
                     except TypeError as error:
                         fail_reasons.append(error)
                     else:
@@ -150,7 +150,7 @@ def make_overload(bind):
         # --------------------------------------------------------------------------------------------------------------
 
         # Cache function signature to speed up binding
-        _signature_cache[func] = binder_signature(func)
+        _signature_cache[func] = OptimizedSignature(signature(func))
 
         return ovl
     return overload
