@@ -4,19 +4,11 @@ from inspect import _POSITIONAL_ONLY, _VAR_POSITIONAL, _KEYWORD_ONLY, _VAR_KEYWO
 import itertools
 from cpython cimport PyObject, Py_INCREF, Py_DECREF
 from libcpp cimport bool
-from libcpp.vector cimport vector
 
 cdef int _c_positional_only = _POSITIONAL_ONLY
 cdef int _c_var_positional = _VAR_POSITIONAL
 cdef int _c_keyword_only = _KEYWORD_ONLY
 cdef int _c_var_keyword = _VAR_KEYWORD
-
-cdef struct Parameter:
-	int kind
-	PyObject* annotation
-	PyObject* name
-	bool has_default
-
 
 cdef Parameter parameter(object py_param):
 	cdef Parameter param
@@ -38,8 +30,6 @@ cdef void delparameter(Parameter param):
 
 
 cdef class Signature:
-	cdef vector[Parameter] parameters
-
 	def __init__(self, py_sig):
 		# Note that the `parameter(py_param)` pseudoconstructor calls Py_INCREF.
 		# Matching Py_DECREF is called in `delparameter` during __dealloc__.
@@ -55,7 +45,7 @@ cdef class Signature:
 			delparameter(param)
 
 
-def bind(Signature sig, args, kwargs, *, binder):	
+cpdef bind_with(Signature sig, bind_func, args, kwargs):	
 	cdef int args_i = 0
 	cdef int parameters_i = 0
 
@@ -85,7 +75,7 @@ def bind(Signature sig, args, kwargs, *, binder):
 				if <object> param.name in kwargs and param.kind != _c_positional_only:
 					raise TypeError(f'multiple values for argument {<object> param.name!r}') from None
 
-				if not binder(arg_val, annotation):
+				if not bind_func(arg_val, annotation):
 					raise TypeError(
 						f"argument '{<object> param.name!r}' has unexpected type '{type(arg_val).__qualname__}'"
 					)
@@ -161,7 +151,7 @@ def bind(Signature sig, args, kwargs, *, binder):
 				# to ensure correct behaviour just in case)
 				raise TypeError(f'{<object> param.name!r} parameter is positional only, but was passed as a keyword')
 
-			if not binder(arg_val, annotation):
+			if not bind_func(arg_val, annotation):
 				raise TypeError(f"argument '{param_name!r}' has unexpected type '{type(arg_val).__qualname__}'")
 
 	if kwargs and not kwargs_param:

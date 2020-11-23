@@ -9,6 +9,8 @@ setup(
     license="MIT",
     packages=["overload"],
     ext_modules=[
-        Extension("overload.inspect_bind", ["overload/inspect_bind.cpp"])
+        Extension("overload.bind_with", ["overload/bind_with.cpp"]),
+        Extension("overload.bind", ["overload/bind.cpp"]),
+        Extension("overload.overload", ["overload/overload.cpp"]),
     ]
 )
