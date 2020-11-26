@@ -1,4 +1,5 @@
 """Create overloaded functions using simple function decorators."""
+from inspect import signature
 
 __all__ = [
     # Decorators

@@ -45,7 +45,8 @@ cdef class Signature:
 			delparameter(param)
 
 
-cpdef bind_with(Signature sig, bind_func, args, kwargs):	
+cdef bind_with(Signature sig, object bind_func, tuple args, dict kwargs):
+	cdef dict kwargs_ = kwargs.copy()
 	cdef int args_i = 0
 	cdef int parameters_i = 0
 
@@ -67,20 +68,20 @@ cpdef bind_with(Signature sig, bind_func, args, kwargs):
 				if param.kind == _c_var_keyword or param.kind == _c_keyword_only:
 					# Looks like we have no parameter for this positional
 					# argument
-					raise TypeError('too many positional arguments') from None
+					return TypeError('too many positional arguments')
 
 				if param.kind == _c_var_positional:
 					break
 
-				if <object> param.name in kwargs and param.kind != _c_positional_only:
-					raise TypeError(f'multiple values for argument {<object> param.name!r}') from None
+				if <object> param.name in kwargs_ and param.kind != _c_positional_only:
+					return TypeError(f'multiple values for argument {<object> param.name!r}')
 
 				if not bind_func(arg_val, annotation):
-					raise TypeError(
+					return TypeError(
 						f"argument '{<object> param.name!r}' has unexpected type '{type(arg_val).__qualname__}'"
 					)
 			else:
-				raise TypeError('too many positional arguments') from None
+				return TypeError('too many positional arguments')
 		else:
 			# No more positional arguments
 			if parameters_i < sig.parameters.size():
@@ -94,11 +95,11 @@ cpdef bind_with(Signature sig, bind_func, args, kwargs):
 					# That's OK, just empty *args.  Let's start parsing
 					# kwargs
 					break
-				elif <object> param.name in kwargs:
+				elif <object> param.name in kwargs_:
 					if param.kind == _c_positional_only:
-						raise TypeError(
+						return TypeError(
 							f'{<object> param.name!r} parameter is positional only, but was passed as a keyword'
-						) from None
+						)
 					parameters_i -= 1
 					break
 				elif (param.kind == _c_var_keyword or param.has_default):
@@ -110,7 +111,7 @@ cpdef bind_with(Signature sig, bind_func, args, kwargs):
 				else:
 					# No default, not VAR_KEYWORD, not VAR_POSITIONAL,
 					# not in `kwargs`
-					raise TypeError(f'missing a required argument: {<object> param.name!r}') from None
+					return TypeError(f'missing a required argument: {<object> param.name!r}')
 			else:
 				# No more parameters. That's it. Just need to check that
 				# we have no `kwargs` after this while loop
@@ -133,26 +134,23 @@ cpdef bind_with(Signature sig, bind_func, args, kwargs):
 			# before reaching the last parameter before *args.
 			continue
 
-		param_name = <object> param.name
-		try:
-			arg_val = kwargs.pop(param_name)
-		except KeyError:
+		arg_val = kwargs_.pop(<object> param.name, None)
+		if arg_val is None:
 			# We have no value for this parameter.  It's fine though,
 			# if it has a default value, or it is an '*args'-like
 			# parameter, left alone by the processing of positional
 			# arguments.
 			if (param.kind != _c_var_positional and not param.has_default):
-				raise TypeError(f'missing a required argument: {param_name!r}') from None
-
+				return TypeError(f'missing a required argument: {<object> param.name!r}')
 		else:
 			if param.kind == _c_positional_only:
 				# This should never happen in case of a properly built
 				# Signature object (but let's have this check here
 				# to ensure correct behaviour just in case)
-				raise TypeError(f'{<object> param.name!r} parameter is positional only, but was passed as a keyword')
+				return TypeError(f'{<object> param.name!r} parameter is positional only, but was passed as a keyword')
 
 			if not bind_func(arg_val, annotation):
-				raise TypeError(f"argument '{param_name!r}' has unexpected type '{type(arg_val).__qualname__}'")
+				return TypeError(f"argument '{<object> param.name!r}' has unexpected type '{type(arg_val).__qualname__}'")
 
-	if kwargs and not kwargs_param:
-		raise TypeError(f'got an unexpected keyword argument {next(iter(kwargs))!r}')
+	if kwargs_ and not kwargs_param:
+		return TypeError(f'got an unexpected keyword argument {next(iter(kwargs_))!r}')

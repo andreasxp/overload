@@ -1180,9 +1180,9 @@ static PyObject *__Pyx_GetItemInt_Generic(PyObject *o, PyObject* j);
 static CYTHON_INLINE PyObject *__Pyx_GetItemInt_Fast(PyObject *o, Py_ssize_t i,
                                                      int is_list, int wraparound, int boundscheck);
 
-/* PySequenceContains.proto */
-static CYTHON_INLINE int __Pyx_PySequence_ContainsTF(PyObject* item, PyObject* seq, int eq) {
-    int result = PySequence_Contains(seq, item);
+/* PyDictContains.proto */
+static CYTHON_INLINE int __Pyx_PyDict_ContainsTF(PyObject* item, PyObject* dict, int eq) {
+    int result = PyDict_Contains(dict, item);
     return unlikely(result < 0) ? result : (result == (eq == Py_EQ));
 }
 
@@ -1219,53 +1219,40 @@ static CYTHON_INLINE PyObject* __Pyx_PyObject_FormatAndDecref(PyObject* s, PyObj
 static PyObject* __Pyx_PyUnicode_Join(PyObject* value_tuple, Py_ssize_t value_count, Py_ssize_t result_ulength,
                                       Py_UCS4 max_char);
 
-/* PyObjectCall2Args.proto */
-static CYTHON_UNUSED PyObject* __Pyx_PyObject_Call2Args(PyObject* function, PyObject* arg1, PyObject* arg2);
+/* py_dict_pop.proto */
+static CYTHON_INLINE PyObject *__Pyx_PyDict_Pop(PyObject *d, PyObject *key, PyObject *default_value);
 
-/* GetTopmostException.proto */
-#if CYTHON_USE_EXC_INFO_STACK
-static _PyErr_StackItem * __Pyx_PyErr_GetTopmostException(PyThreadState *tstate);
+/* UnpackUnboundCMethod.proto */
+typedef struct {
+    PyObject *type;
+    PyObject **method_name;
+    PyCFunction func;
+    PyObject *method;
+    int flag;
+} __Pyx_CachedCFunction;
+
+/* CallUnboundCMethod2.proto */
+static PyObject* __Pyx__CallUnboundCMethod2(__Pyx_CachedCFunction* cfunc, PyObject* self, PyObject* arg1, PyObject* arg2);
+#if CYTHON_COMPILING_IN_CPYTHON && PY_VERSION_HEX >= 0x030600B1
+static CYTHON_INLINE PyObject *__Pyx_CallUnboundCMethod2(__Pyx_CachedCFunction *cfunc, PyObject *self, PyObject *arg1, PyObject *arg2);
+#else
+#define __Pyx_CallUnboundCMethod2(cfunc, self, arg1, arg2)  __Pyx__CallUnboundCMethod2(cfunc, self, arg1, arg2)
 #endif
 
-/* SaveResetException.proto */
-#if CYTHON_FAST_THREAD_STATE
-#define __Pyx_ExceptionSave(type, value, tb)  __Pyx__ExceptionSave(__pyx_tstate, type, value, tb)
-static CYTHON_INLINE void __Pyx__ExceptionSave(PyThreadState *tstate, PyObject **type, PyObject **value, PyObject **tb);
-#define __Pyx_ExceptionReset(type, value, tb)  __Pyx__ExceptionReset(__pyx_tstate, type, value, tb)
-static CYTHON_INLINE void __Pyx__ExceptionReset(PyThreadState *tstate, PyObject *type, PyObject *value, PyObject *tb);
+/* CallUnboundCMethod1.proto */
+static PyObject* __Pyx__CallUnboundCMethod1(__Pyx_CachedCFunction* cfunc, PyObject* self, PyObject* arg);
+#if CYTHON_COMPILING_IN_CPYTHON
+static CYTHON_INLINE PyObject* __Pyx_CallUnboundCMethod1(__Pyx_CachedCFunction* cfunc, PyObject* self, PyObject* arg);
 #else
-#define __Pyx_ExceptionSave(type, value, tb)   PyErr_GetExcInfo(type, value, tb)
-#define __Pyx_ExceptionReset(type, value, tb)  PyErr_SetExcInfo(type, value, tb)
+#define __Pyx_CallUnboundCMethod1(cfunc, self, arg)  __Pyx__CallUnboundCMethod1(cfunc, self, arg)
 #endif
 
 /* None.proto */
 static CYTHON_INLINE void __Pyx_RaiseUnboundLocalError(const char *varname);
 
-/* PyErrExceptionMatches.proto */
-#if CYTHON_FAST_THREAD_STATE
-#define __Pyx_PyErr_ExceptionMatches(err) __Pyx_PyErr_ExceptionMatchesInState(__pyx_tstate, err)
-static CYTHON_INLINE int __Pyx_PyErr_ExceptionMatchesInState(PyThreadState* tstate, PyObject* err);
-#else
-#define __Pyx_PyErr_ExceptionMatches(err)  PyErr_ExceptionMatches(err)
-#endif
-
-/* GetException.proto */
-#if CYTHON_FAST_THREAD_STATE
-#define __Pyx_GetException(type, value, tb)  __Pyx__GetException(__pyx_tstate, type, value, tb)
-static int __Pyx__GetException(PyThreadState *tstate, PyObject **type, PyObject **value, PyObject **tb);
-#else
-static int __Pyx_GetException(PyObject **type, PyObject **value, PyObject **tb);
-#endif
-
 /* IterNext.proto */
 #define __Pyx_PyIter_Next(obj) __Pyx_PyIter_Next2(obj, NULL)
 static CYTHON_INLINE PyObject *__Pyx_PyIter_Next2(PyObject *, PyObject *);
-
-/* ArgTypeTest.proto */
-#define __Pyx_ArgTypeTest(obj, type, none_allowed, name, exact)\
-    ((likely((Py_TYPE(obj) == type) | (none_allowed && (obj == Py_None)))) ? 1 :\
-        __Pyx__ArgTypeTest(obj, type, name, exact))
-static int __Pyx__ArgTypeTest(PyObject *obj, PyTypeObject *type, const char *name, int exact);
 
 /* PyObject_GenericGetAttrNoDict.proto */
 #if CYTHON_USE_TYPE_SLOTS && CYTHON_USE_PYTYPE_LOOKUP && PY_VERSION_HEX < 0x03070000
@@ -1279,6 +1266,14 @@ static CYTHON_INLINE PyObject* __Pyx_PyObject_GenericGetAttrNoDict(PyObject* obj
 static PyObject* __Pyx_PyObject_GenericGetAttr(PyObject* obj, PyObject* attr_name);
 #else
 #define __Pyx_PyObject_GenericGetAttr PyObject_GenericGetAttr
+#endif
+
+/* PyErrExceptionMatches.proto */
+#if CYTHON_FAST_THREAD_STATE
+#define __Pyx_PyErr_ExceptionMatches(err) __Pyx_PyErr_ExceptionMatchesInState(__pyx_tstate, err)
+static CYTHON_INLINE int __Pyx_PyErr_ExceptionMatchesInState(PyThreadState* tstate, PyObject* err);
+#else
+#define __Pyx_PyErr_ExceptionMatches(err)  PyErr_ExceptionMatches(err)
 #endif
 
 /* PyObjectGetAttrStrNoError.proto */
@@ -1509,7 +1504,6 @@ static int __pyx_v_8overload_9bind_with__c_positional_only;
 static int __pyx_v_8overload_9bind_with__c_var_positional;
 static int __pyx_v_8overload_9bind_with__c_keyword_only;
 static int __pyx_v_8overload_9bind_with__c_var_keyword;
-static PyObject *__pyx_f_8overload_9bind_with_bind_with(struct __pyx_obj_8overload_9bind_with_Signature *, PyObject *, PyObject *, PyObject *, int __pyx_skip_dispatch); /*proto*/
 static struct __pyx_t_8overload_9bind_with_Parameter __pyx_f_8overload_9bind_with_parameter(PyObject *); /*proto*/
 static void __pyx_f_8overload_9bind_with_delparameter(struct __pyx_t_8overload_9bind_with_Parameter); /*proto*/
 #define __Pyx_MODULE_NAME "overload.bind_with"
@@ -1519,18 +1513,14 @@ int __pyx_module_is_main_overload__bind_with = 0;
 /* Implementation of 'overload.bind_with' */
 static PyObject *__pyx_builtin_TypeError;
 static PyObject *__pyx_builtin_object;
-static PyObject *__pyx_builtin_KeyError;
 static const char __pyx_k__4[] = "'";
 static const char __pyx_k_pop[] = "pop";
-static const char __pyx_k_sig[] = "sig";
-static const char __pyx_k_args[] = "args";
 static const char __pyx_k_kind[] = "kind";
 static const char __pyx_k_main[] = "__main__";
 static const char __pyx_k_name[] = "name";
 static const char __pyx_k_test[] = "__test__";
 static const char __pyx_k_empty[] = "_empty";
 static const char __pyx_k_import[] = "__import__";
-static const char __pyx_k_kwargs[] = "kwargs";
 static const char __pyx_k_name_2[] = "__name__";
 static const char __pyx_k_object[] = "object";
 static const char __pyx_k_py_sig[] = "py_sig";
@@ -1538,14 +1528,12 @@ static const char __pyx_k_reduce[] = "__reduce__";
 static const char __pyx_k_values[] = "values";
 static const char __pyx_k_default[] = "default";
 static const char __pyx_k_inspect[] = "inspect";
-static const char __pyx_k_KeyError[] = "KeyError";
 static const char __pyx_k_argument[] = "argument '";
 static const char __pyx_k_getstate[] = "__getstate__";
 static const char __pyx_k_qualname[] = "__qualname__";
 static const char __pyx_k_setstate[] = "__setstate__";
 static const char __pyx_k_Signature[] = "Signature";
 static const char __pyx_k_TypeError[] = "TypeError";
-static const char __pyx_k_bind_func[] = "bind_func";
 static const char __pyx_k_itertools[] = "itertools";
 static const char __pyx_k_reduce_ex[] = "__reduce_ex__";
 static const char __pyx_k_annotation[] = "annotation";
@@ -1565,7 +1553,6 @@ static const char __pyx_k_parameter_is_positional_only_bu[] = " parameter is pos
 static const char __pyx_k_got_an_unexpected_keyword_argume[] = "got an unexpected keyword argument ";
 static const char __pyx_k_self_parameters_cannot_be_conver[] = "self.parameters cannot be converted to a Python object for pickling";
 static PyObject *__pyx_n_s_KEYWORD_ONLY;
-static PyObject *__pyx_n_s_KeyError;
 static PyObject *__pyx_n_s_POSITIONAL_ONLY;
 static PyObject *__pyx_n_s_Signature;
 static PyObject *__pyx_n_s_TypeError;
@@ -1573,9 +1560,7 @@ static PyObject *__pyx_n_s_VAR_KEYWORD;
 static PyObject *__pyx_n_s_VAR_POSITIONAL;
 static PyObject *__pyx_kp_u__4;
 static PyObject *__pyx_n_s_annotation;
-static PyObject *__pyx_n_s_args;
 static PyObject *__pyx_kp_u_argument;
-static PyObject *__pyx_n_s_bind_func;
 static PyObject *__pyx_n_s_cline_in_traceback;
 static PyObject *__pyx_n_s_default;
 static PyObject *__pyx_n_s_empty;
@@ -1586,7 +1571,6 @@ static PyObject *__pyx_n_s_import;
 static PyObject *__pyx_n_s_inspect;
 static PyObject *__pyx_n_s_itertools;
 static PyObject *__pyx_n_s_kind;
-static PyObject *__pyx_n_s_kwargs;
 static PyObject *__pyx_n_s_main;
 static PyObject *__pyx_kp_u_missing_a_required_argument;
 static PyObject *__pyx_kp_u_multiple_values_for_argument;
@@ -1604,7 +1588,6 @@ static PyObject *__pyx_n_s_reduce_ex;
 static PyObject *__pyx_kp_s_self_parameters_cannot_be_conver;
 static PyObject *__pyx_n_s_setstate;
 static PyObject *__pyx_n_s_setstate_cython;
-static PyObject *__pyx_n_s_sig;
 static PyObject *__pyx_n_s_test;
 static PyObject *__pyx_kp_u_too_many_positional_arguments;
 static PyObject *__pyx_n_s_values;
@@ -1612,8 +1595,8 @@ static int __pyx_pf_8overload_9bind_with_9Signature___init__(struct __pyx_obj_8o
 static void __pyx_pf_8overload_9bind_with_9Signature_2__dealloc__(struct __pyx_obj_8overload_9bind_with_Signature *__pyx_v_self); /* proto */
 static PyObject *__pyx_pf_8overload_9bind_with_9Signature_4__reduce_cython__(CYTHON_UNUSED struct __pyx_obj_8overload_9bind_with_Signature *__pyx_v_self); /* proto */
 static PyObject *__pyx_pf_8overload_9bind_with_9Signature_6__setstate_cython__(CYTHON_UNUSED struct __pyx_obj_8overload_9bind_with_Signature *__pyx_v_self, CYTHON_UNUSED PyObject *__pyx_v___pyx_state); /* proto */
-static PyObject *__pyx_pf_8overload_9bind_with_bind_with(CYTHON_UNUSED PyObject *__pyx_self, struct __pyx_obj_8overload_9bind_with_Signature *__pyx_v_sig, PyObject *__pyx_v_bind_func, PyObject *__pyx_v_args, PyObject *__pyx_v_kwargs); /* proto */
 static PyObject *__pyx_tp_new_8overload_9bind_with_Signature(PyTypeObject *t, PyObject *a, PyObject *k); /*proto*/
+static __Pyx_CachedCFunction __pyx_umethod_PyDict_Type_pop = {0, &__pyx_n_s_pop, 0, 0, 0};
 static PyObject *__pyx_tuple_;
 static PyObject *__pyx_tuple__2;
 static PyObject *__pyx_tuple__3;
@@ -2140,25 +2123,24 @@ static PyObject *__pyx_pf_8overload_9bind_with_9Signature_6__setstate_cython__(C
 /* "overload/bind_with.pyx":48
  * 
  * 
- * cpdef bind_with(Signature sig, bind_func, args, kwargs):             # <<<<<<<<<<<<<<
+ * cdef bind_with(Signature sig, object bind_func, tuple args, dict kwargs):             # <<<<<<<<<<<<<<
+ * 	cdef dict kwargs_ = kwargs.copy()
  * 	cdef int args_i = 0
- * 	cdef int parameters_i = 0
  */
 
-static PyObject *__pyx_pw_8overload_9bind_with_1bind_with(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static PyObject *__pyx_f_8overload_9bind_with_bind_with(struct __pyx_obj_8overload_9bind_with_Signature *__pyx_v_sig, PyObject *__pyx_v_bind_func, PyObject *__pyx_v_args, PyObject *__pyx_v_kwargs, CYTHON_UNUSED int __pyx_skip_dispatch) {
+static PyObject *__pyx_f_8overload_9bind_with_bind_with(struct __pyx_obj_8overload_9bind_with_Signature *__pyx_v_sig, PyObject *__pyx_v_bind_func, PyObject *__pyx_v_args, PyObject *__pyx_v_kwargs) {
+  PyObject *__pyx_v_kwargs_ = 0;
   int __pyx_v_args_i;
   int __pyx_v_parameters_i;
   PyObject *__pyx_v_arg_val = NULL;
   struct __pyx_t_8overload_9bind_with_Parameter __pyx_v_param;
   PyObject *__pyx_v_annotation = NULL;
   bool __pyx_v_kwargs_param;
-  PyObject *__pyx_v_param_name = NULL;
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
-  Py_ssize_t __pyx_t_1;
-  int __pyx_t_2;
-  PyObject *__pyx_t_3 = NULL;
+  PyObject *__pyx_t_1 = NULL;
+  Py_ssize_t __pyx_t_2;
+  int __pyx_t_3;
   int __pyx_t_4;
   int __pyx_t_5;
   PyObject *__pyx_t_6 = NULL;
@@ -2166,10 +2148,6 @@ static PyObject *__pyx_f_8overload_9bind_with_bind_with(struct __pyx_obj_8overlo
   int __pyx_t_8;
   PyObject *__pyx_t_9 = NULL;
   Py_UCS4 __pyx_t_10;
-  PyObject *__pyx_t_11 = NULL;
-  PyObject *__pyx_t_12 = NULL;
-  PyObject *__pyx_t_13 = NULL;
-  PyObject *__pyx_t_14 = NULL;
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
@@ -2177,15 +2155,31 @@ static PyObject *__pyx_f_8overload_9bind_with_bind_with(struct __pyx_obj_8overlo
 
   /* "overload/bind_with.pyx":49
  * 
- * cpdef bind_with(Signature sig, bind_func, args, kwargs):
+ * cdef bind_with(Signature sig, object bind_func, tuple args, dict kwargs):
+ * 	cdef dict kwargs_ = kwargs.copy()             # <<<<<<<<<<<<<<
+ * 	cdef int args_i = 0
+ * 	cdef int parameters_i = 0
+ */
+  if (unlikely(__pyx_v_kwargs == Py_None)) {
+    PyErr_Format(PyExc_AttributeError, "'NoneType' object has no attribute '%.30s'", "copy");
+    __PYX_ERR(1, 49, __pyx_L1_error)
+  }
+  __pyx_t_1 = PyDict_Copy(__pyx_v_kwargs); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 49, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __pyx_v_kwargs_ = ((PyObject*)__pyx_t_1);
+  __pyx_t_1 = 0;
+
+  /* "overload/bind_with.pyx":50
+ * cdef bind_with(Signature sig, object bind_func, tuple args, dict kwargs):
+ * 	cdef dict kwargs_ = kwargs.copy()
  * 	cdef int args_i = 0             # <<<<<<<<<<<<<<
  * 	cdef int parameters_i = 0
  * 
  */
   __pyx_v_args_i = 0;
 
-  /* "overload/bind_with.pyx":50
- * cpdef bind_with(Signature sig, bind_func, args, kwargs):
+  /* "overload/bind_with.pyx":51
+ * 	cdef dict kwargs_ = kwargs.copy()
  * 	cdef int args_i = 0
  * 	cdef int parameters_i = 0             # <<<<<<<<<<<<<<
  * 
@@ -2193,7 +2187,7 @@ static PyObject *__pyx_f_8overload_9bind_with_bind_with(struct __pyx_obj_8overlo
  */
   __pyx_v_parameters_i = 0;
 
-  /* "overload/bind_with.pyx":52
+  /* "overload/bind_with.pyx":53
  * 	cdef int parameters_i = 0
  * 
  * 	while True:             # <<<<<<<<<<<<<<
@@ -2202,30 +2196,38 @@ static PyObject *__pyx_f_8overload_9bind_with_bind_with(struct __pyx_obj_8overlo
  */
   while (1) {
 
-    /* "overload/bind_with.pyx":55
+    /* "overload/bind_with.pyx":56
  * 		# Let's iterate through the positional arguments and corresponding
  * 		# parameters
  * 		if args_i < len(args):             # <<<<<<<<<<<<<<
  * 			arg_val = args[args_i]
  * 			args_i += 1
  */
-    __pyx_t_1 = PyObject_Length(__pyx_v_args); if (unlikely(__pyx_t_1 == ((Py_ssize_t)-1))) __PYX_ERR(1, 55, __pyx_L1_error)
-    __pyx_t_2 = ((__pyx_v_args_i < __pyx_t_1) != 0);
-    if (__pyx_t_2) {
+    if (unlikely(__pyx_v_args == Py_None)) {
+      PyErr_SetString(PyExc_TypeError, "object of type 'NoneType' has no len()");
+      __PYX_ERR(1, 56, __pyx_L1_error)
+    }
+    __pyx_t_2 = PyTuple_GET_SIZE(__pyx_v_args); if (unlikely(__pyx_t_2 == ((Py_ssize_t)-1))) __PYX_ERR(1, 56, __pyx_L1_error)
+    __pyx_t_3 = ((__pyx_v_args_i < __pyx_t_2) != 0);
+    if (__pyx_t_3) {
 
-      /* "overload/bind_with.pyx":56
+      /* "overload/bind_with.pyx":57
  * 		# parameters
  * 		if args_i < len(args):
  * 			arg_val = args[args_i]             # <<<<<<<<<<<<<<
  * 			args_i += 1
  * 
  */
-      __pyx_t_3 = __Pyx_GetItemInt(__pyx_v_args, __pyx_v_args_i, int, 1, __Pyx_PyInt_From_int, 0, 1, 1); if (unlikely(!__pyx_t_3)) __PYX_ERR(1, 56, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_3);
-      __Pyx_XDECREF_SET(__pyx_v_arg_val, __pyx_t_3);
-      __pyx_t_3 = 0;
+      if (unlikely(__pyx_v_args == Py_None)) {
+        PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
+        __PYX_ERR(1, 57, __pyx_L1_error)
+      }
+      __pyx_t_1 = __Pyx_GetItemInt_Tuple(__pyx_v_args, __pyx_v_args_i, int, 1, __Pyx_PyInt_From_int, 0, 1, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 57, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_1);
+      __Pyx_XDECREF_SET(__pyx_v_arg_val, __pyx_t_1);
+      __pyx_t_1 = 0;
 
-      /* "overload/bind_with.pyx":57
+      /* "overload/bind_with.pyx":58
  * 		if args_i < len(args):
  * 			arg_val = args[args_i]
  * 			args_i += 1             # <<<<<<<<<<<<<<
@@ -2234,17 +2236,17 @@ static PyObject *__pyx_f_8overload_9bind_with_bind_with(struct __pyx_obj_8overlo
  */
       __pyx_v_args_i = (__pyx_v_args_i + 1);
 
-      /* "overload/bind_with.pyx":60
+      /* "overload/bind_with.pyx":61
  * 
  * 			# We have a positional argument to process
  * 			if parameters_i < sig.parameters.size():             # <<<<<<<<<<<<<<
  * 				param = sig.parameters[parameters_i]
  * 				parameters_i += 1
  */
-      __pyx_t_2 = ((__pyx_v_parameters_i < __pyx_v_sig->parameters.size()) != 0);
-      if (likely(__pyx_t_2)) {
+      __pyx_t_3 = ((__pyx_v_parameters_i < __pyx_v_sig->parameters.size()) != 0);
+      if (__pyx_t_3) {
 
-        /* "overload/bind_with.pyx":61
+        /* "overload/bind_with.pyx":62
  * 			# We have a positional argument to process
  * 			if parameters_i < sig.parameters.size():
  * 				param = sig.parameters[parameters_i]             # <<<<<<<<<<<<<<
@@ -2253,7 +2255,7 @@ static PyObject *__pyx_f_8overload_9bind_with_bind_with(struct __pyx_obj_8overlo
  */
         __pyx_v_param = (__pyx_v_sig->parameters[__pyx_v_parameters_i]);
 
-        /* "overload/bind_with.pyx":62
+        /* "overload/bind_with.pyx":63
  * 			if parameters_i < sig.parameters.size():
  * 				param = sig.parameters[parameters_i]
  * 				parameters_i += 1             # <<<<<<<<<<<<<<
@@ -2262,33 +2264,33 @@ static PyObject *__pyx_f_8overload_9bind_with_bind_with(struct __pyx_obj_8overlo
  */
         __pyx_v_parameters_i = (__pyx_v_parameters_i + 1);
 
-        /* "overload/bind_with.pyx":63
+        /* "overload/bind_with.pyx":64
  * 				param = sig.parameters[parameters_i]
  * 				parameters_i += 1
  * 				annotation = <object> param.annotation             # <<<<<<<<<<<<<<
  * 				if annotation is _empty:
  * 					annotation = object
  */
-        __pyx_t_3 = ((PyObject *)__pyx_v_param.annotation);
-        __Pyx_INCREF(__pyx_t_3);
-        __Pyx_XDECREF_SET(__pyx_v_annotation, __pyx_t_3);
-        __pyx_t_3 = 0;
+        __pyx_t_1 = ((PyObject *)__pyx_v_param.annotation);
+        __Pyx_INCREF(__pyx_t_1);
+        __Pyx_XDECREF_SET(__pyx_v_annotation, __pyx_t_1);
+        __pyx_t_1 = 0;
 
-        /* "overload/bind_with.pyx":64
+        /* "overload/bind_with.pyx":65
  * 				parameters_i += 1
  * 				annotation = <object> param.annotation
  * 				if annotation is _empty:             # <<<<<<<<<<<<<<
  * 					annotation = object
  * 
  */
-        __Pyx_GetModuleGlobalName(__pyx_t_3, __pyx_n_s_empty); if (unlikely(!__pyx_t_3)) __PYX_ERR(1, 64, __pyx_L1_error)
-        __Pyx_GOTREF(__pyx_t_3);
-        __pyx_t_2 = (__pyx_v_annotation == __pyx_t_3);
-        __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-        __pyx_t_4 = (__pyx_t_2 != 0);
+        __Pyx_GetModuleGlobalName(__pyx_t_1, __pyx_n_s_empty); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 65, __pyx_L1_error)
+        __Pyx_GOTREF(__pyx_t_1);
+        __pyx_t_3 = (__pyx_v_annotation == __pyx_t_1);
+        __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+        __pyx_t_4 = (__pyx_t_3 != 0);
         if (__pyx_t_4) {
 
-          /* "overload/bind_with.pyx":65
+          /* "overload/bind_with.pyx":66
  * 				annotation = <object> param.annotation
  * 				if annotation is _empty:
  * 					annotation = object             # <<<<<<<<<<<<<<
@@ -2298,7 +2300,7 @@ static PyObject *__pyx_f_8overload_9bind_with_bind_with(struct __pyx_obj_8overlo
           __Pyx_INCREF(__pyx_builtin_object);
           __Pyx_DECREF_SET(__pyx_v_annotation, __pyx_builtin_object);
 
-          /* "overload/bind_with.pyx":64
+          /* "overload/bind_with.pyx":65
  * 				parameters_i += 1
  * 				annotation = <object> param.annotation
  * 				if annotation is _empty:             # <<<<<<<<<<<<<<
@@ -2307,38 +2309,39 @@ static PyObject *__pyx_f_8overload_9bind_with_bind_with(struct __pyx_obj_8overlo
  */
         }
 
-        /* "overload/bind_with.pyx":67
+        /* "overload/bind_with.pyx":68
  * 					annotation = object
  * 
  * 				if param.kind == _c_var_keyword or param.kind == _c_keyword_only:             # <<<<<<<<<<<<<<
  * 					# Looks like we have no parameter for this positional
  * 					# argument
  */
-        __pyx_t_2 = ((__pyx_v_param.kind == __pyx_v_8overload_9bind_with__c_var_keyword) != 0);
-        if (!__pyx_t_2) {
+        __pyx_t_3 = ((__pyx_v_param.kind == __pyx_v_8overload_9bind_with__c_var_keyword) != 0);
+        if (!__pyx_t_3) {
         } else {
-          __pyx_t_4 = __pyx_t_2;
+          __pyx_t_4 = __pyx_t_3;
           goto __pyx_L9_bool_binop_done;
         }
-        __pyx_t_2 = ((__pyx_v_param.kind == __pyx_v_8overload_9bind_with__c_keyword_only) != 0);
-        __pyx_t_4 = __pyx_t_2;
+        __pyx_t_3 = ((__pyx_v_param.kind == __pyx_v_8overload_9bind_with__c_keyword_only) != 0);
+        __pyx_t_4 = __pyx_t_3;
         __pyx_L9_bool_binop_done:;
-        if (unlikely(__pyx_t_4)) {
+        if (__pyx_t_4) {
 
-          /* "overload/bind_with.pyx":70
+          /* "overload/bind_with.pyx":71
  * 					# Looks like we have no parameter for this positional
  * 					# argument
- * 					raise TypeError('too many positional arguments') from None             # <<<<<<<<<<<<<<
+ * 					return TypeError('too many positional arguments')             # <<<<<<<<<<<<<<
  * 
  * 				if param.kind == _c_var_positional:
  */
-          __pyx_t_3 = __Pyx_PyObject_Call(__pyx_builtin_TypeError, __pyx_tuple__3, NULL); if (unlikely(!__pyx_t_3)) __PYX_ERR(1, 70, __pyx_L1_error)
-          __Pyx_GOTREF(__pyx_t_3);
-          __Pyx_Raise(__pyx_t_3, 0, 0, Py_None);
-          __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-          __PYX_ERR(1, 70, __pyx_L1_error)
+          __Pyx_XDECREF(__pyx_r);
+          __pyx_t_1 = __Pyx_PyObject_Call(__pyx_builtin_TypeError, __pyx_tuple__3, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 71, __pyx_L1_error)
+          __Pyx_GOTREF(__pyx_t_1);
+          __pyx_r = __pyx_t_1;
+          __pyx_t_1 = 0;
+          goto __pyx_L0;
 
-          /* "overload/bind_with.pyx":67
+          /* "overload/bind_with.pyx":68
  * 					annotation = object
  * 
  * 				if param.kind == _c_var_keyword or param.kind == _c_keyword_only:             # <<<<<<<<<<<<<<
@@ -2347,8 +2350,8 @@ static PyObject *__pyx_f_8overload_9bind_with_bind_with(struct __pyx_obj_8overlo
  */
         }
 
-        /* "overload/bind_with.pyx":72
- * 					raise TypeError('too many positional arguments') from None
+        /* "overload/bind_with.pyx":73
+ * 					return TypeError('too many positional arguments')
  * 
  * 				if param.kind == _c_var_positional:             # <<<<<<<<<<<<<<
  * 					break
@@ -2357,17 +2360,17 @@ static PyObject *__pyx_f_8overload_9bind_with_bind_with(struct __pyx_obj_8overlo
         __pyx_t_4 = ((__pyx_v_param.kind == __pyx_v_8overload_9bind_with__c_var_positional) != 0);
         if (__pyx_t_4) {
 
-          /* "overload/bind_with.pyx":73
+          /* "overload/bind_with.pyx":74
  * 
  * 				if param.kind == _c_var_positional:
  * 					break             # <<<<<<<<<<<<<<
  * 
- * 				if <object> param.name in kwargs and param.kind != _c_positional_only:
+ * 				if <object> param.name in kwargs_ and param.kind != _c_positional_only:
  */
           goto __pyx_L4_break;
 
-          /* "overload/bind_with.pyx":72
- * 					raise TypeError('too many positional arguments') from None
+          /* "overload/bind_with.pyx":73
+ * 					return TypeError('too many positional arguments')
  * 
  * 				if param.kind == _c_var_positional:             # <<<<<<<<<<<<<<
  * 					break
@@ -2375,15 +2378,19 @@ static PyObject *__pyx_f_8overload_9bind_with_bind_with(struct __pyx_obj_8overlo
  */
         }
 
-        /* "overload/bind_with.pyx":75
+        /* "overload/bind_with.pyx":76
  * 					break
  * 
- * 				if <object> param.name in kwargs and param.kind != _c_positional_only:             # <<<<<<<<<<<<<<
- * 					raise TypeError(f'multiple values for argument {<object> param.name!r}') from None
+ * 				if <object> param.name in kwargs_ and param.kind != _c_positional_only:             # <<<<<<<<<<<<<<
+ * 					return TypeError(f'multiple values for argument {<object> param.name!r}')
  * 
  */
-        __pyx_t_2 = (__Pyx_PySequence_ContainsTF(((PyObject *)__pyx_v_param.name), __pyx_v_kwargs, Py_EQ)); if (unlikely(__pyx_t_2 < 0)) __PYX_ERR(1, 75, __pyx_L1_error)
-        __pyx_t_5 = (__pyx_t_2 != 0);
+        if (unlikely(__pyx_v_kwargs_ == Py_None)) {
+          PyErr_SetString(PyExc_TypeError, "'NoneType' object is not iterable");
+          __PYX_ERR(1, 76, __pyx_L1_error)
+        }
+        __pyx_t_3 = (__Pyx_PyDict_ContainsTF(((PyObject *)__pyx_v_param.name), __pyx_v_kwargs_, Py_EQ)); if (unlikely(__pyx_t_3 < 0)) __PYX_ERR(1, 76, __pyx_L1_error)
+        __pyx_t_5 = (__pyx_t_3 != 0);
         if (__pyx_t_5) {
         } else {
           __pyx_t_4 = __pyx_t_5;
@@ -2392,41 +2399,42 @@ static PyObject *__pyx_f_8overload_9bind_with_bind_with(struct __pyx_obj_8overlo
         __pyx_t_5 = ((__pyx_v_param.kind != __pyx_v_8overload_9bind_with__c_positional_only) != 0);
         __pyx_t_4 = __pyx_t_5;
         __pyx_L13_bool_binop_done:;
-        if (unlikely(__pyx_t_4)) {
+        if (__pyx_t_4) {
 
-          /* "overload/bind_with.pyx":76
+          /* "overload/bind_with.pyx":77
  * 
- * 				if <object> param.name in kwargs and param.kind != _c_positional_only:
- * 					raise TypeError(f'multiple values for argument {<object> param.name!r}') from None             # <<<<<<<<<<<<<<
+ * 				if <object> param.name in kwargs_ and param.kind != _c_positional_only:
+ * 					return TypeError(f'multiple values for argument {<object> param.name!r}')             # <<<<<<<<<<<<<<
  * 
  * 				if not bind_func(arg_val, annotation):
  */
-          __pyx_t_3 = __Pyx_PyObject_FormatSimpleAndDecref(PyObject_Repr(((PyObject *)__pyx_v_param.name)), __pyx_empty_unicode); if (unlikely(!__pyx_t_3)) __PYX_ERR(1, 76, __pyx_L1_error)
-          __Pyx_GOTREF(__pyx_t_3);
-          __pyx_t_6 = __Pyx_PyUnicode_Concat(__pyx_kp_u_multiple_values_for_argument, __pyx_t_3); if (unlikely(!__pyx_t_6)) __PYX_ERR(1, 76, __pyx_L1_error)
+          __Pyx_XDECREF(__pyx_r);
+          __pyx_t_1 = __Pyx_PyObject_FormatSimpleAndDecref(PyObject_Repr(((PyObject *)__pyx_v_param.name)), __pyx_empty_unicode); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 77, __pyx_L1_error)
+          __Pyx_GOTREF(__pyx_t_1);
+          __pyx_t_6 = __Pyx_PyUnicode_Concat(__pyx_kp_u_multiple_values_for_argument, __pyx_t_1); if (unlikely(!__pyx_t_6)) __PYX_ERR(1, 77, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_6);
-          __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-          __pyx_t_3 = __Pyx_PyObject_CallOneArg(__pyx_builtin_TypeError, __pyx_t_6); if (unlikely(!__pyx_t_3)) __PYX_ERR(1, 76, __pyx_L1_error)
-          __Pyx_GOTREF(__pyx_t_3);
+          __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+          __pyx_t_1 = __Pyx_PyObject_CallOneArg(__pyx_builtin_TypeError, __pyx_t_6); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 77, __pyx_L1_error)
+          __Pyx_GOTREF(__pyx_t_1);
           __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
-          __Pyx_Raise(__pyx_t_3, 0, 0, Py_None);
-          __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-          __PYX_ERR(1, 76, __pyx_L1_error)
+          __pyx_r = __pyx_t_1;
+          __pyx_t_1 = 0;
+          goto __pyx_L0;
 
-          /* "overload/bind_with.pyx":75
+          /* "overload/bind_with.pyx":76
  * 					break
  * 
- * 				if <object> param.name in kwargs and param.kind != _c_positional_only:             # <<<<<<<<<<<<<<
- * 					raise TypeError(f'multiple values for argument {<object> param.name!r}') from None
+ * 				if <object> param.name in kwargs_ and param.kind != _c_positional_only:             # <<<<<<<<<<<<<<
+ * 					return TypeError(f'multiple values for argument {<object> param.name!r}')
  * 
  */
         }
 
-        /* "overload/bind_with.pyx":78
- * 					raise TypeError(f'multiple values for argument {<object> param.name!r}') from None
+        /* "overload/bind_with.pyx":79
+ * 					return TypeError(f'multiple values for argument {<object> param.name!r}')
  * 
  * 				if not bind_func(arg_val, annotation):             # <<<<<<<<<<<<<<
- * 					raise TypeError(
+ * 					return TypeError(
  * 						f"argument '{<object> param.name!r}' has unexpected type '{type(arg_val).__qualname__}'"
  */
         __Pyx_INCREF(__pyx_v_bind_func);
@@ -2445,21 +2453,21 @@ static PyObject *__pyx_f_8overload_9bind_with_bind_with(struct __pyx_obj_8overlo
         #if CYTHON_FAST_PYCALL
         if (PyFunction_Check(__pyx_t_6)) {
           PyObject *__pyx_temp[3] = {__pyx_t_7, __pyx_v_arg_val, __pyx_v_annotation};
-          __pyx_t_3 = __Pyx_PyFunction_FastCall(__pyx_t_6, __pyx_temp+1-__pyx_t_8, 2+__pyx_t_8); if (unlikely(!__pyx_t_3)) __PYX_ERR(1, 78, __pyx_L1_error)
+          __pyx_t_1 = __Pyx_PyFunction_FastCall(__pyx_t_6, __pyx_temp+1-__pyx_t_8, 2+__pyx_t_8); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 79, __pyx_L1_error)
           __Pyx_XDECREF(__pyx_t_7); __pyx_t_7 = 0;
-          __Pyx_GOTREF(__pyx_t_3);
+          __Pyx_GOTREF(__pyx_t_1);
         } else
         #endif
         #if CYTHON_FAST_PYCCALL
         if (__Pyx_PyFastCFunction_Check(__pyx_t_6)) {
           PyObject *__pyx_temp[3] = {__pyx_t_7, __pyx_v_arg_val, __pyx_v_annotation};
-          __pyx_t_3 = __Pyx_PyCFunction_FastCall(__pyx_t_6, __pyx_temp+1-__pyx_t_8, 2+__pyx_t_8); if (unlikely(!__pyx_t_3)) __PYX_ERR(1, 78, __pyx_L1_error)
+          __pyx_t_1 = __Pyx_PyCFunction_FastCall(__pyx_t_6, __pyx_temp+1-__pyx_t_8, 2+__pyx_t_8); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 79, __pyx_L1_error)
           __Pyx_XDECREF(__pyx_t_7); __pyx_t_7 = 0;
-          __Pyx_GOTREF(__pyx_t_3);
+          __Pyx_GOTREF(__pyx_t_1);
         } else
         #endif
         {
-          __pyx_t_9 = PyTuple_New(2+__pyx_t_8); if (unlikely(!__pyx_t_9)) __PYX_ERR(1, 78, __pyx_L1_error)
+          __pyx_t_9 = PyTuple_New(2+__pyx_t_8); if (unlikely(!__pyx_t_9)) __PYX_ERR(1, 79, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_9);
           if (__pyx_t_7) {
             __Pyx_GIVEREF(__pyx_t_7); PyTuple_SET_ITEM(__pyx_t_9, 0, __pyx_t_7); __pyx_t_7 = NULL;
@@ -2470,84 +2478,93 @@ static PyObject *__pyx_f_8overload_9bind_with_bind_with(struct __pyx_obj_8overlo
           __Pyx_INCREF(__pyx_v_annotation);
           __Pyx_GIVEREF(__pyx_v_annotation);
           PyTuple_SET_ITEM(__pyx_t_9, 1+__pyx_t_8, __pyx_v_annotation);
-          __pyx_t_3 = __Pyx_PyObject_Call(__pyx_t_6, __pyx_t_9, NULL); if (unlikely(!__pyx_t_3)) __PYX_ERR(1, 78, __pyx_L1_error)
-          __Pyx_GOTREF(__pyx_t_3);
+          __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_6, __pyx_t_9, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 79, __pyx_L1_error)
+          __Pyx_GOTREF(__pyx_t_1);
           __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
         }
         __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
-        __pyx_t_4 = __Pyx_PyObject_IsTrue(__pyx_t_3); if (unlikely(__pyx_t_4 < 0)) __PYX_ERR(1, 78, __pyx_L1_error)
-        __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+        __pyx_t_4 = __Pyx_PyObject_IsTrue(__pyx_t_1); if (unlikely(__pyx_t_4 < 0)) __PYX_ERR(1, 79, __pyx_L1_error)
+        __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
         __pyx_t_5 = ((!__pyx_t_4) != 0);
-        if (unlikely(__pyx_t_5)) {
+        if (__pyx_t_5) {
 
           /* "overload/bind_with.pyx":80
+ * 
  * 				if not bind_func(arg_val, annotation):
- * 					raise TypeError(
+ * 					return TypeError(             # <<<<<<<<<<<<<<
+ * 						f"argument '{<object> param.name!r}' has unexpected type '{type(arg_val).__qualname__}'"
+ * 					)
+ */
+          __Pyx_XDECREF(__pyx_r);
+
+          /* "overload/bind_with.pyx":81
+ * 				if not bind_func(arg_val, annotation):
+ * 					return TypeError(
  * 						f"argument '{<object> param.name!r}' has unexpected type '{type(arg_val).__qualname__}'"             # <<<<<<<<<<<<<<
  * 					)
  * 			else:
  */
-          __pyx_t_3 = PyTuple_New(5); if (unlikely(!__pyx_t_3)) __PYX_ERR(1, 80, __pyx_L1_error)
-          __Pyx_GOTREF(__pyx_t_3);
-          __pyx_t_1 = 0;
+          __pyx_t_1 = PyTuple_New(5); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 81, __pyx_L1_error)
+          __Pyx_GOTREF(__pyx_t_1);
+          __pyx_t_2 = 0;
           __pyx_t_10 = 127;
           __Pyx_INCREF(__pyx_kp_u_argument);
-          __pyx_t_1 += 10;
+          __pyx_t_2 += 10;
           __Pyx_GIVEREF(__pyx_kp_u_argument);
-          PyTuple_SET_ITEM(__pyx_t_3, 0, __pyx_kp_u_argument);
-          __pyx_t_6 = __Pyx_PyObject_FormatSimpleAndDecref(PyObject_Repr(((PyObject *)__pyx_v_param.name)), __pyx_empty_unicode); if (unlikely(!__pyx_t_6)) __PYX_ERR(1, 80, __pyx_L1_error)
+          PyTuple_SET_ITEM(__pyx_t_1, 0, __pyx_kp_u_argument);
+          __pyx_t_6 = __Pyx_PyObject_FormatSimpleAndDecref(PyObject_Repr(((PyObject *)__pyx_v_param.name)), __pyx_empty_unicode); if (unlikely(!__pyx_t_6)) __PYX_ERR(1, 81, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_6);
           __pyx_t_10 = (__Pyx_PyUnicode_MAX_CHAR_VALUE(__pyx_t_6) > __pyx_t_10) ? __Pyx_PyUnicode_MAX_CHAR_VALUE(__pyx_t_6) : __pyx_t_10;
-          __pyx_t_1 += __Pyx_PyUnicode_GET_LENGTH(__pyx_t_6);
+          __pyx_t_2 += __Pyx_PyUnicode_GET_LENGTH(__pyx_t_6);
           __Pyx_GIVEREF(__pyx_t_6);
-          PyTuple_SET_ITEM(__pyx_t_3, 1, __pyx_t_6);
+          PyTuple_SET_ITEM(__pyx_t_1, 1, __pyx_t_6);
           __pyx_t_6 = 0;
           __Pyx_INCREF(__pyx_kp_u_has_unexpected_type);
-          __pyx_t_1 += 23;
+          __pyx_t_2 += 23;
           __Pyx_GIVEREF(__pyx_kp_u_has_unexpected_type);
-          PyTuple_SET_ITEM(__pyx_t_3, 2, __pyx_kp_u_has_unexpected_type);
-          __pyx_t_6 = __Pyx_PyObject_GetAttrStr(((PyObject *)Py_TYPE(__pyx_v_arg_val)), __pyx_n_s_qualname); if (unlikely(!__pyx_t_6)) __PYX_ERR(1, 80, __pyx_L1_error)
+          PyTuple_SET_ITEM(__pyx_t_1, 2, __pyx_kp_u_has_unexpected_type);
+          __pyx_t_6 = __Pyx_PyObject_GetAttrStr(((PyObject *)Py_TYPE(__pyx_v_arg_val)), __pyx_n_s_qualname); if (unlikely(!__pyx_t_6)) __PYX_ERR(1, 81, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_6);
-          __pyx_t_9 = __Pyx_PyObject_FormatSimple(__pyx_t_6, __pyx_empty_unicode); if (unlikely(!__pyx_t_9)) __PYX_ERR(1, 80, __pyx_L1_error)
+          __pyx_t_9 = __Pyx_PyObject_FormatSimple(__pyx_t_6, __pyx_empty_unicode); if (unlikely(!__pyx_t_9)) __PYX_ERR(1, 81, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_9);
           __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
           __pyx_t_10 = (__Pyx_PyUnicode_MAX_CHAR_VALUE(__pyx_t_9) > __pyx_t_10) ? __Pyx_PyUnicode_MAX_CHAR_VALUE(__pyx_t_9) : __pyx_t_10;
-          __pyx_t_1 += __Pyx_PyUnicode_GET_LENGTH(__pyx_t_9);
+          __pyx_t_2 += __Pyx_PyUnicode_GET_LENGTH(__pyx_t_9);
           __Pyx_GIVEREF(__pyx_t_9);
-          PyTuple_SET_ITEM(__pyx_t_3, 3, __pyx_t_9);
+          PyTuple_SET_ITEM(__pyx_t_1, 3, __pyx_t_9);
           __pyx_t_9 = 0;
           __Pyx_INCREF(__pyx_kp_u__4);
-          __pyx_t_1 += 1;
+          __pyx_t_2 += 1;
           __Pyx_GIVEREF(__pyx_kp_u__4);
-          PyTuple_SET_ITEM(__pyx_t_3, 4, __pyx_kp_u__4);
-          __pyx_t_9 = __Pyx_PyUnicode_Join(__pyx_t_3, 5, __pyx_t_1, __pyx_t_10); if (unlikely(!__pyx_t_9)) __PYX_ERR(1, 80, __pyx_L1_error)
+          PyTuple_SET_ITEM(__pyx_t_1, 4, __pyx_kp_u__4);
+          __pyx_t_9 = __Pyx_PyUnicode_Join(__pyx_t_1, 5, __pyx_t_2, __pyx_t_10); if (unlikely(!__pyx_t_9)) __PYX_ERR(1, 81, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_9);
-          __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+          __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-          /* "overload/bind_with.pyx":79
+          /* "overload/bind_with.pyx":80
  * 
  * 				if not bind_func(arg_val, annotation):
- * 					raise TypeError(             # <<<<<<<<<<<<<<
+ * 					return TypeError(             # <<<<<<<<<<<<<<
  * 						f"argument '{<object> param.name!r}' has unexpected type '{type(arg_val).__qualname__}'"
  * 					)
  */
-          __pyx_t_3 = __Pyx_PyObject_CallOneArg(__pyx_builtin_TypeError, __pyx_t_9); if (unlikely(!__pyx_t_3)) __PYX_ERR(1, 79, __pyx_L1_error)
-          __Pyx_GOTREF(__pyx_t_3);
+          __pyx_t_1 = __Pyx_PyObject_CallOneArg(__pyx_builtin_TypeError, __pyx_t_9); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 80, __pyx_L1_error)
+          __Pyx_GOTREF(__pyx_t_1);
           __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
-          __Pyx_Raise(__pyx_t_3, 0, 0, 0);
-          __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-          __PYX_ERR(1, 79, __pyx_L1_error)
+          __pyx_r = __pyx_t_1;
+          __pyx_t_1 = 0;
+          goto __pyx_L0;
 
-          /* "overload/bind_with.pyx":78
- * 					raise TypeError(f'multiple values for argument {<object> param.name!r}') from None
+          /* "overload/bind_with.pyx":79
+ * 					return TypeError(f'multiple values for argument {<object> param.name!r}')
  * 
  * 				if not bind_func(arg_val, annotation):             # <<<<<<<<<<<<<<
- * 					raise TypeError(
+ * 					return TypeError(
  * 						f"argument '{<object> param.name!r}' has unexpected type '{type(arg_val).__qualname__}'"
  */
         }
 
-        /* "overload/bind_with.pyx":60
+        /* "overload/bind_with.pyx":61
  * 
  * 			# We have a positional argument to process
  * 			if parameters_i < sig.parameters.size():             # <<<<<<<<<<<<<<
@@ -2557,23 +2574,24 @@ static PyObject *__pyx_f_8overload_9bind_with_bind_with(struct __pyx_obj_8overlo
         goto __pyx_L6;
       }
 
-      /* "overload/bind_with.pyx":83
+      /* "overload/bind_with.pyx":84
  * 					)
  * 			else:
- * 				raise TypeError('too many positional arguments') from None             # <<<<<<<<<<<<<<
+ * 				return TypeError('too many positional arguments')             # <<<<<<<<<<<<<<
  * 		else:
  * 			# No more positional arguments
  */
       /*else*/ {
-        __pyx_t_3 = __Pyx_PyObject_Call(__pyx_builtin_TypeError, __pyx_tuple__3, NULL); if (unlikely(!__pyx_t_3)) __PYX_ERR(1, 83, __pyx_L1_error)
-        __Pyx_GOTREF(__pyx_t_3);
-        __Pyx_Raise(__pyx_t_3, 0, 0, Py_None);
-        __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-        __PYX_ERR(1, 83, __pyx_L1_error)
+        __Pyx_XDECREF(__pyx_r);
+        __pyx_t_1 = __Pyx_PyObject_Call(__pyx_builtin_TypeError, __pyx_tuple__3, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 84, __pyx_L1_error)
+        __Pyx_GOTREF(__pyx_t_1);
+        __pyx_r = __pyx_t_1;
+        __pyx_t_1 = 0;
+        goto __pyx_L0;
       }
       __pyx_L6:;
 
-      /* "overload/bind_with.pyx":55
+      /* "overload/bind_with.pyx":56
  * 		# Let's iterate through the positional arguments and corresponding
  * 		# parameters
  * 		if args_i < len(args):             # <<<<<<<<<<<<<<
@@ -2583,7 +2601,7 @@ static PyObject *__pyx_f_8overload_9bind_with_bind_with(struct __pyx_obj_8overlo
       goto __pyx_L5;
     }
 
-    /* "overload/bind_with.pyx":86
+    /* "overload/bind_with.pyx":87
  * 		else:
  * 			# No more positional arguments
  * 			if parameters_i < sig.parameters.size():             # <<<<<<<<<<<<<<
@@ -2594,7 +2612,7 @@ static PyObject *__pyx_f_8overload_9bind_with_bind_with(struct __pyx_obj_8overlo
       __pyx_t_5 = ((__pyx_v_parameters_i < __pyx_v_sig->parameters.size()) != 0);
       if (__pyx_t_5) {
 
-        /* "overload/bind_with.pyx":87
+        /* "overload/bind_with.pyx":88
  * 			# No more positional arguments
  * 			if parameters_i < sig.parameters.size():
  * 				param = sig.parameters[parameters_i]             # <<<<<<<<<<<<<<
@@ -2603,7 +2621,7 @@ static PyObject *__pyx_f_8overload_9bind_with_bind_with(struct __pyx_obj_8overlo
  */
         __pyx_v_param = (__pyx_v_sig->parameters[__pyx_v_parameters_i]);
 
-        /* "overload/bind_with.pyx":88
+        /* "overload/bind_with.pyx":89
  * 			if parameters_i < sig.parameters.size():
  * 				param = sig.parameters[parameters_i]
  * 				parameters_i += 1             # <<<<<<<<<<<<<<
@@ -2612,33 +2630,33 @@ static PyObject *__pyx_f_8overload_9bind_with_bind_with(struct __pyx_obj_8overlo
  */
         __pyx_v_parameters_i = (__pyx_v_parameters_i + 1);
 
-        /* "overload/bind_with.pyx":89
+        /* "overload/bind_with.pyx":90
  * 				param = sig.parameters[parameters_i]
  * 				parameters_i += 1
  * 				annotation = <object> param.annotation             # <<<<<<<<<<<<<<
  * 				if annotation is _empty:
  * 					annotation = object
  */
-        __pyx_t_3 = ((PyObject *)__pyx_v_param.annotation);
-        __Pyx_INCREF(__pyx_t_3);
-        __Pyx_XDECREF_SET(__pyx_v_annotation, __pyx_t_3);
-        __pyx_t_3 = 0;
+        __pyx_t_1 = ((PyObject *)__pyx_v_param.annotation);
+        __Pyx_INCREF(__pyx_t_1);
+        __Pyx_XDECREF_SET(__pyx_v_annotation, __pyx_t_1);
+        __pyx_t_1 = 0;
 
-        /* "overload/bind_with.pyx":90
+        /* "overload/bind_with.pyx":91
  * 				parameters_i += 1
  * 				annotation = <object> param.annotation
  * 				if annotation is _empty:             # <<<<<<<<<<<<<<
  * 					annotation = object
  * 
  */
-        __Pyx_GetModuleGlobalName(__pyx_t_3, __pyx_n_s_empty); if (unlikely(!__pyx_t_3)) __PYX_ERR(1, 90, __pyx_L1_error)
-        __Pyx_GOTREF(__pyx_t_3);
-        __pyx_t_5 = (__pyx_v_annotation == __pyx_t_3);
-        __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+        __Pyx_GetModuleGlobalName(__pyx_t_1, __pyx_n_s_empty); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 91, __pyx_L1_error)
+        __Pyx_GOTREF(__pyx_t_1);
+        __pyx_t_5 = (__pyx_v_annotation == __pyx_t_1);
+        __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
         __pyx_t_4 = (__pyx_t_5 != 0);
         if (__pyx_t_4) {
 
-          /* "overload/bind_with.pyx":91
+          /* "overload/bind_with.pyx":92
  * 				annotation = <object> param.annotation
  * 				if annotation is _empty:
  * 					annotation = object             # <<<<<<<<<<<<<<
@@ -2648,7 +2666,7 @@ static PyObject *__pyx_f_8overload_9bind_with_bind_with(struct __pyx_obj_8overlo
           __Pyx_INCREF(__pyx_builtin_object);
           __Pyx_DECREF_SET(__pyx_v_annotation, __pyx_builtin_object);
 
-          /* "overload/bind_with.pyx":90
+          /* "overload/bind_with.pyx":91
  * 				parameters_i += 1
  * 				annotation = <object> param.annotation
  * 				if annotation is _empty:             # <<<<<<<<<<<<<<
@@ -2657,7 +2675,7 @@ static PyObject *__pyx_f_8overload_9bind_with_bind_with(struct __pyx_obj_8overlo
  */
         }
 
-        /* "overload/bind_with.pyx":93
+        /* "overload/bind_with.pyx":94
  * 					annotation = object
  * 
  * 				if param.kind == _c_var_positional:             # <<<<<<<<<<<<<<
@@ -2667,16 +2685,16 @@ static PyObject *__pyx_f_8overload_9bind_with_bind_with(struct __pyx_obj_8overlo
         __pyx_t_4 = ((__pyx_v_param.kind == __pyx_v_8overload_9bind_with__c_var_positional) != 0);
         if (__pyx_t_4) {
 
-          /* "overload/bind_with.pyx":96
+          /* "overload/bind_with.pyx":97
  * 					# That's OK, just empty *args.  Let's start parsing
  * 					# kwargs
  * 					break             # <<<<<<<<<<<<<<
- * 				elif <object> param.name in kwargs:
+ * 				elif <object> param.name in kwargs_:
  * 					if param.kind == _c_positional_only:
  */
           goto __pyx_L4_break;
 
-          /* "overload/bind_with.pyx":93
+          /* "overload/bind_with.pyx":94
  * 					annotation = object
  * 
  * 				if param.kind == _c_var_positional:             # <<<<<<<<<<<<<<
@@ -2685,82 +2703,87 @@ static PyObject *__pyx_f_8overload_9bind_with_bind_with(struct __pyx_obj_8overlo
  */
         }
 
-        /* "overload/bind_with.pyx":97
+        /* "overload/bind_with.pyx":98
  * 					# kwargs
  * 					break
- * 				elif <object> param.name in kwargs:             # <<<<<<<<<<<<<<
+ * 				elif <object> param.name in kwargs_:             # <<<<<<<<<<<<<<
  * 					if param.kind == _c_positional_only:
- * 						raise TypeError(
+ * 						return TypeError(
  */
-        __pyx_t_4 = (__Pyx_PySequence_ContainsTF(((PyObject *)__pyx_v_param.name), __pyx_v_kwargs, Py_EQ)); if (unlikely(__pyx_t_4 < 0)) __PYX_ERR(1, 97, __pyx_L1_error)
+        if (unlikely(__pyx_v_kwargs_ == Py_None)) {
+          PyErr_SetString(PyExc_TypeError, "'NoneType' object is not iterable");
+          __PYX_ERR(1, 98, __pyx_L1_error)
+        }
+        __pyx_t_4 = (__Pyx_PyDict_ContainsTF(((PyObject *)__pyx_v_param.name), __pyx_v_kwargs_, Py_EQ)); if (unlikely(__pyx_t_4 < 0)) __PYX_ERR(1, 98, __pyx_L1_error)
         __pyx_t_5 = (__pyx_t_4 != 0);
         if (__pyx_t_5) {
 
-          /* "overload/bind_with.pyx":98
+          /* "overload/bind_with.pyx":99
  * 					break
- * 				elif <object> param.name in kwargs:
+ * 				elif <object> param.name in kwargs_:
  * 					if param.kind == _c_positional_only:             # <<<<<<<<<<<<<<
- * 						raise TypeError(
+ * 						return TypeError(
  * 							f'{<object> param.name!r} parameter is positional only, but was passed as a keyword'
  */
           __pyx_t_5 = ((__pyx_v_param.kind == __pyx_v_8overload_9bind_with__c_positional_only) != 0);
-          if (unlikely(__pyx_t_5)) {
+          if (__pyx_t_5) {
 
             /* "overload/bind_with.pyx":100
+ * 				elif <object> param.name in kwargs_:
  * 					if param.kind == _c_positional_only:
- * 						raise TypeError(
- * 							f'{<object> param.name!r} parameter is positional only, but was passed as a keyword'             # <<<<<<<<<<<<<<
- * 						) from None
- * 					parameters_i -= 1
- */
-            __pyx_t_3 = __Pyx_PyObject_FormatSimpleAndDecref(PyObject_Repr(((PyObject *)__pyx_v_param.name)), __pyx_empty_unicode); if (unlikely(!__pyx_t_3)) __PYX_ERR(1, 100, __pyx_L1_error)
-            __Pyx_GOTREF(__pyx_t_3);
-            __pyx_t_9 = __Pyx_PyUnicode_Concat(__pyx_t_3, __pyx_kp_u_parameter_is_positional_only_bu); if (unlikely(!__pyx_t_9)) __PYX_ERR(1, 100, __pyx_L1_error)
-            __Pyx_GOTREF(__pyx_t_9);
-            __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-
-            /* "overload/bind_with.pyx":99
- * 				elif <object> param.name in kwargs:
- * 					if param.kind == _c_positional_only:
- * 						raise TypeError(             # <<<<<<<<<<<<<<
+ * 						return TypeError(             # <<<<<<<<<<<<<<
  * 							f'{<object> param.name!r} parameter is positional only, but was passed as a keyword'
- * 						) from None
+ * 						)
  */
-            __pyx_t_3 = __Pyx_PyObject_CallOneArg(__pyx_builtin_TypeError, __pyx_t_9); if (unlikely(!__pyx_t_3)) __PYX_ERR(1, 99, __pyx_L1_error)
-            __Pyx_GOTREF(__pyx_t_3);
-            __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
+            __Pyx_XDECREF(__pyx_r);
 
             /* "overload/bind_with.pyx":101
- * 						raise TypeError(
- * 							f'{<object> param.name!r} parameter is positional only, but was passed as a keyword'
- * 						) from None             # <<<<<<<<<<<<<<
+ * 					if param.kind == _c_positional_only:
+ * 						return TypeError(
+ * 							f'{<object> param.name!r} parameter is positional only, but was passed as a keyword'             # <<<<<<<<<<<<<<
+ * 						)
  * 					parameters_i -= 1
- * 					break
  */
-            __Pyx_Raise(__pyx_t_3, 0, 0, Py_None);
-            __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-            __PYX_ERR(1, 99, __pyx_L1_error)
+            __pyx_t_1 = __Pyx_PyObject_FormatSimpleAndDecref(PyObject_Repr(((PyObject *)__pyx_v_param.name)), __pyx_empty_unicode); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 101, __pyx_L1_error)
+            __Pyx_GOTREF(__pyx_t_1);
+            __pyx_t_9 = __Pyx_PyUnicode_Concat(__pyx_t_1, __pyx_kp_u_parameter_is_positional_only_bu); if (unlikely(!__pyx_t_9)) __PYX_ERR(1, 101, __pyx_L1_error)
+            __Pyx_GOTREF(__pyx_t_9);
+            __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-            /* "overload/bind_with.pyx":98
+            /* "overload/bind_with.pyx":100
+ * 				elif <object> param.name in kwargs_:
+ * 					if param.kind == _c_positional_only:
+ * 						return TypeError(             # <<<<<<<<<<<<<<
+ * 							f'{<object> param.name!r} parameter is positional only, but was passed as a keyword'
+ * 						)
+ */
+            __pyx_t_1 = __Pyx_PyObject_CallOneArg(__pyx_builtin_TypeError, __pyx_t_9); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 100, __pyx_L1_error)
+            __Pyx_GOTREF(__pyx_t_1);
+            __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
+            __pyx_r = __pyx_t_1;
+            __pyx_t_1 = 0;
+            goto __pyx_L0;
+
+            /* "overload/bind_with.pyx":99
  * 					break
- * 				elif <object> param.name in kwargs:
+ * 				elif <object> param.name in kwargs_:
  * 					if param.kind == _c_positional_only:             # <<<<<<<<<<<<<<
- * 						raise TypeError(
+ * 						return TypeError(
  * 							f'{<object> param.name!r} parameter is positional only, but was passed as a keyword'
  */
           }
 
-          /* "overload/bind_with.pyx":102
+          /* "overload/bind_with.pyx":103
  * 							f'{<object> param.name!r} parameter is positional only, but was passed as a keyword'
- * 						) from None
+ * 						)
  * 					parameters_i -= 1             # <<<<<<<<<<<<<<
  * 					break
  * 				elif (param.kind == _c_var_keyword or param.has_default):
  */
           __pyx_v_parameters_i = (__pyx_v_parameters_i - 1);
 
-          /* "overload/bind_with.pyx":103
- * 						) from None
+          /* "overload/bind_with.pyx":104
+ * 						)
  * 					parameters_i -= 1
  * 					break             # <<<<<<<<<<<<<<
  * 				elif (param.kind == _c_var_keyword or param.has_default):
@@ -2768,16 +2791,16 @@ static PyObject *__pyx_f_8overload_9bind_with_bind_with(struct __pyx_obj_8overlo
  */
           goto __pyx_L4_break;
 
-          /* "overload/bind_with.pyx":97
+          /* "overload/bind_with.pyx":98
  * 					# kwargs
  * 					break
- * 				elif <object> param.name in kwargs:             # <<<<<<<<<<<<<<
+ * 				elif <object> param.name in kwargs_:             # <<<<<<<<<<<<<<
  * 					if param.kind == _c_positional_only:
- * 						raise TypeError(
+ * 						return TypeError(
  */
         }
 
-        /* "overload/bind_with.pyx":104
+        /* "overload/bind_with.pyx":105
  * 					parameters_i -= 1
  * 					break
  * 				elif (param.kind == _c_var_keyword or param.has_default):             # <<<<<<<<<<<<<<
@@ -2793,9 +2816,9 @@ static PyObject *__pyx_f_8overload_9bind_with_bind_with(struct __pyx_obj_8overlo
         __pyx_t_4 = (__pyx_v_param.has_default != 0);
         __pyx_t_5 = __pyx_t_4;
         __pyx_L20_bool_binop_done:;
-        if (likely(__pyx_t_5)) {
+        if (__pyx_t_5) {
 
-          /* "overload/bind_with.pyx":108
+          /* "overload/bind_with.pyx":109
  * 					# parameter.  So, lets start parsing `kwargs`, starting
  * 					# with the current parameter
  * 					parameters_i -= 1             # <<<<<<<<<<<<<<
@@ -2804,7 +2827,7 @@ static PyObject *__pyx_f_8overload_9bind_with_bind_with(struct __pyx_obj_8overlo
  */
           __pyx_v_parameters_i = (__pyx_v_parameters_i - 1);
 
-          /* "overload/bind_with.pyx":109
+          /* "overload/bind_with.pyx":110
  * 					# with the current parameter
  * 					parameters_i -= 1
  * 					break             # <<<<<<<<<<<<<<
@@ -2813,7 +2836,7 @@ static PyObject *__pyx_f_8overload_9bind_with_bind_with(struct __pyx_obj_8overlo
  */
           goto __pyx_L4_break;
 
-          /* "overload/bind_with.pyx":104
+          /* "overload/bind_with.pyx":105
  * 					parameters_i -= 1
  * 					break
  * 				elif (param.kind == _c_var_keyword or param.has_default):             # <<<<<<<<<<<<<<
@@ -2822,28 +2845,29 @@ static PyObject *__pyx_f_8overload_9bind_with_bind_with(struct __pyx_obj_8overlo
  */
         }
 
-        /* "overload/bind_with.pyx":113
+        /* "overload/bind_with.pyx":114
  * 					# No default, not VAR_KEYWORD, not VAR_POSITIONAL,
  * 					# not in `kwargs`
- * 					raise TypeError(f'missing a required argument: {<object> param.name!r}') from None             # <<<<<<<<<<<<<<
+ * 					return TypeError(f'missing a required argument: {<object> param.name!r}')             # <<<<<<<<<<<<<<
  * 			else:
  * 				# No more parameters. That's it. Just need to check that
  */
         /*else*/ {
-          __pyx_t_3 = __Pyx_PyObject_FormatSimpleAndDecref(PyObject_Repr(((PyObject *)__pyx_v_param.name)), __pyx_empty_unicode); if (unlikely(!__pyx_t_3)) __PYX_ERR(1, 113, __pyx_L1_error)
-          __Pyx_GOTREF(__pyx_t_3);
-          __pyx_t_9 = __Pyx_PyUnicode_Concat(__pyx_kp_u_missing_a_required_argument, __pyx_t_3); if (unlikely(!__pyx_t_9)) __PYX_ERR(1, 113, __pyx_L1_error)
+          __Pyx_XDECREF(__pyx_r);
+          __pyx_t_1 = __Pyx_PyObject_FormatSimpleAndDecref(PyObject_Repr(((PyObject *)__pyx_v_param.name)), __pyx_empty_unicode); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 114, __pyx_L1_error)
+          __Pyx_GOTREF(__pyx_t_1);
+          __pyx_t_9 = __Pyx_PyUnicode_Concat(__pyx_kp_u_missing_a_required_argument, __pyx_t_1); if (unlikely(!__pyx_t_9)) __PYX_ERR(1, 114, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_9);
-          __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-          __pyx_t_3 = __Pyx_PyObject_CallOneArg(__pyx_builtin_TypeError, __pyx_t_9); if (unlikely(!__pyx_t_3)) __PYX_ERR(1, 113, __pyx_L1_error)
-          __Pyx_GOTREF(__pyx_t_3);
+          __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+          __pyx_t_1 = __Pyx_PyObject_CallOneArg(__pyx_builtin_TypeError, __pyx_t_9); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 114, __pyx_L1_error)
+          __Pyx_GOTREF(__pyx_t_1);
           __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
-          __Pyx_Raise(__pyx_t_3, 0, 0, Py_None);
-          __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-          __PYX_ERR(1, 113, __pyx_L1_error)
+          __pyx_r = __pyx_t_1;
+          __pyx_t_1 = 0;
+          goto __pyx_L0;
         }
 
-        /* "overload/bind_with.pyx":86
+        /* "overload/bind_with.pyx":87
  * 		else:
  * 			# No more positional arguments
  * 			if parameters_i < sig.parameters.size():             # <<<<<<<<<<<<<<
@@ -2852,7 +2876,7 @@ static PyObject *__pyx_f_8overload_9bind_with_bind_with(struct __pyx_obj_8overlo
  */
       }
 
-      /* "overload/bind_with.pyx":117
+      /* "overload/bind_with.pyx":118
  * 				# No more parameters. That's it. Just need to check that
  * 				# we have no `kwargs` after this while loop
  * 				break             # <<<<<<<<<<<<<<
@@ -2867,7 +2891,7 @@ static PyObject *__pyx_f_8overload_9bind_with_bind_with(struct __pyx_obj_8overlo
   }
   __pyx_L4_break:;
 
-  /* "overload/bind_with.pyx":121
+  /* "overload/bind_with.pyx":122
  * 	# Now, we iterate through the remaining parameters to process
  * 	# keyword arguments
  * 	cdef bool kwargs_param = False             # <<<<<<<<<<<<<<
@@ -2876,7 +2900,7 @@ static PyObject *__pyx_f_8overload_9bind_with_bind_with(struct __pyx_obj_8overlo
  */
   __pyx_v_kwargs_param = 0;
 
-  /* "overload/bind_with.pyx":122
+  /* "overload/bind_with.pyx":123
  * 	# keyword arguments
  * 	cdef bool kwargs_param = False
  * 	while parameters_i < sig.parameters.size():             # <<<<<<<<<<<<<<
@@ -2887,7 +2911,7 @@ static PyObject *__pyx_f_8overload_9bind_with_bind_with(struct __pyx_obj_8overlo
     __pyx_t_5 = ((__pyx_v_parameters_i < __pyx_v_sig->parameters.size()) != 0);
     if (!__pyx_t_5) break;
 
-    /* "overload/bind_with.pyx":123
+    /* "overload/bind_with.pyx":124
  * 	cdef bool kwargs_param = False
  * 	while parameters_i < sig.parameters.size():
  * 		param = sig.parameters[parameters_i]             # <<<<<<<<<<<<<<
@@ -2896,7 +2920,7 @@ static PyObject *__pyx_f_8overload_9bind_with_bind_with(struct __pyx_obj_8overlo
  */
     __pyx_v_param = (__pyx_v_sig->parameters[__pyx_v_parameters_i]);
 
-    /* "overload/bind_with.pyx":124
+    /* "overload/bind_with.pyx":125
  * 	while parameters_i < sig.parameters.size():
  * 		param = sig.parameters[parameters_i]
  * 		parameters_i += 1             # <<<<<<<<<<<<<<
@@ -2905,7 +2929,7 @@ static PyObject *__pyx_f_8overload_9bind_with_bind_with(struct __pyx_obj_8overlo
  */
     __pyx_v_parameters_i = (__pyx_v_parameters_i + 1);
 
-    /* "overload/bind_with.pyx":125
+    /* "overload/bind_with.pyx":126
  * 		param = sig.parameters[parameters_i]
  * 		parameters_i += 1
  * 		if param.kind == _c_var_keyword:             # <<<<<<<<<<<<<<
@@ -2915,7 +2939,7 @@ static PyObject *__pyx_f_8overload_9bind_with_bind_with(struct __pyx_obj_8overlo
     __pyx_t_5 = ((__pyx_v_param.kind == __pyx_v_8overload_9bind_with__c_var_keyword) != 0);
     if (__pyx_t_5) {
 
-      /* "overload/bind_with.pyx":127
+      /* "overload/bind_with.pyx":128
  * 		if param.kind == _c_var_keyword:
  * 			# Memorize that we have a '**kwargs'-like parameter
  * 			kwargs_param = True             # <<<<<<<<<<<<<<
@@ -2924,7 +2948,7 @@ static PyObject *__pyx_f_8overload_9bind_with_bind_with(struct __pyx_obj_8overlo
  */
       __pyx_v_kwargs_param = 1;
 
-      /* "overload/bind_with.pyx":128
+      /* "overload/bind_with.pyx":129
  * 			# Memorize that we have a '**kwargs'-like parameter
  * 			kwargs_param = True
  * 			continue             # <<<<<<<<<<<<<<
@@ -2933,7 +2957,7 @@ static PyObject *__pyx_f_8overload_9bind_with_bind_with(struct __pyx_obj_8overlo
  */
       goto __pyx_L22_continue;
 
-      /* "overload/bind_with.pyx":125
+      /* "overload/bind_with.pyx":126
  * 		param = sig.parameters[parameters_i]
  * 		parameters_i += 1
  * 		if param.kind == _c_var_keyword:             # <<<<<<<<<<<<<<
@@ -2942,7 +2966,7 @@ static PyObject *__pyx_f_8overload_9bind_with_bind_with(struct __pyx_obj_8overlo
  */
     }
 
-    /* "overload/bind_with.pyx":130
+    /* "overload/bind_with.pyx":131
  * 			continue
  * 
  * 		if param.kind == _c_var_positional:             # <<<<<<<<<<<<<<
@@ -2952,16 +2976,16 @@ static PyObject *__pyx_f_8overload_9bind_with_bind_with(struct __pyx_obj_8overlo
     __pyx_t_5 = ((__pyx_v_param.kind == __pyx_v_8overload_9bind_with__c_var_positional) != 0);
     if (__pyx_t_5) {
 
-      /* "overload/bind_with.pyx":134
+      /* "overload/bind_with.pyx":135
  * 			# We only arrive here if the positional arguments ended
  * 			# before reaching the last parameter before *args.
  * 			continue             # <<<<<<<<<<<<<<
  * 
- * 		param_name = <object> param.name
+ * 		arg_val = kwargs_.pop(<object> param.name, None)
  */
       goto __pyx_L22_continue;
 
-      /* "overload/bind_with.pyx":130
+      /* "overload/bind_with.pyx":131
  * 			continue
  * 
  * 		if param.kind == _c_var_positional:             # <<<<<<<<<<<<<<
@@ -2970,515 +2994,324 @@ static PyObject *__pyx_f_8overload_9bind_with_bind_with(struct __pyx_obj_8overlo
  */
     }
 
-    /* "overload/bind_with.pyx":136
+    /* "overload/bind_with.pyx":137
  * 			continue
  * 
- * 		param_name = <object> param.name             # <<<<<<<<<<<<<<
- * 		try:
- * 			arg_val = kwargs.pop(param_name)
- */
-    __pyx_t_3 = ((PyObject *)__pyx_v_param.name);
-    __Pyx_INCREF(__pyx_t_3);
-    __Pyx_XDECREF_SET(__pyx_v_param_name, __pyx_t_3);
-    __pyx_t_3 = 0;
-
-    /* "overload/bind_with.pyx":137
- * 
- * 		param_name = <object> param.name
- * 		try:             # <<<<<<<<<<<<<<
- * 			arg_val = kwargs.pop(param_name)
- * 		except KeyError:
- */
-    {
-      __Pyx_PyThreadState_declare
-      __Pyx_PyThreadState_assign
-      __Pyx_ExceptionSave(&__pyx_t_11, &__pyx_t_12, &__pyx_t_13);
-      __Pyx_XGOTREF(__pyx_t_11);
-      __Pyx_XGOTREF(__pyx_t_12);
-      __Pyx_XGOTREF(__pyx_t_13);
-      /*try:*/ {
-
-        /* "overload/bind_with.pyx":138
- * 		param_name = <object> param.name
- * 		try:
- * 			arg_val = kwargs.pop(param_name)             # <<<<<<<<<<<<<<
- * 		except KeyError:
+ * 		arg_val = kwargs_.pop(<object> param.name, None)             # <<<<<<<<<<<<<<
+ * 		if arg_val is None:
  * 			# We have no value for this parameter.  It's fine though,
  */
-        __pyx_t_9 = __Pyx_PyObject_GetAttrStr(__pyx_v_kwargs, __pyx_n_s_pop); if (unlikely(!__pyx_t_9)) __PYX_ERR(1, 138, __pyx_L26_error)
-        __Pyx_GOTREF(__pyx_t_9);
-        __pyx_t_6 = NULL;
-        if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_9))) {
-          __pyx_t_6 = PyMethod_GET_SELF(__pyx_t_9);
-          if (likely(__pyx_t_6)) {
-            PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_9);
-            __Pyx_INCREF(__pyx_t_6);
-            __Pyx_INCREF(function);
-            __Pyx_DECREF_SET(__pyx_t_9, function);
-          }
-        }
-        __pyx_t_3 = (__pyx_t_6) ? __Pyx_PyObject_Call2Args(__pyx_t_9, __pyx_t_6, __pyx_v_param_name) : __Pyx_PyObject_CallOneArg(__pyx_t_9, __pyx_v_param_name);
-        __Pyx_XDECREF(__pyx_t_6); __pyx_t_6 = 0;
-        if (unlikely(!__pyx_t_3)) __PYX_ERR(1, 138, __pyx_L26_error)
-        __Pyx_GOTREF(__pyx_t_3);
-        __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
-        __Pyx_XDECREF_SET(__pyx_v_arg_val, __pyx_t_3);
-        __pyx_t_3 = 0;
+    if (unlikely(__pyx_v_kwargs_ == Py_None)) {
+      PyErr_Format(PyExc_AttributeError, "'NoneType' object has no attribute '%.30s'", "pop");
+      __PYX_ERR(1, 137, __pyx_L1_error)
+    }
+    __pyx_t_1 = __Pyx_PyDict_Pop(__pyx_v_kwargs_, ((PyObject *)__pyx_v_param.name), Py_None); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 137, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_1);
+    __Pyx_XDECREF_SET(__pyx_v_arg_val, __pyx_t_1);
+    __pyx_t_1 = 0;
 
-        /* "overload/bind_with.pyx":137
+    /* "overload/bind_with.pyx":138
  * 
- * 		param_name = <object> param.name
- * 		try:             # <<<<<<<<<<<<<<
- * 			arg_val = kwargs.pop(param_name)
- * 		except KeyError:
- */
-      }
-
-      /* "overload/bind_with.pyx":148
- * 
- * 		else:
- * 			if param.kind == _c_positional_only:             # <<<<<<<<<<<<<<
- * 				# This should never happen in case of a properly built
- * 				# Signature object (but let's have this check here
- */
-      /*else:*/ {
-        __pyx_t_5 = ((__pyx_v_param.kind == __pyx_v_8overload_9bind_with__c_positional_only) != 0);
-        if (unlikely(__pyx_t_5)) {
-
-          /* "overload/bind_with.pyx":152
- * 				# Signature object (but let's have this check here
- * 				# to ensure correct behaviour just in case)
- * 				raise TypeError(f'{<object> param.name!r} parameter is positional only, but was passed as a keyword')             # <<<<<<<<<<<<<<
- * 
- * 			if not bind_func(arg_val, annotation):
- */
-          __pyx_t_3 = __Pyx_PyObject_FormatSimpleAndDecref(PyObject_Repr(((PyObject *)__pyx_v_param.name)), __pyx_empty_unicode); if (unlikely(!__pyx_t_3)) __PYX_ERR(1, 152, __pyx_L28_except_error)
-          __Pyx_GOTREF(__pyx_t_3);
-          __pyx_t_9 = __Pyx_PyUnicode_Concat(__pyx_t_3, __pyx_kp_u_parameter_is_positional_only_bu); if (unlikely(!__pyx_t_9)) __PYX_ERR(1, 152, __pyx_L28_except_error)
-          __Pyx_GOTREF(__pyx_t_9);
-          __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-          __pyx_t_3 = __Pyx_PyObject_CallOneArg(__pyx_builtin_TypeError, __pyx_t_9); if (unlikely(!__pyx_t_3)) __PYX_ERR(1, 152, __pyx_L28_except_error)
-          __Pyx_GOTREF(__pyx_t_3);
-          __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
-          __Pyx_Raise(__pyx_t_3, 0, 0, 0);
-          __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-          __PYX_ERR(1, 152, __pyx_L28_except_error)
-
-          /* "overload/bind_with.pyx":148
- * 
- * 		else:
- * 			if param.kind == _c_positional_only:             # <<<<<<<<<<<<<<
- * 				# This should never happen in case of a properly built
- * 				# Signature object (but let's have this check here
- */
-        }
-
-        /* "overload/bind_with.pyx":154
- * 				raise TypeError(f'{<object> param.name!r} parameter is positional only, but was passed as a keyword')
- * 
- * 			if not bind_func(arg_val, annotation):             # <<<<<<<<<<<<<<
- * 				raise TypeError(f"argument '{param_name!r}' has unexpected type '{type(arg_val).__qualname__}'")
- * 
- */
-        if (unlikely(!__pyx_v_annotation)) { __Pyx_RaiseUnboundLocalError("annotation"); __PYX_ERR(1, 154, __pyx_L28_except_error) }
-        __Pyx_INCREF(__pyx_v_bind_func);
-        __pyx_t_9 = __pyx_v_bind_func; __pyx_t_6 = NULL;
-        __pyx_t_8 = 0;
-        if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_9))) {
-          __pyx_t_6 = PyMethod_GET_SELF(__pyx_t_9);
-          if (likely(__pyx_t_6)) {
-            PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_9);
-            __Pyx_INCREF(__pyx_t_6);
-            __Pyx_INCREF(function);
-            __Pyx_DECREF_SET(__pyx_t_9, function);
-            __pyx_t_8 = 1;
-          }
-        }
-        #if CYTHON_FAST_PYCALL
-        if (PyFunction_Check(__pyx_t_9)) {
-          PyObject *__pyx_temp[3] = {__pyx_t_6, __pyx_v_arg_val, __pyx_v_annotation};
-          __pyx_t_3 = __Pyx_PyFunction_FastCall(__pyx_t_9, __pyx_temp+1-__pyx_t_8, 2+__pyx_t_8); if (unlikely(!__pyx_t_3)) __PYX_ERR(1, 154, __pyx_L28_except_error)
-          __Pyx_XDECREF(__pyx_t_6); __pyx_t_6 = 0;
-          __Pyx_GOTREF(__pyx_t_3);
-        } else
-        #endif
-        #if CYTHON_FAST_PYCCALL
-        if (__Pyx_PyFastCFunction_Check(__pyx_t_9)) {
-          PyObject *__pyx_temp[3] = {__pyx_t_6, __pyx_v_arg_val, __pyx_v_annotation};
-          __pyx_t_3 = __Pyx_PyCFunction_FastCall(__pyx_t_9, __pyx_temp+1-__pyx_t_8, 2+__pyx_t_8); if (unlikely(!__pyx_t_3)) __PYX_ERR(1, 154, __pyx_L28_except_error)
-          __Pyx_XDECREF(__pyx_t_6); __pyx_t_6 = 0;
-          __Pyx_GOTREF(__pyx_t_3);
-        } else
-        #endif
-        {
-          __pyx_t_7 = PyTuple_New(2+__pyx_t_8); if (unlikely(!__pyx_t_7)) __PYX_ERR(1, 154, __pyx_L28_except_error)
-          __Pyx_GOTREF(__pyx_t_7);
-          if (__pyx_t_6) {
-            __Pyx_GIVEREF(__pyx_t_6); PyTuple_SET_ITEM(__pyx_t_7, 0, __pyx_t_6); __pyx_t_6 = NULL;
-          }
-          __Pyx_INCREF(__pyx_v_arg_val);
-          __Pyx_GIVEREF(__pyx_v_arg_val);
-          PyTuple_SET_ITEM(__pyx_t_7, 0+__pyx_t_8, __pyx_v_arg_val);
-          __Pyx_INCREF(__pyx_v_annotation);
-          __Pyx_GIVEREF(__pyx_v_annotation);
-          PyTuple_SET_ITEM(__pyx_t_7, 1+__pyx_t_8, __pyx_v_annotation);
-          __pyx_t_3 = __Pyx_PyObject_Call(__pyx_t_9, __pyx_t_7, NULL); if (unlikely(!__pyx_t_3)) __PYX_ERR(1, 154, __pyx_L28_except_error)
-          __Pyx_GOTREF(__pyx_t_3);
-          __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
-        }
-        __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
-        __pyx_t_5 = __Pyx_PyObject_IsTrue(__pyx_t_3); if (unlikely(__pyx_t_5 < 0)) __PYX_ERR(1, 154, __pyx_L28_except_error)
-        __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-        __pyx_t_4 = ((!__pyx_t_5) != 0);
-        if (unlikely(__pyx_t_4)) {
-
-          /* "overload/bind_with.pyx":155
- * 
- * 			if not bind_func(arg_val, annotation):
- * 				raise TypeError(f"argument '{param_name!r}' has unexpected type '{type(arg_val).__qualname__}'")             # <<<<<<<<<<<<<<
- * 
- * 	if kwargs and not kwargs_param:
- */
-          __pyx_t_3 = PyTuple_New(5); if (unlikely(!__pyx_t_3)) __PYX_ERR(1, 155, __pyx_L28_except_error)
-          __Pyx_GOTREF(__pyx_t_3);
-          __pyx_t_1 = 0;
-          __pyx_t_10 = 127;
-          __Pyx_INCREF(__pyx_kp_u_argument);
-          __pyx_t_1 += 10;
-          __Pyx_GIVEREF(__pyx_kp_u_argument);
-          PyTuple_SET_ITEM(__pyx_t_3, 0, __pyx_kp_u_argument);
-          __pyx_t_9 = __Pyx_PyObject_FormatSimpleAndDecref(PyObject_Repr(__pyx_v_param_name), __pyx_empty_unicode); if (unlikely(!__pyx_t_9)) __PYX_ERR(1, 155, __pyx_L28_except_error)
-          __Pyx_GOTREF(__pyx_t_9);
-          __pyx_t_10 = (__Pyx_PyUnicode_MAX_CHAR_VALUE(__pyx_t_9) > __pyx_t_10) ? __Pyx_PyUnicode_MAX_CHAR_VALUE(__pyx_t_9) : __pyx_t_10;
-          __pyx_t_1 += __Pyx_PyUnicode_GET_LENGTH(__pyx_t_9);
-          __Pyx_GIVEREF(__pyx_t_9);
-          PyTuple_SET_ITEM(__pyx_t_3, 1, __pyx_t_9);
-          __pyx_t_9 = 0;
-          __Pyx_INCREF(__pyx_kp_u_has_unexpected_type);
-          __pyx_t_1 += 23;
-          __Pyx_GIVEREF(__pyx_kp_u_has_unexpected_type);
-          PyTuple_SET_ITEM(__pyx_t_3, 2, __pyx_kp_u_has_unexpected_type);
-          __pyx_t_9 = __Pyx_PyObject_GetAttrStr(((PyObject *)Py_TYPE(__pyx_v_arg_val)), __pyx_n_s_qualname); if (unlikely(!__pyx_t_9)) __PYX_ERR(1, 155, __pyx_L28_except_error)
-          __Pyx_GOTREF(__pyx_t_9);
-          __pyx_t_7 = __Pyx_PyObject_FormatSimple(__pyx_t_9, __pyx_empty_unicode); if (unlikely(!__pyx_t_7)) __PYX_ERR(1, 155, __pyx_L28_except_error)
-          __Pyx_GOTREF(__pyx_t_7);
-          __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
-          __pyx_t_10 = (__Pyx_PyUnicode_MAX_CHAR_VALUE(__pyx_t_7) > __pyx_t_10) ? __Pyx_PyUnicode_MAX_CHAR_VALUE(__pyx_t_7) : __pyx_t_10;
-          __pyx_t_1 += __Pyx_PyUnicode_GET_LENGTH(__pyx_t_7);
-          __Pyx_GIVEREF(__pyx_t_7);
-          PyTuple_SET_ITEM(__pyx_t_3, 3, __pyx_t_7);
-          __pyx_t_7 = 0;
-          __Pyx_INCREF(__pyx_kp_u__4);
-          __pyx_t_1 += 1;
-          __Pyx_GIVEREF(__pyx_kp_u__4);
-          PyTuple_SET_ITEM(__pyx_t_3, 4, __pyx_kp_u__4);
-          __pyx_t_7 = __Pyx_PyUnicode_Join(__pyx_t_3, 5, __pyx_t_1, __pyx_t_10); if (unlikely(!__pyx_t_7)) __PYX_ERR(1, 155, __pyx_L28_except_error)
-          __Pyx_GOTREF(__pyx_t_7);
-          __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-          __pyx_t_3 = __Pyx_PyObject_CallOneArg(__pyx_builtin_TypeError, __pyx_t_7); if (unlikely(!__pyx_t_3)) __PYX_ERR(1, 155, __pyx_L28_except_error)
-          __Pyx_GOTREF(__pyx_t_3);
-          __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
-          __Pyx_Raise(__pyx_t_3, 0, 0, 0);
-          __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-          __PYX_ERR(1, 155, __pyx_L28_except_error)
-
-          /* "overload/bind_with.pyx":154
- * 				raise TypeError(f'{<object> param.name!r} parameter is positional only, but was passed as a keyword')
- * 
- * 			if not bind_func(arg_val, annotation):             # <<<<<<<<<<<<<<
- * 				raise TypeError(f"argument '{param_name!r}' has unexpected type '{type(arg_val).__qualname__}'")
- * 
- */
-        }
-      }
-      __Pyx_XDECREF(__pyx_t_11); __pyx_t_11 = 0;
-      __Pyx_XDECREF(__pyx_t_12); __pyx_t_12 = 0;
-      __Pyx_XDECREF(__pyx_t_13); __pyx_t_13 = 0;
-      goto __pyx_L33_try_end;
-      __pyx_L26_error:;
-      __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
-      __Pyx_XDECREF(__pyx_t_6); __pyx_t_6 = 0;
-      __Pyx_XDECREF(__pyx_t_7); __pyx_t_7 = 0;
-      __Pyx_XDECREF(__pyx_t_9); __pyx_t_9 = 0;
-
-      /* "overload/bind_with.pyx":139
- * 		try:
- * 			arg_val = kwargs.pop(param_name)
- * 		except KeyError:             # <<<<<<<<<<<<<<
+ * 		arg_val = kwargs_.pop(<object> param.name, None)
+ * 		if arg_val is None:             # <<<<<<<<<<<<<<
  * 			# We have no value for this parameter.  It's fine though,
  * 			# if it has a default value, or it is an '*args'-like
  */
-      __pyx_t_8 = __Pyx_PyErr_ExceptionMatches(__pyx_builtin_KeyError);
-      if (__pyx_t_8) {
-        __Pyx_AddTraceback("overload.bind_with.bind_with", __pyx_clineno, __pyx_lineno, __pyx_filename);
-        if (__Pyx_GetException(&__pyx_t_3, &__pyx_t_7, &__pyx_t_9) < 0) __PYX_ERR(1, 139, __pyx_L28_except_error)
-        __Pyx_GOTREF(__pyx_t_3);
-        __Pyx_GOTREF(__pyx_t_7);
-        __Pyx_GOTREF(__pyx_t_9);
+    __pyx_t_5 = (__pyx_v_arg_val == Py_None);
+    __pyx_t_4 = (__pyx_t_5 != 0);
+    if (__pyx_t_4) {
 
-        /* "overload/bind_with.pyx":144
+      /* "overload/bind_with.pyx":143
  * 			# parameter, left alone by the processing of positional
  * 			# arguments.
  * 			if (param.kind != _c_var_positional and not param.has_default):             # <<<<<<<<<<<<<<
- * 				raise TypeError(f'missing a required argument: {param_name!r}') from None
- * 
- */
-        __pyx_t_5 = ((__pyx_v_param.kind != __pyx_v_8overload_9bind_with__c_var_positional) != 0);
-        if (__pyx_t_5) {
-        } else {
-          __pyx_t_4 = __pyx_t_5;
-          goto __pyx_L39_bool_binop_done;
-        }
-        __pyx_t_5 = ((!(__pyx_v_param.has_default != 0)) != 0);
-        __pyx_t_4 = __pyx_t_5;
-        __pyx_L39_bool_binop_done:;
-        if (unlikely(__pyx_t_4)) {
-
-          /* "overload/bind_with.pyx":145
- * 			# arguments.
- * 			if (param.kind != _c_var_positional and not param.has_default):
- * 				raise TypeError(f'missing a required argument: {param_name!r}') from None             # <<<<<<<<<<<<<<
- * 
+ * 				return TypeError(f'missing a required argument: {<object> param.name!r}')
  * 		else:
  */
-          __pyx_t_6 = __Pyx_PyObject_FormatSimpleAndDecref(PyObject_Repr(__pyx_v_param_name), __pyx_empty_unicode); if (unlikely(!__pyx_t_6)) __PYX_ERR(1, 145, __pyx_L28_except_error)
-          __Pyx_GOTREF(__pyx_t_6);
-          __pyx_t_14 = __Pyx_PyUnicode_Concat(__pyx_kp_u_missing_a_required_argument, __pyx_t_6); if (unlikely(!__pyx_t_14)) __PYX_ERR(1, 145, __pyx_L28_except_error)
-          __Pyx_GOTREF(__pyx_t_14);
-          __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
-          __pyx_t_6 = __Pyx_PyObject_CallOneArg(__pyx_builtin_TypeError, __pyx_t_14); if (unlikely(!__pyx_t_6)) __PYX_ERR(1, 145, __pyx_L28_except_error)
-          __Pyx_GOTREF(__pyx_t_6);
-          __Pyx_DECREF(__pyx_t_14); __pyx_t_14 = 0;
-          __Pyx_Raise(__pyx_t_6, 0, 0, Py_None);
-          __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
-          __PYX_ERR(1, 145, __pyx_L28_except_error)
+      __pyx_t_5 = ((__pyx_v_param.kind != __pyx_v_8overload_9bind_with__c_var_positional) != 0);
+      if (__pyx_t_5) {
+      } else {
+        __pyx_t_4 = __pyx_t_5;
+        goto __pyx_L28_bool_binop_done;
+      }
+      __pyx_t_5 = ((!(__pyx_v_param.has_default != 0)) != 0);
+      __pyx_t_4 = __pyx_t_5;
+      __pyx_L28_bool_binop_done:;
+      if (__pyx_t_4) {
 
-          /* "overload/bind_with.pyx":144
+        /* "overload/bind_with.pyx":144
+ * 			# arguments.
+ * 			if (param.kind != _c_var_positional and not param.has_default):
+ * 				return TypeError(f'missing a required argument: {<object> param.name!r}')             # <<<<<<<<<<<<<<
+ * 		else:
+ * 			if param.kind == _c_positional_only:
+ */
+        __Pyx_XDECREF(__pyx_r);
+        __pyx_t_1 = __Pyx_PyObject_FormatSimpleAndDecref(PyObject_Repr(((PyObject *)__pyx_v_param.name)), __pyx_empty_unicode); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 144, __pyx_L1_error)
+        __Pyx_GOTREF(__pyx_t_1);
+        __pyx_t_9 = __Pyx_PyUnicode_Concat(__pyx_kp_u_missing_a_required_argument, __pyx_t_1); if (unlikely(!__pyx_t_9)) __PYX_ERR(1, 144, __pyx_L1_error)
+        __Pyx_GOTREF(__pyx_t_9);
+        __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+        __pyx_t_1 = __Pyx_PyObject_CallOneArg(__pyx_builtin_TypeError, __pyx_t_9); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 144, __pyx_L1_error)
+        __Pyx_GOTREF(__pyx_t_1);
+        __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
+        __pyx_r = __pyx_t_1;
+        __pyx_t_1 = 0;
+        goto __pyx_L0;
+
+        /* "overload/bind_with.pyx":143
  * 			# parameter, left alone by the processing of positional
  * 			# arguments.
  * 			if (param.kind != _c_var_positional and not param.has_default):             # <<<<<<<<<<<<<<
- * 				raise TypeError(f'missing a required argument: {param_name!r}') from None
- * 
+ * 				return TypeError(f'missing a required argument: {<object> param.name!r}')
+ * 		else:
  */
-        }
-        __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
-        __Pyx_XDECREF(__pyx_t_7); __pyx_t_7 = 0;
-        __Pyx_XDECREF(__pyx_t_9); __pyx_t_9 = 0;
-        goto __pyx_L27_exception_handled;
       }
-      goto __pyx_L28_except_error;
-      __pyx_L28_except_error:;
 
-      /* "overload/bind_with.pyx":137
+      /* "overload/bind_with.pyx":138
  * 
- * 		param_name = <object> param.name
- * 		try:             # <<<<<<<<<<<<<<
- * 			arg_val = kwargs.pop(param_name)
- * 		except KeyError:
+ * 		arg_val = kwargs_.pop(<object> param.name, None)
+ * 		if arg_val is None:             # <<<<<<<<<<<<<<
+ * 			# We have no value for this parameter.  It's fine though,
+ * 			# if it has a default value, or it is an '*args'-like
  */
-      __Pyx_XGIVEREF(__pyx_t_11);
-      __Pyx_XGIVEREF(__pyx_t_12);
-      __Pyx_XGIVEREF(__pyx_t_13);
-      __Pyx_ExceptionReset(__pyx_t_11, __pyx_t_12, __pyx_t_13);
-      goto __pyx_L1_error;
-      __pyx_L27_exception_handled:;
-      __Pyx_XGIVEREF(__pyx_t_11);
-      __Pyx_XGIVEREF(__pyx_t_12);
-      __Pyx_XGIVEREF(__pyx_t_13);
-      __Pyx_ExceptionReset(__pyx_t_11, __pyx_t_12, __pyx_t_13);
-      __pyx_L33_try_end:;
+      goto __pyx_L26;
     }
+
+    /* "overload/bind_with.pyx":146
+ * 				return TypeError(f'missing a required argument: {<object> param.name!r}')
+ * 		else:
+ * 			if param.kind == _c_positional_only:             # <<<<<<<<<<<<<<
+ * 				# This should never happen in case of a properly built
+ * 				# Signature object (but let's have this check here
+ */
+    /*else*/ {
+      __pyx_t_4 = ((__pyx_v_param.kind == __pyx_v_8overload_9bind_with__c_positional_only) != 0);
+      if (__pyx_t_4) {
+
+        /* "overload/bind_with.pyx":150
+ * 				# Signature object (but let's have this check here
+ * 				# to ensure correct behaviour just in case)
+ * 				return TypeError(f'{<object> param.name!r} parameter is positional only, but was passed as a keyword')             # <<<<<<<<<<<<<<
+ * 
+ * 			if not bind_func(arg_val, annotation):
+ */
+        __Pyx_XDECREF(__pyx_r);
+        __pyx_t_1 = __Pyx_PyObject_FormatSimpleAndDecref(PyObject_Repr(((PyObject *)__pyx_v_param.name)), __pyx_empty_unicode); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 150, __pyx_L1_error)
+        __Pyx_GOTREF(__pyx_t_1);
+        __pyx_t_9 = __Pyx_PyUnicode_Concat(__pyx_t_1, __pyx_kp_u_parameter_is_positional_only_bu); if (unlikely(!__pyx_t_9)) __PYX_ERR(1, 150, __pyx_L1_error)
+        __Pyx_GOTREF(__pyx_t_9);
+        __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+        __pyx_t_1 = __Pyx_PyObject_CallOneArg(__pyx_builtin_TypeError, __pyx_t_9); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 150, __pyx_L1_error)
+        __Pyx_GOTREF(__pyx_t_1);
+        __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
+        __pyx_r = __pyx_t_1;
+        __pyx_t_1 = 0;
+        goto __pyx_L0;
+
+        /* "overload/bind_with.pyx":146
+ * 				return TypeError(f'missing a required argument: {<object> param.name!r}')
+ * 		else:
+ * 			if param.kind == _c_positional_only:             # <<<<<<<<<<<<<<
+ * 				# This should never happen in case of a properly built
+ * 				# Signature object (but let's have this check here
+ */
+      }
+
+      /* "overload/bind_with.pyx":152
+ * 				return TypeError(f'{<object> param.name!r} parameter is positional only, but was passed as a keyword')
+ * 
+ * 			if not bind_func(arg_val, annotation):             # <<<<<<<<<<<<<<
+ * 				return TypeError(f"argument '{<object> param.name!r}' has unexpected type '{type(arg_val).__qualname__}'")
+ * 
+ */
+      if (unlikely(!__pyx_v_annotation)) { __Pyx_RaiseUnboundLocalError("annotation"); __PYX_ERR(1, 152, __pyx_L1_error) }
+      __Pyx_INCREF(__pyx_v_bind_func);
+      __pyx_t_9 = __pyx_v_bind_func; __pyx_t_6 = NULL;
+      __pyx_t_8 = 0;
+      if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_9))) {
+        __pyx_t_6 = PyMethod_GET_SELF(__pyx_t_9);
+        if (likely(__pyx_t_6)) {
+          PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_9);
+          __Pyx_INCREF(__pyx_t_6);
+          __Pyx_INCREF(function);
+          __Pyx_DECREF_SET(__pyx_t_9, function);
+          __pyx_t_8 = 1;
+        }
+      }
+      #if CYTHON_FAST_PYCALL
+      if (PyFunction_Check(__pyx_t_9)) {
+        PyObject *__pyx_temp[3] = {__pyx_t_6, __pyx_v_arg_val, __pyx_v_annotation};
+        __pyx_t_1 = __Pyx_PyFunction_FastCall(__pyx_t_9, __pyx_temp+1-__pyx_t_8, 2+__pyx_t_8); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 152, __pyx_L1_error)
+        __Pyx_XDECREF(__pyx_t_6); __pyx_t_6 = 0;
+        __Pyx_GOTREF(__pyx_t_1);
+      } else
+      #endif
+      #if CYTHON_FAST_PYCCALL
+      if (__Pyx_PyFastCFunction_Check(__pyx_t_9)) {
+        PyObject *__pyx_temp[3] = {__pyx_t_6, __pyx_v_arg_val, __pyx_v_annotation};
+        __pyx_t_1 = __Pyx_PyCFunction_FastCall(__pyx_t_9, __pyx_temp+1-__pyx_t_8, 2+__pyx_t_8); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 152, __pyx_L1_error)
+        __Pyx_XDECREF(__pyx_t_6); __pyx_t_6 = 0;
+        __Pyx_GOTREF(__pyx_t_1);
+      } else
+      #endif
+      {
+        __pyx_t_7 = PyTuple_New(2+__pyx_t_8); if (unlikely(!__pyx_t_7)) __PYX_ERR(1, 152, __pyx_L1_error)
+        __Pyx_GOTREF(__pyx_t_7);
+        if (__pyx_t_6) {
+          __Pyx_GIVEREF(__pyx_t_6); PyTuple_SET_ITEM(__pyx_t_7, 0, __pyx_t_6); __pyx_t_6 = NULL;
+        }
+        __Pyx_INCREF(__pyx_v_arg_val);
+        __Pyx_GIVEREF(__pyx_v_arg_val);
+        PyTuple_SET_ITEM(__pyx_t_7, 0+__pyx_t_8, __pyx_v_arg_val);
+        __Pyx_INCREF(__pyx_v_annotation);
+        __Pyx_GIVEREF(__pyx_v_annotation);
+        PyTuple_SET_ITEM(__pyx_t_7, 1+__pyx_t_8, __pyx_v_annotation);
+        __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_9, __pyx_t_7, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 152, __pyx_L1_error)
+        __Pyx_GOTREF(__pyx_t_1);
+        __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
+      }
+      __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
+      __pyx_t_4 = __Pyx_PyObject_IsTrue(__pyx_t_1); if (unlikely(__pyx_t_4 < 0)) __PYX_ERR(1, 152, __pyx_L1_error)
+      __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+      __pyx_t_5 = ((!__pyx_t_4) != 0);
+      if (__pyx_t_5) {
+
+        /* "overload/bind_with.pyx":153
+ * 
+ * 			if not bind_func(arg_val, annotation):
+ * 				return TypeError(f"argument '{<object> param.name!r}' has unexpected type '{type(arg_val).__qualname__}'")             # <<<<<<<<<<<<<<
+ * 
+ * 	if kwargs_ and not kwargs_param:
+ */
+        __Pyx_XDECREF(__pyx_r);
+        __pyx_t_1 = PyTuple_New(5); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 153, __pyx_L1_error)
+        __Pyx_GOTREF(__pyx_t_1);
+        __pyx_t_2 = 0;
+        __pyx_t_10 = 127;
+        __Pyx_INCREF(__pyx_kp_u_argument);
+        __pyx_t_2 += 10;
+        __Pyx_GIVEREF(__pyx_kp_u_argument);
+        PyTuple_SET_ITEM(__pyx_t_1, 0, __pyx_kp_u_argument);
+        __pyx_t_9 = __Pyx_PyObject_FormatSimpleAndDecref(PyObject_Repr(((PyObject *)__pyx_v_param.name)), __pyx_empty_unicode); if (unlikely(!__pyx_t_9)) __PYX_ERR(1, 153, __pyx_L1_error)
+        __Pyx_GOTREF(__pyx_t_9);
+        __pyx_t_10 = (__Pyx_PyUnicode_MAX_CHAR_VALUE(__pyx_t_9) > __pyx_t_10) ? __Pyx_PyUnicode_MAX_CHAR_VALUE(__pyx_t_9) : __pyx_t_10;
+        __pyx_t_2 += __Pyx_PyUnicode_GET_LENGTH(__pyx_t_9);
+        __Pyx_GIVEREF(__pyx_t_9);
+        PyTuple_SET_ITEM(__pyx_t_1, 1, __pyx_t_9);
+        __pyx_t_9 = 0;
+        __Pyx_INCREF(__pyx_kp_u_has_unexpected_type);
+        __pyx_t_2 += 23;
+        __Pyx_GIVEREF(__pyx_kp_u_has_unexpected_type);
+        PyTuple_SET_ITEM(__pyx_t_1, 2, __pyx_kp_u_has_unexpected_type);
+        __pyx_t_9 = __Pyx_PyObject_GetAttrStr(((PyObject *)Py_TYPE(__pyx_v_arg_val)), __pyx_n_s_qualname); if (unlikely(!__pyx_t_9)) __PYX_ERR(1, 153, __pyx_L1_error)
+        __Pyx_GOTREF(__pyx_t_9);
+        __pyx_t_7 = __Pyx_PyObject_FormatSimple(__pyx_t_9, __pyx_empty_unicode); if (unlikely(!__pyx_t_7)) __PYX_ERR(1, 153, __pyx_L1_error)
+        __Pyx_GOTREF(__pyx_t_7);
+        __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
+        __pyx_t_10 = (__Pyx_PyUnicode_MAX_CHAR_VALUE(__pyx_t_7) > __pyx_t_10) ? __Pyx_PyUnicode_MAX_CHAR_VALUE(__pyx_t_7) : __pyx_t_10;
+        __pyx_t_2 += __Pyx_PyUnicode_GET_LENGTH(__pyx_t_7);
+        __Pyx_GIVEREF(__pyx_t_7);
+        PyTuple_SET_ITEM(__pyx_t_1, 3, __pyx_t_7);
+        __pyx_t_7 = 0;
+        __Pyx_INCREF(__pyx_kp_u__4);
+        __pyx_t_2 += 1;
+        __Pyx_GIVEREF(__pyx_kp_u__4);
+        PyTuple_SET_ITEM(__pyx_t_1, 4, __pyx_kp_u__4);
+        __pyx_t_7 = __Pyx_PyUnicode_Join(__pyx_t_1, 5, __pyx_t_2, __pyx_t_10); if (unlikely(!__pyx_t_7)) __PYX_ERR(1, 153, __pyx_L1_error)
+        __Pyx_GOTREF(__pyx_t_7);
+        __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+        __pyx_t_1 = __Pyx_PyObject_CallOneArg(__pyx_builtin_TypeError, __pyx_t_7); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 153, __pyx_L1_error)
+        __Pyx_GOTREF(__pyx_t_1);
+        __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
+        __pyx_r = __pyx_t_1;
+        __pyx_t_1 = 0;
+        goto __pyx_L0;
+
+        /* "overload/bind_with.pyx":152
+ * 				return TypeError(f'{<object> param.name!r} parameter is positional only, but was passed as a keyword')
+ * 
+ * 			if not bind_func(arg_val, annotation):             # <<<<<<<<<<<<<<
+ * 				return TypeError(f"argument '{<object> param.name!r}' has unexpected type '{type(arg_val).__qualname__}'")
+ * 
+ */
+      }
+    }
+    __pyx_L26:;
     __pyx_L22_continue:;
   }
 
-  /* "overload/bind_with.pyx":157
- * 				raise TypeError(f"argument '{param_name!r}' has unexpected type '{type(arg_val).__qualname__}'")
+  /* "overload/bind_with.pyx":155
+ * 				return TypeError(f"argument '{<object> param.name!r}' has unexpected type '{type(arg_val).__qualname__}'")
  * 
- * 	if kwargs and not kwargs_param:             # <<<<<<<<<<<<<<
- * 		raise TypeError(f'got an unexpected keyword argument {next(iter(kwargs))!r}')
+ * 	if kwargs_ and not kwargs_param:             # <<<<<<<<<<<<<<
+ * 		return TypeError(f'got an unexpected keyword argument {next(iter(kwargs_))!r}')
  */
-  __pyx_t_5 = __Pyx_PyObject_IsTrue(__pyx_v_kwargs); if (unlikely(__pyx_t_5 < 0)) __PYX_ERR(1, 157, __pyx_L1_error)
-  if (__pyx_t_5) {
+  __pyx_t_4 = __Pyx_PyObject_IsTrue(__pyx_v_kwargs_); if (unlikely(__pyx_t_4 < 0)) __PYX_ERR(1, 155, __pyx_L1_error)
+  if (__pyx_t_4) {
   } else {
-    __pyx_t_4 = __pyx_t_5;
-    goto __pyx_L42_bool_binop_done;
+    __pyx_t_5 = __pyx_t_4;
+    goto __pyx_L33_bool_binop_done;
   }
-  __pyx_t_5 = ((!(__pyx_v_kwargs_param != 0)) != 0);
-  __pyx_t_4 = __pyx_t_5;
-  __pyx_L42_bool_binop_done:;
-  if (unlikely(__pyx_t_4)) {
+  __pyx_t_4 = ((!(__pyx_v_kwargs_param != 0)) != 0);
+  __pyx_t_5 = __pyx_t_4;
+  __pyx_L33_bool_binop_done:;
+  if (__pyx_t_5) {
 
-    /* "overload/bind_with.pyx":158
+    /* "overload/bind_with.pyx":156
  * 
- * 	if kwargs and not kwargs_param:
- * 		raise TypeError(f'got an unexpected keyword argument {next(iter(kwargs))!r}')             # <<<<<<<<<<<<<<
+ * 	if kwargs_ and not kwargs_param:
+ * 		return TypeError(f'got an unexpected keyword argument {next(iter(kwargs_))!r}')             # <<<<<<<<<<<<<<
  */
-    __pyx_t_9 = PyObject_GetIter(__pyx_v_kwargs); if (unlikely(!__pyx_t_9)) __PYX_ERR(1, 158, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_9);
-    __pyx_t_7 = __Pyx_PyIter_Next(__pyx_t_9); if (unlikely(!__pyx_t_7)) __PYX_ERR(1, 158, __pyx_L1_error)
+    __Pyx_XDECREF(__pyx_r);
+    __pyx_t_1 = PyObject_GetIter(__pyx_v_kwargs_); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 156, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_1);
+    __pyx_t_7 = __Pyx_PyIter_Next(__pyx_t_1); if (unlikely(!__pyx_t_7)) __PYX_ERR(1, 156, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_7);
-    __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
-    __pyx_t_9 = __Pyx_PyObject_FormatSimpleAndDecref(PyObject_Repr(__pyx_t_7), __pyx_empty_unicode); if (unlikely(!__pyx_t_9)) __PYX_ERR(1, 158, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_9);
+    __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+    __pyx_t_1 = __Pyx_PyObject_FormatSimpleAndDecref(PyObject_Repr(__pyx_t_7), __pyx_empty_unicode); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 156, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_1);
     __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
-    __pyx_t_7 = __Pyx_PyUnicode_Concat(__pyx_kp_u_got_an_unexpected_keyword_argume, __pyx_t_9); if (unlikely(!__pyx_t_7)) __PYX_ERR(1, 158, __pyx_L1_error)
+    __pyx_t_7 = __Pyx_PyUnicode_Concat(__pyx_kp_u_got_an_unexpected_keyword_argume, __pyx_t_1); if (unlikely(!__pyx_t_7)) __PYX_ERR(1, 156, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_7);
-    __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
-    __pyx_t_9 = __Pyx_PyObject_CallOneArg(__pyx_builtin_TypeError, __pyx_t_7); if (unlikely(!__pyx_t_9)) __PYX_ERR(1, 158, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_9);
+    __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+    __pyx_t_1 = __Pyx_PyObject_CallOneArg(__pyx_builtin_TypeError, __pyx_t_7); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 156, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_1);
     __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
-    __Pyx_Raise(__pyx_t_9, 0, 0, 0);
-    __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
-    __PYX_ERR(1, 158, __pyx_L1_error)
+    __pyx_r = __pyx_t_1;
+    __pyx_t_1 = 0;
+    goto __pyx_L0;
 
-    /* "overload/bind_with.pyx":157
- * 				raise TypeError(f"argument '{param_name!r}' has unexpected type '{type(arg_val).__qualname__}'")
+    /* "overload/bind_with.pyx":155
+ * 				return TypeError(f"argument '{<object> param.name!r}' has unexpected type '{type(arg_val).__qualname__}'")
  * 
- * 	if kwargs and not kwargs_param:             # <<<<<<<<<<<<<<
- * 		raise TypeError(f'got an unexpected keyword argument {next(iter(kwargs))!r}')
+ * 	if kwargs_ and not kwargs_param:             # <<<<<<<<<<<<<<
+ * 		return TypeError(f'got an unexpected keyword argument {next(iter(kwargs_))!r}')
  */
   }
 
   /* "overload/bind_with.pyx":48
  * 
  * 
- * cpdef bind_with(Signature sig, bind_func, args, kwargs):             # <<<<<<<<<<<<<<
+ * cdef bind_with(Signature sig, object bind_func, tuple args, dict kwargs):             # <<<<<<<<<<<<<<
+ * 	cdef dict kwargs_ = kwargs.copy()
  * 	cdef int args_i = 0
- * 	cdef int parameters_i = 0
  */
 
   /* function exit code */
   __pyx_r = Py_None; __Pyx_INCREF(Py_None);
   goto __pyx_L0;
   __pyx_L1_error:;
-  __Pyx_XDECREF(__pyx_t_3);
+  __Pyx_XDECREF(__pyx_t_1);
   __Pyx_XDECREF(__pyx_t_6);
   __Pyx_XDECREF(__pyx_t_7);
   __Pyx_XDECREF(__pyx_t_9);
-  __Pyx_XDECREF(__pyx_t_14);
   __Pyx_AddTraceback("overload.bind_with.bind_with", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = 0;
   __pyx_L0:;
+  __Pyx_XDECREF(__pyx_v_kwargs_);
   __Pyx_XDECREF(__pyx_v_arg_val);
   __Pyx_XDECREF(__pyx_v_annotation);
-  __Pyx_XDECREF(__pyx_v_param_name);
-  __Pyx_XGIVEREF(__pyx_r);
-  __Pyx_RefNannyFinishContext();
-  return __pyx_r;
-}
-
-/* Python wrapper */
-static PyObject *__pyx_pw_8overload_9bind_with_1bind_with(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static PyObject *__pyx_pw_8overload_9bind_with_1bind_with(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
-  struct __pyx_obj_8overload_9bind_with_Signature *__pyx_v_sig = 0;
-  PyObject *__pyx_v_bind_func = 0;
-  PyObject *__pyx_v_args = 0;
-  PyObject *__pyx_v_kwargs = 0;
-  int __pyx_lineno = 0;
-  const char *__pyx_filename = NULL;
-  int __pyx_clineno = 0;
-  PyObject *__pyx_r = 0;
-  __Pyx_RefNannyDeclarations
-  __Pyx_RefNannySetupContext("bind_with (wrapper)", 0);
-  {
-    static PyObject **__pyx_pyargnames[] = {&__pyx_n_s_sig,&__pyx_n_s_bind_func,&__pyx_n_s_args,&__pyx_n_s_kwargs,0};
-    PyObject* values[4] = {0,0,0,0};
-    if (unlikely(__pyx_kwds)) {
-      Py_ssize_t kw_args;
-      const Py_ssize_t pos_args = PyTuple_GET_SIZE(__pyx_args);
-      switch (pos_args) {
-        case  4: values[3] = PyTuple_GET_ITEM(__pyx_args, 3);
-        CYTHON_FALLTHROUGH;
-        case  3: values[2] = PyTuple_GET_ITEM(__pyx_args, 2);
-        CYTHON_FALLTHROUGH;
-        case  2: values[1] = PyTuple_GET_ITEM(__pyx_args, 1);
-        CYTHON_FALLTHROUGH;
-        case  1: values[0] = PyTuple_GET_ITEM(__pyx_args, 0);
-        CYTHON_FALLTHROUGH;
-        case  0: break;
-        default: goto __pyx_L5_argtuple_error;
-      }
-      kw_args = PyDict_Size(__pyx_kwds);
-      switch (pos_args) {
-        case  0:
-        if (likely((values[0] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_sig)) != 0)) kw_args--;
-        else goto __pyx_L5_argtuple_error;
-        CYTHON_FALLTHROUGH;
-        case  1:
-        if (likely((values[1] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_bind_func)) != 0)) kw_args--;
-        else {
-          __Pyx_RaiseArgtupleInvalid("bind_with", 1, 4, 4, 1); __PYX_ERR(1, 48, __pyx_L3_error)
-        }
-        CYTHON_FALLTHROUGH;
-        case  2:
-        if (likely((values[2] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_args)) != 0)) kw_args--;
-        else {
-          __Pyx_RaiseArgtupleInvalid("bind_with", 1, 4, 4, 2); __PYX_ERR(1, 48, __pyx_L3_error)
-        }
-        CYTHON_FALLTHROUGH;
-        case  3:
-        if (likely((values[3] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_kwargs)) != 0)) kw_args--;
-        else {
-          __Pyx_RaiseArgtupleInvalid("bind_with", 1, 4, 4, 3); __PYX_ERR(1, 48, __pyx_L3_error)
-        }
-      }
-      if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "bind_with") < 0)) __PYX_ERR(1, 48, __pyx_L3_error)
-      }
-    } else if (PyTuple_GET_SIZE(__pyx_args) != 4) {
-      goto __pyx_L5_argtuple_error;
-    } else {
-      values[0] = PyTuple_GET_ITEM(__pyx_args, 0);
-      values[1] = PyTuple_GET_ITEM(__pyx_args, 1);
-      values[2] = PyTuple_GET_ITEM(__pyx_args, 2);
-      values[3] = PyTuple_GET_ITEM(__pyx_args, 3);
-    }
-    __pyx_v_sig = ((struct __pyx_obj_8overload_9bind_with_Signature *)values[0]);
-    __pyx_v_bind_func = values[1];
-    __pyx_v_args = values[2];
-    __pyx_v_kwargs = values[3];
-  }
-  goto __pyx_L4_argument_unpacking_done;
-  __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("bind_with", 1, 4, 4, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(1, 48, __pyx_L3_error)
-  __pyx_L3_error:;
-  __Pyx_AddTraceback("overload.bind_with.bind_with", __pyx_clineno, __pyx_lineno, __pyx_filename);
-  __Pyx_RefNannyFinishContext();
-  return NULL;
-  __pyx_L4_argument_unpacking_done:;
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_sig), __pyx_ptype_8overload_9bind_with_Signature, 1, "sig", 0))) __PYX_ERR(1, 48, __pyx_L1_error)
-  __pyx_r = __pyx_pf_8overload_9bind_with_bind_with(__pyx_self, __pyx_v_sig, __pyx_v_bind_func, __pyx_v_args, __pyx_v_kwargs);
-
-  /* function exit code */
-  goto __pyx_L0;
-  __pyx_L1_error:;
-  __pyx_r = NULL;
-  __pyx_L0:;
-  __Pyx_RefNannyFinishContext();
-  return __pyx_r;
-}
-
-static PyObject *__pyx_pf_8overload_9bind_with_bind_with(CYTHON_UNUSED PyObject *__pyx_self, struct __pyx_obj_8overload_9bind_with_Signature *__pyx_v_sig, PyObject *__pyx_v_bind_func, PyObject *__pyx_v_args, PyObject *__pyx_v_kwargs) {
-  PyObject *__pyx_r = NULL;
-  __Pyx_RefNannyDeclarations
-  PyObject *__pyx_t_1 = NULL;
-  int __pyx_lineno = 0;
-  const char *__pyx_filename = NULL;
-  int __pyx_clineno = 0;
-  __Pyx_RefNannySetupContext("bind_with", 0);
-  __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __pyx_f_8overload_9bind_with_bind_with(__pyx_v_sig, __pyx_v_bind_func, __pyx_v_args, __pyx_v_kwargs, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 48, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_1);
-  __pyx_r = __pyx_t_1;
-  __pyx_t_1 = 0;
-  goto __pyx_L0;
-
-  /* function exit code */
-  __pyx_L1_error:;
-  __Pyx_XDECREF(__pyx_t_1);
-  __Pyx_AddTraceback("overload.bind_with.bind_with", __pyx_clineno, __pyx_lineno, __pyx_filename);
-  __pyx_r = NULL;
-  __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
@@ -3593,7 +3426,6 @@ static PyTypeObject __pyx_type_8overload_9bind_with_Signature = {
 };
 
 static PyMethodDef __pyx_methods[] = {
-  {"bind_with", (PyCFunction)(void*)(PyCFunctionWithKeywords)__pyx_pw_8overload_9bind_with_1bind_with, METH_VARARGS|METH_KEYWORDS, 0},
   {0, 0, 0, 0}
 };
 
@@ -3640,7 +3472,6 @@ static struct PyModuleDef __pyx_moduledef = {
 
 static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_KEYWORD_ONLY, __pyx_k_KEYWORD_ONLY, sizeof(__pyx_k_KEYWORD_ONLY), 0, 0, 1, 1},
-  {&__pyx_n_s_KeyError, __pyx_k_KeyError, sizeof(__pyx_k_KeyError), 0, 0, 1, 1},
   {&__pyx_n_s_POSITIONAL_ONLY, __pyx_k_POSITIONAL_ONLY, sizeof(__pyx_k_POSITIONAL_ONLY), 0, 0, 1, 1},
   {&__pyx_n_s_Signature, __pyx_k_Signature, sizeof(__pyx_k_Signature), 0, 0, 1, 1},
   {&__pyx_n_s_TypeError, __pyx_k_TypeError, sizeof(__pyx_k_TypeError), 0, 0, 1, 1},
@@ -3648,9 +3479,7 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_VAR_POSITIONAL, __pyx_k_VAR_POSITIONAL, sizeof(__pyx_k_VAR_POSITIONAL), 0, 0, 1, 1},
   {&__pyx_kp_u__4, __pyx_k__4, sizeof(__pyx_k__4), 0, 1, 0, 0},
   {&__pyx_n_s_annotation, __pyx_k_annotation, sizeof(__pyx_k_annotation), 0, 0, 1, 1},
-  {&__pyx_n_s_args, __pyx_k_args, sizeof(__pyx_k_args), 0, 0, 1, 1},
   {&__pyx_kp_u_argument, __pyx_k_argument, sizeof(__pyx_k_argument), 0, 1, 0, 0},
-  {&__pyx_n_s_bind_func, __pyx_k_bind_func, sizeof(__pyx_k_bind_func), 0, 0, 1, 1},
   {&__pyx_n_s_cline_in_traceback, __pyx_k_cline_in_traceback, sizeof(__pyx_k_cline_in_traceback), 0, 0, 1, 1},
   {&__pyx_n_s_default, __pyx_k_default, sizeof(__pyx_k_default), 0, 0, 1, 1},
   {&__pyx_n_s_empty, __pyx_k_empty, sizeof(__pyx_k_empty), 0, 0, 1, 1},
@@ -3661,7 +3490,6 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_inspect, __pyx_k_inspect, sizeof(__pyx_k_inspect), 0, 0, 1, 1},
   {&__pyx_n_s_itertools, __pyx_k_itertools, sizeof(__pyx_k_itertools), 0, 0, 1, 1},
   {&__pyx_n_s_kind, __pyx_k_kind, sizeof(__pyx_k_kind), 0, 0, 1, 1},
-  {&__pyx_n_s_kwargs, __pyx_k_kwargs, sizeof(__pyx_k_kwargs), 0, 0, 1, 1},
   {&__pyx_n_s_main, __pyx_k_main, sizeof(__pyx_k_main), 0, 0, 1, 1},
   {&__pyx_kp_u_missing_a_required_argument, __pyx_k_missing_a_required_argument, sizeof(__pyx_k_missing_a_required_argument), 0, 1, 0, 0},
   {&__pyx_kp_u_multiple_values_for_argument, __pyx_k_multiple_values_for_argument, sizeof(__pyx_k_multiple_values_for_argument), 0, 1, 0, 0},
@@ -3679,7 +3507,6 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_kp_s_self_parameters_cannot_be_conver, __pyx_k_self_parameters_cannot_be_conver, sizeof(__pyx_k_self_parameters_cannot_be_conver), 0, 0, 1, 0},
   {&__pyx_n_s_setstate, __pyx_k_setstate, sizeof(__pyx_k_setstate), 0, 0, 1, 1},
   {&__pyx_n_s_setstate_cython, __pyx_k_setstate_cython, sizeof(__pyx_k_setstate_cython), 0, 0, 1, 1},
-  {&__pyx_n_s_sig, __pyx_k_sig, sizeof(__pyx_k_sig), 0, 0, 1, 1},
   {&__pyx_n_s_test, __pyx_k_test, sizeof(__pyx_k_test), 0, 0, 1, 1},
   {&__pyx_kp_u_too_many_positional_arguments, __pyx_k_too_many_positional_arguments, sizeof(__pyx_k_too_many_positional_arguments), 0, 1, 0, 0},
   {&__pyx_n_s_values, __pyx_k_values, sizeof(__pyx_k_values), 0, 0, 1, 1},
@@ -3687,8 +3514,7 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
 };
 static CYTHON_SMALL_CODE int __Pyx_InitCachedBuiltins(void) {
   __pyx_builtin_TypeError = __Pyx_GetBuiltinName(__pyx_n_s_TypeError); if (!__pyx_builtin_TypeError) __PYX_ERR(0, 2, __pyx_L1_error)
-  __pyx_builtin_object = __Pyx_GetBuiltinName(__pyx_n_s_object); if (!__pyx_builtin_object) __PYX_ERR(1, 65, __pyx_L1_error)
-  __pyx_builtin_KeyError = __Pyx_GetBuiltinName(__pyx_n_s_KeyError); if (!__pyx_builtin_KeyError) __PYX_ERR(1, 139, __pyx_L1_error)
+  __pyx_builtin_object = __Pyx_GetBuiltinName(__pyx_n_s_object); if (!__pyx_builtin_object) __PYX_ERR(1, 66, __pyx_L1_error)
   return 0;
   __pyx_L1_error:;
   return -1;
@@ -3717,14 +3543,14 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
   __Pyx_GOTREF(__pyx_tuple__2);
   __Pyx_GIVEREF(__pyx_tuple__2);
 
-  /* "overload/bind_with.pyx":70
+  /* "overload/bind_with.pyx":71
  * 					# Looks like we have no parameter for this positional
  * 					# argument
- * 					raise TypeError('too many positional arguments') from None             # <<<<<<<<<<<<<<
+ * 					return TypeError('too many positional arguments')             # <<<<<<<<<<<<<<
  * 
  * 				if param.kind == _c_var_positional:
  */
-  __pyx_tuple__3 = PyTuple_Pack(1, __pyx_kp_u_too_many_positional_arguments); if (unlikely(!__pyx_tuple__3)) __PYX_ERR(1, 70, __pyx_L1_error)
+  __pyx_tuple__3 = PyTuple_Pack(1, __pyx_kp_u_too_many_positional_arguments); if (unlikely(!__pyx_tuple__3)) __PYX_ERR(1, 71, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__3);
   __Pyx_GIVEREF(__pyx_tuple__3);
   __Pyx_RefNannyFinishContext();
@@ -3735,6 +3561,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
 }
 
 static CYTHON_SMALL_CODE int __Pyx_InitGlobals(void) {
+  __pyx_umethod_PyDict_Type_pop.type = (PyObject*)&PyDict_Type;
   if (__Pyx_InitStrings(__pyx_string_tab) < 0) __PYX_ERR(1, 1, __pyx_L1_error);
   return 0;
   __pyx_L1_error:;
@@ -3772,7 +3599,7 @@ static int __Pyx_modinit_function_export_code(void) {
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("__Pyx_modinit_function_export_code", 0);
   /*--- Function export code ---*/
-  if (__Pyx_ExportFunction("bind_with", (void (*)(void))__pyx_f_8overload_9bind_with_bind_with, "PyObject *(struct __pyx_obj_8overload_9bind_with_Signature *, PyObject *, PyObject *, PyObject *, int __pyx_skip_dispatch)") < 0) __PYX_ERR(1, 1, __pyx_L1_error)
+  if (__Pyx_ExportFunction("bind_with", (void (*)(void))__pyx_f_8overload_9bind_with_bind_with, "PyObject *(struct __pyx_obj_8overload_9bind_with_Signature *, PyObject *, PyObject *, PyObject *)") < 0) __PYX_ERR(1, 1, __pyx_L1_error)
   __Pyx_RefNannyFinishContext();
   return 0;
   __pyx_L1_error:;
@@ -5448,193 +5275,151 @@ bad:
 #endif
 }
 
-/* PyObjectCall2Args */
-static CYTHON_UNUSED PyObject* __Pyx_PyObject_Call2Args(PyObject* function, PyObject* arg1, PyObject* arg2) {
+/* UnpackUnboundCMethod */
+static int __Pyx_TryUnpackUnboundCMethod(__Pyx_CachedCFunction* target) {
+    PyObject *method;
+    method = __Pyx_PyObject_GetAttrStr(target->type, *target->method_name);
+    if (unlikely(!method))
+        return -1;
+    target->method = method;
+#if CYTHON_COMPILING_IN_CPYTHON
+    #if PY_MAJOR_VERSION >= 3
+    if (likely(__Pyx_TypeCheck(method, &PyMethodDescr_Type)))
+    #endif
+    {
+        PyMethodDescrObject *descr = (PyMethodDescrObject*) method;
+        target->func = descr->d_method->ml_meth;
+        target->flag = descr->d_method->ml_flags & ~(METH_CLASS | METH_STATIC | METH_COEXIST | METH_STACKLESS);
+    }
+#endif
+    return 0;
+}
+
+/* CallUnboundCMethod2 */
+#if CYTHON_COMPILING_IN_CPYTHON && PY_VERSION_HEX >= 0x030600B1
+static CYTHON_INLINE PyObject *__Pyx_CallUnboundCMethod2(__Pyx_CachedCFunction *cfunc, PyObject *self, PyObject *arg1, PyObject *arg2) {
+    if (likely(cfunc->func)) {
+        PyObject *args[2] = {arg1, arg2};
+        if (cfunc->flag == METH_FASTCALL) {
+            #if PY_VERSION_HEX >= 0x030700A0
+            return (*(__Pyx_PyCFunctionFast)(void*)(PyCFunction)cfunc->func)(self, args, 2);
+            #else
+            return (*(__Pyx_PyCFunctionFastWithKeywords)(void*)(PyCFunction)cfunc->func)(self, args, 2, NULL);
+            #endif
+        }
+        #if PY_VERSION_HEX >= 0x030700A0
+        if (cfunc->flag == (METH_FASTCALL | METH_KEYWORDS))
+            return (*(__Pyx_PyCFunctionFastWithKeywords)(void*)(PyCFunction)cfunc->func)(self, args, 2, NULL);
+        #endif
+    }
+    return __Pyx__CallUnboundCMethod2(cfunc, self, arg1, arg2);
+}
+#endif
+static PyObject* __Pyx__CallUnboundCMethod2(__Pyx_CachedCFunction* cfunc, PyObject* self, PyObject* arg1, PyObject* arg2){
     PyObject *args, *result = NULL;
-    #if CYTHON_FAST_PYCALL
-    if (PyFunction_Check(function)) {
-        PyObject *args[2] = {arg1, arg2};
-        return __Pyx_PyFunction_FastCall(function, args, 2);
+    if (unlikely(!cfunc->func && !cfunc->method) && unlikely(__Pyx_TryUnpackUnboundCMethod(cfunc) < 0)) return NULL;
+#if CYTHON_COMPILING_IN_CPYTHON
+    if (cfunc->func && (cfunc->flag & METH_VARARGS)) {
+        args = PyTuple_New(2);
+        if (unlikely(!args)) goto bad;
+        Py_INCREF(arg1);
+        PyTuple_SET_ITEM(args, 0, arg1);
+        Py_INCREF(arg2);
+        PyTuple_SET_ITEM(args, 1, arg2);
+        if (cfunc->flag & METH_KEYWORDS)
+            result = (*(PyCFunctionWithKeywords)(void*)(PyCFunction)cfunc->func)(self, args, NULL);
+        else
+            result = (*cfunc->func)(self, args);
+    } else {
+        args = PyTuple_New(3);
+        if (unlikely(!args)) goto bad;
+        Py_INCREF(self);
+        PyTuple_SET_ITEM(args, 0, self);
+        Py_INCREF(arg1);
+        PyTuple_SET_ITEM(args, 1, arg1);
+        Py_INCREF(arg2);
+        PyTuple_SET_ITEM(args, 2, arg2);
+        result = __Pyx_PyObject_Call(cfunc->method, args, NULL);
     }
-    #endif
-    #if CYTHON_FAST_PYCCALL
-    if (__Pyx_PyFastCFunction_Check(function)) {
-        PyObject *args[2] = {arg1, arg2};
-        return __Pyx_PyCFunction_FastCall(function, args, 2);
-    }
-    #endif
-    args = PyTuple_New(2);
-    if (unlikely(!args)) goto done;
-    Py_INCREF(arg1);
-    PyTuple_SET_ITEM(args, 0, arg1);
-    Py_INCREF(arg2);
-    PyTuple_SET_ITEM(args, 1, arg2);
-    Py_INCREF(function);
-    result = __Pyx_PyObject_Call(function, args, NULL);
-    Py_DECREF(args);
-    Py_DECREF(function);
-done:
+#else
+    args = PyTuple_Pack(3, self, arg1, arg2);
+    if (unlikely(!args)) goto bad;
+    result = __Pyx_PyObject_Call(cfunc->method, args, NULL);
+#endif
+bad:
+    Py_XDECREF(args);
     return result;
 }
 
-/* GetTopmostException */
-#if CYTHON_USE_EXC_INFO_STACK
-static _PyErr_StackItem *
-__Pyx_PyErr_GetTopmostException(PyThreadState *tstate)
-{
-    _PyErr_StackItem *exc_info = tstate->exc_info;
-    while ((exc_info->exc_type == NULL || exc_info->exc_type == Py_None) &&
-           exc_info->previous_item != NULL)
-    {
-        exc_info = exc_info->previous_item;
+/* CallUnboundCMethod1 */
+#if CYTHON_COMPILING_IN_CPYTHON
+static CYTHON_INLINE PyObject* __Pyx_CallUnboundCMethod1(__Pyx_CachedCFunction* cfunc, PyObject* self, PyObject* arg) {
+    if (likely(cfunc->func)) {
+        int flag = cfunc->flag;
+        if (flag == METH_O) {
+            return (*(cfunc->func))(self, arg);
+        } else if (PY_VERSION_HEX >= 0x030600B1 && flag == METH_FASTCALL) {
+            if (PY_VERSION_HEX >= 0x030700A0) {
+                return (*(__Pyx_PyCFunctionFast)(void*)(PyCFunction)cfunc->func)(self, &arg, 1);
+            } else {
+                return (*(__Pyx_PyCFunctionFastWithKeywords)(void*)(PyCFunction)cfunc->func)(self, &arg, 1, NULL);
+            }
+        } else if (PY_VERSION_HEX >= 0x030700A0 && flag == (METH_FASTCALL | METH_KEYWORDS)) {
+            return (*(__Pyx_PyCFunctionFastWithKeywords)(void*)(PyCFunction)cfunc->func)(self, &arg, 1, NULL);
+        }
     }
-    return exc_info;
+    return __Pyx__CallUnboundCMethod1(cfunc, self, arg);
 }
 #endif
+static PyObject* __Pyx__CallUnboundCMethod1(__Pyx_CachedCFunction* cfunc, PyObject* self, PyObject* arg){
+    PyObject *args, *result = NULL;
+    if (unlikely(!cfunc->func && !cfunc->method) && unlikely(__Pyx_TryUnpackUnboundCMethod(cfunc) < 0)) return NULL;
+#if CYTHON_COMPILING_IN_CPYTHON
+    if (cfunc->func && (cfunc->flag & METH_VARARGS)) {
+        args = PyTuple_New(1);
+        if (unlikely(!args)) goto bad;
+        Py_INCREF(arg);
+        PyTuple_SET_ITEM(args, 0, arg);
+        if (cfunc->flag & METH_KEYWORDS)
+            result = (*(PyCFunctionWithKeywords)(void*)(PyCFunction)cfunc->func)(self, args, NULL);
+        else
+            result = (*cfunc->func)(self, args);
+    } else {
+        args = PyTuple_New(2);
+        if (unlikely(!args)) goto bad;
+        Py_INCREF(self);
+        PyTuple_SET_ITEM(args, 0, self);
+        Py_INCREF(arg);
+        PyTuple_SET_ITEM(args, 1, arg);
+        result = __Pyx_PyObject_Call(cfunc->method, args, NULL);
+    }
+#else
+    args = PyTuple_Pack(2, self, arg);
+    if (unlikely(!args)) goto bad;
+    result = __Pyx_PyObject_Call(cfunc->method, args, NULL);
+#endif
+bad:
+    Py_XDECREF(args);
+    return result;
+}
 
-/* SaveResetException */
-#if CYTHON_FAST_THREAD_STATE
-static CYTHON_INLINE void __Pyx__ExceptionSave(PyThreadState *tstate, PyObject **type, PyObject **value, PyObject **tb) {
-    #if CYTHON_USE_EXC_INFO_STACK
-    _PyErr_StackItem *exc_info = __Pyx_PyErr_GetTopmostException(tstate);
-    *type = exc_info->exc_type;
-    *value = exc_info->exc_value;
-    *tb = exc_info->exc_traceback;
-    #else
-    *type = tstate->exc_type;
-    *value = tstate->exc_value;
-    *tb = tstate->exc_traceback;
-    #endif
-    Py_XINCREF(*type);
-    Py_XINCREF(*value);
-    Py_XINCREF(*tb);
-}
-static CYTHON_INLINE void __Pyx__ExceptionReset(PyThreadState *tstate, PyObject *type, PyObject *value, PyObject *tb) {
-    PyObject *tmp_type, *tmp_value, *tmp_tb;
-    #if CYTHON_USE_EXC_INFO_STACK
-    _PyErr_StackItem *exc_info = tstate->exc_info;
-    tmp_type = exc_info->exc_type;
-    tmp_value = exc_info->exc_value;
-    tmp_tb = exc_info->exc_traceback;
-    exc_info->exc_type = type;
-    exc_info->exc_value = value;
-    exc_info->exc_traceback = tb;
-    #else
-    tmp_type = tstate->exc_type;
-    tmp_value = tstate->exc_value;
-    tmp_tb = tstate->exc_traceback;
-    tstate->exc_type = type;
-    tstate->exc_value = value;
-    tstate->exc_traceback = tb;
-    #endif
-    Py_XDECREF(tmp_type);
-    Py_XDECREF(tmp_value);
-    Py_XDECREF(tmp_tb);
-}
+/* py_dict_pop */
+static CYTHON_INLINE PyObject *__Pyx_PyDict_Pop(PyObject *d, PyObject *key, PyObject *default_value) {
+#if CYTHON_COMPILING_IN_CPYTHON && PY_VERSION_HEX > 0x030600B3
+    if ((1)) {
+        return _PyDict_Pop(d, key, default_value);
+    } else
 #endif
+    if (default_value) {
+        return __Pyx_CallUnboundCMethod2(&__pyx_umethod_PyDict_Type_pop, d, key, default_value);
+    } else {
+        return __Pyx_CallUnboundCMethod1(&__pyx_umethod_PyDict_Type_pop, d, key);
+    }
+}
 
 /* None */
 static CYTHON_INLINE void __Pyx_RaiseUnboundLocalError(const char *varname) {
     PyErr_Format(PyExc_UnboundLocalError, "local variable '%s' referenced before assignment", varname);
-}
-
-/* PyErrExceptionMatches */
-#if CYTHON_FAST_THREAD_STATE
-static int __Pyx_PyErr_ExceptionMatchesTuple(PyObject *exc_type, PyObject *tuple) {
-    Py_ssize_t i, n;
-    n = PyTuple_GET_SIZE(tuple);
-#if PY_MAJOR_VERSION >= 3
-    for (i=0; i<n; i++) {
-        if (exc_type == PyTuple_GET_ITEM(tuple, i)) return 1;
-    }
-#endif
-    for (i=0; i<n; i++) {
-        if (__Pyx_PyErr_GivenExceptionMatches(exc_type, PyTuple_GET_ITEM(tuple, i))) return 1;
-    }
-    return 0;
-}
-static CYTHON_INLINE int __Pyx_PyErr_ExceptionMatchesInState(PyThreadState* tstate, PyObject* err) {
-    PyObject *exc_type = tstate->curexc_type;
-    if (exc_type == err) return 1;
-    if (unlikely(!exc_type)) return 0;
-    if (unlikely(PyTuple_Check(err)))
-        return __Pyx_PyErr_ExceptionMatchesTuple(exc_type, err);
-    return __Pyx_PyErr_GivenExceptionMatches(exc_type, err);
-}
-#endif
-
-/* GetException */
-#if CYTHON_FAST_THREAD_STATE
-static int __Pyx__GetException(PyThreadState *tstate, PyObject **type, PyObject **value, PyObject **tb)
-#else
-static int __Pyx_GetException(PyObject **type, PyObject **value, PyObject **tb)
-#endif
-{
-    PyObject *local_type, *local_value, *local_tb;
-#if CYTHON_FAST_THREAD_STATE
-    PyObject *tmp_type, *tmp_value, *tmp_tb;
-    local_type = tstate->curexc_type;
-    local_value = tstate->curexc_value;
-    local_tb = tstate->curexc_traceback;
-    tstate->curexc_type = 0;
-    tstate->curexc_value = 0;
-    tstate->curexc_traceback = 0;
-#else
-    PyErr_Fetch(&local_type, &local_value, &local_tb);
-#endif
-    PyErr_NormalizeException(&local_type, &local_value, &local_tb);
-#if CYTHON_FAST_THREAD_STATE
-    if (unlikely(tstate->curexc_type))
-#else
-    if (unlikely(PyErr_Occurred()))
-#endif
-        goto bad;
-    #if PY_MAJOR_VERSION >= 3
-    if (local_tb) {
-        if (unlikely(PyException_SetTraceback(local_value, local_tb) < 0))
-            goto bad;
-    }
-    #endif
-    Py_XINCREF(local_tb);
-    Py_XINCREF(local_type);
-    Py_XINCREF(local_value);
-    *type = local_type;
-    *value = local_value;
-    *tb = local_tb;
-#if CYTHON_FAST_THREAD_STATE
-    #if CYTHON_USE_EXC_INFO_STACK
-    {
-        _PyErr_StackItem *exc_info = tstate->exc_info;
-        tmp_type = exc_info->exc_type;
-        tmp_value = exc_info->exc_value;
-        tmp_tb = exc_info->exc_traceback;
-        exc_info->exc_type = local_type;
-        exc_info->exc_value = local_value;
-        exc_info->exc_traceback = local_tb;
-    }
-    #else
-    tmp_type = tstate->exc_type;
-    tmp_value = tstate->exc_value;
-    tmp_tb = tstate->exc_traceback;
-    tstate->exc_type = local_type;
-    tstate->exc_value = local_value;
-    tstate->exc_traceback = local_tb;
-    #endif
-    Py_XDECREF(tmp_type);
-    Py_XDECREF(tmp_value);
-    Py_XDECREF(tmp_tb);
-#else
-    PyErr_SetExcInfo(local_type, local_value, local_tb);
-#endif
-    return 0;
-bad:
-    *type = 0;
-    *value = 0;
-    *tb = 0;
-    Py_XDECREF(local_type);
-    Py_XDECREF(local_value);
-    Py_XDECREF(local_tb);
-    return -1;
 }
 
 /* IterNext */
@@ -5692,27 +5477,6 @@ static CYTHON_INLINE PyObject *__Pyx_PyIter_Next2(PyObject* iterator, PyObject* 
     return __Pyx_PyIter_Next2Default(defval);
 }
 
-/* ArgTypeTest */
-static int __Pyx__ArgTypeTest(PyObject *obj, PyTypeObject *type, const char *name, int exact)
-{
-    if (unlikely(!type)) {
-        PyErr_SetString(PyExc_SystemError, "Missing type object");
-        return 0;
-    }
-    else if (exact) {
-        #if PY_MAJOR_VERSION == 2
-        if ((type == &PyBaseString_Type) && likely(__Pyx_PyBaseString_CheckExact(obj))) return 1;
-        #endif
-    }
-    else {
-        if (likely(__Pyx_TypeCheck(obj, type))) return 1;
-    }
-    PyErr_Format(PyExc_TypeError,
-        "Argument '%.200s' has incorrect type (expected %.200s, got %.200s)",
-        name, type->tp_name, Py_TYPE(obj)->tp_name);
-    return 0;
-}
-
 /* PyObject_GenericGetAttrNoDict */
 #if CYTHON_USE_TYPE_SLOTS && CYTHON_USE_PYTYPE_LOOKUP && PY_VERSION_HEX < 0x03070000
 static PyObject *__Pyx_RaiseGenericGetAttributeError(PyTypeObject *tp, PyObject *attr_name) {
@@ -5760,6 +5524,31 @@ static PyObject* __Pyx_PyObject_GenericGetAttr(PyObject* obj, PyObject* attr_nam
         return PyObject_GenericGetAttr(obj, attr_name);
     }
     return __Pyx_PyObject_GenericGetAttrNoDict(obj, attr_name);
+}
+#endif
+
+/* PyErrExceptionMatches */
+#if CYTHON_FAST_THREAD_STATE
+static int __Pyx_PyErr_ExceptionMatchesTuple(PyObject *exc_type, PyObject *tuple) {
+    Py_ssize_t i, n;
+    n = PyTuple_GET_SIZE(tuple);
+#if PY_MAJOR_VERSION >= 3
+    for (i=0; i<n; i++) {
+        if (exc_type == PyTuple_GET_ITEM(tuple, i)) return 1;
+    }
+#endif
+    for (i=0; i<n; i++) {
+        if (__Pyx_PyErr_GivenExceptionMatches(exc_type, PyTuple_GET_ITEM(tuple, i))) return 1;
+    }
+    return 0;
+}
+static CYTHON_INLINE int __Pyx_PyErr_ExceptionMatchesInState(PyThreadState* tstate, PyObject* err) {
+    PyObject *exc_type = tstate->curexc_type;
+    if (exc_type == err) return 1;
+    if (unlikely(!exc_type)) return 0;
+    if (unlikely(PyTuple_Check(err)))
+        return __Pyx_PyErr_ExceptionMatchesTuple(exc_type, err);
+    return __Pyx_PyErr_GivenExceptionMatches(exc_type, err);
 }
 #endif
 

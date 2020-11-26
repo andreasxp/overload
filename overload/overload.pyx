@@ -33,9 +33,8 @@ def make_overloaded(func, bind_func):
             fail_reasons = []
 
             for func, bind in overloads:
-                try:
-                    bind(func, args, kwargs)
-                except TypeError as error:
+                error = bind(func, args, kwargs)
+                if error is not None:
                     fail_reasons.append(error)
                 else:
                     candidates.append(func)

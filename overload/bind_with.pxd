@@ -13,4 +13,4 @@ cdef struct Parameter:
 cdef class Signature:
 	cdef vector[Parameter] parameters
 
-cpdef bind_with(Signature sig, bind_func, args, kwargs)
+cdef bind_with(Signature sig, object bind_func, tuple args, dict kwargs)

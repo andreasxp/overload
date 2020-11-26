@@ -891,7 +891,7 @@ struct __pyx_obj_8overload_9bind_with_Signature {
 
 
 /* "overload/bind.pyx":12
- *     bind_with(_signature_cache[func], isinstance, args, kwargs)
+ *     return bind_with(_signature_cache[func], isinstance, args, kwargs)
  * 
  * def bind_annotated(func, args, kwargs):             # <<<<<<<<<<<<<<
  *     def matchesannotation(obj, ann):
@@ -1532,7 +1532,7 @@ static PyTypeObject *__pyx_ptype_7cpython_7complex_complex = 0;
 
 /* Module declarations from 'overload.bind_with' */
 static PyTypeObject *__pyx_ptype_8overload_9bind_with_Signature = 0;
-static PyObject *(*__pyx_f_8overload_9bind_with_bind_with)(struct __pyx_obj_8overload_9bind_with_Signature *, PyObject *, PyObject *, PyObject *, int __pyx_skip_dispatch); /*proto*/
+static PyObject *(*__pyx_f_8overload_9bind_with_bind_with)(struct __pyx_obj_8overload_9bind_with_Signature *, PyObject *, PyObject *, PyObject *); /*proto*/
 
 /* Module declarations from 'overload.bind' */
 static PyTypeObject *__pyx_ptype_8overload_4bind___pyx_scope_struct__bind_annotated = 0;
@@ -1626,7 +1626,7 @@ static PyObject *__pyx_codeobj__7;
  * _signature_cache = {}
  * 
  * def bind_strict(func, args, kwargs):             # <<<<<<<<<<<<<<
- *     bind_with(_signature_cache[func], isinstance, args, kwargs)
+ *     return bind_with(_signature_cache[func], isinstance, args, kwargs)
  * 
  */
 
@@ -1720,10 +1720,11 @@ static PyObject *__pyx_pf_8overload_4bind_bind_strict(CYTHON_UNUSED PyObject *__
   /* "overload/bind.pyx":10
  * 
  * def bind_strict(func, args, kwargs):
- *     bind_with(_signature_cache[func], isinstance, args, kwargs)             # <<<<<<<<<<<<<<
+ *     return bind_with(_signature_cache[func], isinstance, args, kwargs)             # <<<<<<<<<<<<<<
  * 
  * def bind_annotated(func, args, kwargs):
  */
+  __Pyx_XDECREF(__pyx_r);
   __Pyx_GetModuleGlobalName(__pyx_t_1, __pyx_n_s_signature_cache); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 10, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_t_2 = __Pyx_PyObject_GetItem(__pyx_t_1, __pyx_v_func); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 10, __pyx_L1_error)
@@ -1732,23 +1733,25 @@ static PyObject *__pyx_pf_8overload_4bind_bind_strict(CYTHON_UNUSED PyObject *__
   if (!(likely(((__pyx_t_2) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_2, __pyx_ptype_8overload_9bind_with_Signature))))) __PYX_ERR(0, 10, __pyx_L1_error)
   __pyx_t_1 = __Pyx_GetBuiltinName(__pyx_n_s_isinstance); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 10, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_3 = __pyx_f_8overload_9bind_with_bind_with(((struct __pyx_obj_8overload_9bind_with_Signature *)__pyx_t_2), __pyx_t_1, __pyx_v_args, __pyx_v_kwargs, 0); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 10, __pyx_L1_error)
+  if (!(likely(PyTuple_CheckExact(__pyx_v_args))||((__pyx_v_args) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "tuple", Py_TYPE(__pyx_v_args)->tp_name), 0))) __PYX_ERR(0, 10, __pyx_L1_error)
+  if (!(likely(PyDict_CheckExact(__pyx_v_kwargs))||((__pyx_v_kwargs) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "dict", Py_TYPE(__pyx_v_kwargs)->tp_name), 0))) __PYX_ERR(0, 10, __pyx_L1_error)
+  __pyx_t_3 = __pyx_f_8overload_9bind_with_bind_with(((struct __pyx_obj_8overload_9bind_with_Signature *)__pyx_t_2), __pyx_t_1, ((PyObject*)__pyx_v_args), ((PyObject*)__pyx_v_kwargs)); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 10, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+  __pyx_r = __pyx_t_3;
+  __pyx_t_3 = 0;
+  goto __pyx_L0;
 
   /* "overload/bind.pyx":9
  * _signature_cache = {}
  * 
  * def bind_strict(func, args, kwargs):             # <<<<<<<<<<<<<<
- *     bind_with(_signature_cache[func], isinstance, args, kwargs)
+ *     return bind_with(_signature_cache[func], isinstance, args, kwargs)
  * 
  */
 
   /* function exit code */
-  __pyx_r = Py_None; __Pyx_INCREF(Py_None);
-  goto __pyx_L0;
   __pyx_L1_error:;
   __Pyx_XDECREF(__pyx_t_1);
   __Pyx_XDECREF(__pyx_t_2);
@@ -1762,7 +1765,7 @@ static PyObject *__pyx_pf_8overload_4bind_bind_strict(CYTHON_UNUSED PyObject *__
 }
 
 /* "overload/bind.pyx":12
- *     bind_with(_signature_cache[func], isinstance, args, kwargs)
+ *     return bind_with(_signature_cache[func], isinstance, args, kwargs)
  * 
  * def bind_annotated(func, args, kwargs):             # <<<<<<<<<<<<<<
  *     def matchesannotation(obj, ann):
@@ -2249,7 +2252,7 @@ static PyObject *__pyx_pf_8overload_4bind_14bind_annotated_matchesannotation(PyO
  *         else:
  *             return isinstance(obj, ann)             # <<<<<<<<<<<<<<
  * 
- *     bind_with(_signature_cache[func], matchesannotation, args, kwargs)
+ *     return bind_with(_signature_cache[func], matchesannotation, args, kwargs)
  */
   /*else*/ {
     __Pyx_XDECREF(__pyx_r);
@@ -2289,7 +2292,7 @@ static PyObject *__pyx_pf_8overload_4bind_14bind_annotated_matchesannotation(PyO
 }
 
 /* "overload/bind.pyx":12
- *     bind_with(_signature_cache[func], isinstance, args, kwargs)
+ *     return bind_with(_signature_cache[func], isinstance, args, kwargs)
  * 
  * def bind_annotated(func, args, kwargs):             # <<<<<<<<<<<<<<
  *     def matchesannotation(obj, ann):
@@ -2332,8 +2335,9 @@ static PyObject *__pyx_pf_8overload_4bind_2bind_annotated(CYTHON_UNUSED PyObject
   /* "overload/bind.pyx":26
  *             return isinstance(obj, ann)
  * 
- *     bind_with(_signature_cache[func], matchesannotation, args, kwargs)             # <<<<<<<<<<<<<<
+ *     return bind_with(_signature_cache[func], matchesannotation, args, kwargs)             # <<<<<<<<<<<<<<
  */
+  __Pyx_XDECREF(__pyx_r);
   __Pyx_GetModuleGlobalName(__pyx_t_1, __pyx_n_s_signature_cache); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 26, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_t_2 = __Pyx_PyObject_GetItem(__pyx_t_1, __pyx_v_func); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 26, __pyx_L1_error)
@@ -2342,14 +2346,18 @@ static PyObject *__pyx_pf_8overload_4bind_2bind_annotated(CYTHON_UNUSED PyObject
   if (!(likely(((__pyx_t_2) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_2, __pyx_ptype_8overload_9bind_with_Signature))))) __PYX_ERR(0, 26, __pyx_L1_error)
   __pyx_t_1 = __pyx_cur_scope->__pyx_v_matchesannotation;
   __Pyx_INCREF(__pyx_t_1);
-  __pyx_t_3 = __pyx_f_8overload_9bind_with_bind_with(((struct __pyx_obj_8overload_9bind_with_Signature *)__pyx_t_2), __pyx_t_1, __pyx_v_args, __pyx_v_kwargs, 0); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 26, __pyx_L1_error)
+  if (!(likely(PyTuple_CheckExact(__pyx_v_args))||((__pyx_v_args) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "tuple", Py_TYPE(__pyx_v_args)->tp_name), 0))) __PYX_ERR(0, 26, __pyx_L1_error)
+  if (!(likely(PyDict_CheckExact(__pyx_v_kwargs))||((__pyx_v_kwargs) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "dict", Py_TYPE(__pyx_v_kwargs)->tp_name), 0))) __PYX_ERR(0, 26, __pyx_L1_error)
+  __pyx_t_3 = __pyx_f_8overload_9bind_with_bind_with(((struct __pyx_obj_8overload_9bind_with_Signature *)__pyx_t_2), __pyx_t_1, ((PyObject*)__pyx_v_args), ((PyObject*)__pyx_v_kwargs)); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 26, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+  __pyx_r = __pyx_t_3;
+  __pyx_t_3 = 0;
+  goto __pyx_L0;
 
   /* "overload/bind.pyx":12
- *     bind_with(_signature_cache[func], isinstance, args, kwargs)
+ *     return bind_with(_signature_cache[func], isinstance, args, kwargs)
  * 
  * def bind_annotated(func, args, kwargs):             # <<<<<<<<<<<<<<
  *     def matchesannotation(obj, ann):
@@ -2357,8 +2365,6 @@ static PyObject *__pyx_pf_8overload_4bind_2bind_annotated(CYTHON_UNUSED PyObject
  */
 
   /* function exit code */
-  __pyx_r = Py_None; __Pyx_INCREF(Py_None);
-  goto __pyx_L0;
   __pyx_L1_error:;
   __Pyx_XDECREF(__pyx_t_1);
   __Pyx_XDECREF(__pyx_t_2);
@@ -2843,7 +2849,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
  * _signature_cache = {}
  * 
  * def bind_strict(func, args, kwargs):             # <<<<<<<<<<<<<<
- *     bind_with(_signature_cache[func], isinstance, args, kwargs)
+ *     return bind_with(_signature_cache[func], isinstance, args, kwargs)
  * 
  */
   __pyx_tuple__4 = PyTuple_Pack(3, __pyx_n_s_func, __pyx_n_s_args, __pyx_n_s_kwargs); if (unlikely(!__pyx_tuple__4)) __PYX_ERR(0, 9, __pyx_L1_error)
@@ -2852,7 +2858,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
   __pyx_codeobj__5 = (PyObject*)__Pyx_PyCode_New(3, 0, 3, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__4, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_overload_bind_pyx, __pyx_n_s_bind_strict, 9, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__5)) __PYX_ERR(0, 9, __pyx_L1_error)
 
   /* "overload/bind.pyx":12
- *     bind_with(_signature_cache[func], isinstance, args, kwargs)
+ *     return bind_with(_signature_cache[func], isinstance, args, kwargs)
  * 
  * def bind_annotated(func, args, kwargs):             # <<<<<<<<<<<<<<
  *     def matchesannotation(obj, ann):
@@ -3006,7 +3012,7 @@ static int __Pyx_modinit_function_import_code(void) {
   /*--- Function import code ---*/
   __pyx_t_1 = PyImport_ImportModule("overload.bind_with"); if (!__pyx_t_1) __PYX_ERR(0, 1, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (__Pyx_ImportFunction(__pyx_t_1, "bind_with", (void (**)(void))&__pyx_f_8overload_9bind_with_bind_with, "PyObject *(struct __pyx_obj_8overload_9bind_with_Signature *, PyObject *, PyObject *, PyObject *, int __pyx_skip_dispatch)") < 0) __PYX_ERR(0, 1, __pyx_L1_error)
+  if (__Pyx_ImportFunction(__pyx_t_1, "bind_with", (void (**)(void))&__pyx_f_8overload_9bind_with_bind_with, "PyObject *(struct __pyx_obj_8overload_9bind_with_Signature *, PyObject *, PyObject *, PyObject *)") < 0) __PYX_ERR(0, 1, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __Pyx_RefNannyFinishContext();
   return 0;
@@ -3270,7 +3276,7 @@ if (!__Pyx_RefNanny) {
  * _signature_cache = {}
  * 
  * def bind_strict(func, args, kwargs):             # <<<<<<<<<<<<<<
- *     bind_with(_signature_cache[func], isinstance, args, kwargs)
+ *     return bind_with(_signature_cache[func], isinstance, args, kwargs)
  * 
  */
   __pyx_t_2 = PyCFunction_NewEx(&__pyx_mdef_8overload_4bind_1bind_strict, NULL, __pyx_n_s_overload_bind); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 9, __pyx_L1_error)
@@ -3279,7 +3285,7 @@ if (!__Pyx_RefNanny) {
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
   /* "overload/bind.pyx":12
- *     bind_with(_signature_cache[func], isinstance, args, kwargs)
+ *     return bind_with(_signature_cache[func], isinstance, args, kwargs)
  * 
  * def bind_annotated(func, args, kwargs):             # <<<<<<<<<<<<<<
  *     def matchesannotation(obj, ann):

@@ -7,7 +7,7 @@ from .bind_with cimport bind_with
 _signature_cache = {}
 
 def bind_strict(func, args, kwargs):
-    bind_with(_signature_cache[func], isinstance, args, kwargs)
+    return bind_with(_signature_cache[func], isinstance, args, kwargs)
 
 def bind_annotated(func, args, kwargs):
     def matchesannotation(obj, ann):
@@ -23,4 +23,4 @@ def bind_annotated(func, args, kwargs):
         else:
             return isinstance(obj, ann)
 
-    bind_with(_signature_cache[func], matchesannotation, args, kwargs)
+    return bind_with(_signature_cache[func], matchesannotation, args, kwargs)
