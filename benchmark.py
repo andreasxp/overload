@@ -6,18 +6,18 @@ from cProfile import Profile
 from pyprof2calltree import convert, visualize
 
 @overload
-def func(x, y):
+def func_ovl(x, y):
     pass
 
 @overload
-def func(val: tuple):
+def func_ovl(val: tuple):
     pass
 
 @overload
-def func(val: str):
+def func_ovl(val: str):
     pass
 
-def func2(*args):
+def func_normal(*args):
     if len(args) == 2:
         return
     elif isinstance(args[0], tuple):
@@ -28,8 +28,9 @@ def func2(*args):
         raise TypeError
 
 def main():
-    N = 100
+    N = 10000  # Number of tests
 
+    # Different argument types
     variants = [
         (1, 3),
         ((1, 3),),
@@ -41,14 +42,24 @@ def main():
     for i in range(N):
         args.append(variants[randint(0, len(variants)-1)])
     
-    def run():
+    def run_ovl():
         for arg in args:
-            func(*arg)
+            func_ovl(*arg)
     
-    print(timeit.timeit(run, number=1) * 1000000 / N, " mcs")
+    def run_normal():
+        for arg in args:
+            func_normal(*arg)
+    
+    time_ovl = timeit.timeit(run_ovl, number=1) / N
+    time_normal = timeit.timeit(run_normal, number=1) / N
+
     profiler = Profile()
-    profiler.runctx("run()", globals(), locals())
+    profiler.runctx("run_ovl()", globals(), locals())
     convert(profiler.getstats(), "C:/Users/andreasxp/Desktop/callgrind.profile")
+
+    print(f"Average over {N} runs:")
+    print(f"Overloaded function:     {time_ovl * 1000000:.2f} mcs")
+    print(f"Non-overloaded function: {time_normal * 1000000:.2f} mcs")
 
 
 if __name__ == "__main__":
