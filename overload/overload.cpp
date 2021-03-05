@@ -853,46 +853,45 @@ static const char *__pyx_f[] = {
   "type.pxd",
   "bool.pxd",
   "complex.pxd",
-  "overload\\bind_with.pxd",
+  "overload\\signature.pxd",
 };
 
 /*--- Type declarations ---*/
-struct __pyx_obj_8overload_9bind_with_Signature;
+struct __pyx_obj_8overload_9signature_Signature;
 struct __pyx_obj_8overload_8overload___pyx_scope_struct____pyx_f_8overload_8overload_make_overloaded;
-struct __pyx_obj_8overload_8overload___pyx_scope_struct_1_decorator;
-struct __pyx_t_8overload_9bind_with_Parameter;
+struct __pyx_t_8overload_9signature_Parameter;
 
-/* "bind_with.pxd":11
- * from libcpp.vector cimport vector
+/* "signature.pxd":12
+ * 
  * 
  * cdef struct Parameter:             # <<<<<<<<<<<<<<
  * 	int kind
  * 	PyObject* annotation
  */
-struct __pyx_t_8overload_9bind_with_Parameter {
+struct __pyx_t_8overload_9signature_Parameter {
   int kind;
   PyObject *annotation;
   PyObject *name;
   bool has_default;
 };
 
-/* "bind_with.pxd":17
- * 	bool has_default
+/* "signature.pxd":19
+ * 
  * 
  * cdef class Signature:             # <<<<<<<<<<<<<<
  * 	cdef vector[Parameter] parameters
  * 
  */
-struct __pyx_obj_8overload_9bind_with_Signature {
+struct __pyx_obj_8overload_9signature_Signature {
   PyObject_HEAD
-  std::vector<struct __pyx_t_8overload_9bind_with_Parameter>  parameters;
+  std::vector<struct __pyx_t_8overload_9signature_Parameter>  parameters;
 };
 
 
-/* "overload/overload.pyx":43
+/* "overload/overload.pyx":44
  * 
  * 
- * cdef make_overloaded(func, bind_func):             # <<<<<<<<<<<<<<
+ * cdef make_overloaded(func):             # <<<<<<<<<<<<<<
  *     """Make a function `func` overloaded.
  * 
  */
@@ -900,21 +899,7 @@ struct __pyx_obj_8overload_8overload___pyx_scope_struct____pyx_f_8overload_8over
   PyObject_HEAD
   PyObject *__pyx_v___module__;
   PyObject *__pyx_v___qualname__;
-  PyObject *__pyx_v_binders;
   PyObject *__pyx_v_functions;
-};
-
-
-/* "overload/overload.pyx":78
- *     return overloaded_function
- * 
- * def decorator(bind_func):             # <<<<<<<<<<<<<<
- *     """Create an overload decorator with a particular bind function."""
- *     def overload(func):
- */
-struct __pyx_obj_8overload_8overload___pyx_scope_struct_1_decorator {
-  PyObject_HEAD
-  PyObject *__pyx_v_bind_func;
 };
 
 
@@ -981,16 +966,6 @@ struct __pyx_obj_8overload_8overload___pyx_scope_struct_1_decorator {
     } while (0)
 #define __Pyx_CLEAR(r)    do { PyObject* tmp = ((PyObject*)(r)); r = NULL; __Pyx_DECREF(tmp);} while(0)
 #define __Pyx_XCLEAR(r)   do { if((r) != NULL) {PyObject* tmp = ((PyObject*)(r)); r = NULL; __Pyx_DECREF(tmp);}} while(0)
-
-/* PyObjectGetAttrStr.proto */
-#if CYTHON_USE_TYPE_SLOTS
-static CYTHON_INLINE PyObject* __Pyx_PyObject_GetAttrStr(PyObject* obj, PyObject* attr_name);
-#else
-#define __Pyx_PyObject_GetAttrStr(o,n) PyObject_GetAttr(o,n)
-#endif
-
-/* GetBuiltinName.proto */
-static PyObject *__Pyx_GetBuiltinName(PyObject *name);
 
 /* PyThreadStateGet.proto */
 #if CYTHON_FAST_THREAD_STATE
@@ -1230,71 +1205,15 @@ static CYTHON_INLINE void __Pyx_ErrFetchInState(PyThreadState *tstate, PyObject 
   #define __Pyx_TraceLine(lineno, nogil, goto_error)   if ((1)); else goto_error;
 #endif
 
-/* PyObjectCall.proto */
-#if CYTHON_COMPILING_IN_CPYTHON
-static CYTHON_INLINE PyObject* __Pyx_PyObject_Call(PyObject *func, PyObject *arg, PyObject *kw);
+/* PyObjectGetAttrStr.proto */
+#if CYTHON_USE_TYPE_SLOTS
+static CYTHON_INLINE PyObject* __Pyx_PyObject_GetAttrStr(PyObject* obj, PyObject* attr_name);
 #else
-#define __Pyx_PyObject_Call(func, arg, kw) PyObject_Call(func, arg, kw)
+#define __Pyx_PyObject_GetAttrStr(o,n) PyObject_GetAttr(o,n)
 #endif
 
-/* RaiseTooManyValuesToUnpack.proto */
-static CYTHON_INLINE void __Pyx_RaiseTooManyValuesError(Py_ssize_t expected);
-
-/* RaiseNeedMoreValuesToUnpack.proto */
-static CYTHON_INLINE void __Pyx_RaiseNeedMoreValuesError(Py_ssize_t index);
-
-/* IterFinish.proto */
-static CYTHON_INLINE int __Pyx_IterFinish(void);
-
-/* UnpackItemEndCheck.proto */
-static int __Pyx_IternextUnpackEndCheck(PyObject *retval, Py_ssize_t expected);
-
-/* PyFunctionFastCall.proto */
-#if CYTHON_FAST_PYCALL
-#define __Pyx_PyFunction_FastCall(func, args, nargs)\
-    __Pyx_PyFunction_FastCallDict((func), (args), (nargs), NULL)
-#if 1 || PY_VERSION_HEX < 0x030600B1
-static PyObject *__Pyx_PyFunction_FastCallDict(PyObject *func, PyObject **args, Py_ssize_t nargs, PyObject *kwargs);
-#else
-#define __Pyx_PyFunction_FastCallDict(func, args, nargs, kwargs) _PyFunction_FastCallDict(func, args, nargs, kwargs)
-#endif
-#define __Pyx_BUILD_ASSERT_EXPR(cond)\
-    (sizeof(char [1 - 2*!(cond)]) - 1)
-#ifndef Py_MEMBER_SIZE
-#define Py_MEMBER_SIZE(type, member) sizeof(((type *)0)->member)
-#endif
-  static size_t __pyx_pyframe_localsplus_offset = 0;
-  #include "frameobject.h"
-  #define __Pxy_PyFrame_Initialize_Offsets()\
-    ((void)__Pyx_BUILD_ASSERT_EXPR(sizeof(PyFrameObject) == offsetof(PyFrameObject, f_localsplus) + Py_MEMBER_SIZE(PyFrameObject, f_localsplus)),\
-     (void)(__pyx_pyframe_localsplus_offset = ((size_t)PyFrame_Type.tp_basicsize) - Py_MEMBER_SIZE(PyFrameObject, f_localsplus)))
-  #define __Pyx_PyFrame_GetLocalsplus(frame)\
-    (assert(__pyx_pyframe_localsplus_offset), (PyObject **)(((char *)(frame)) + __pyx_pyframe_localsplus_offset))
-#endif
-
-/* PyCFunctionFastCall.proto */
-#if CYTHON_FAST_PYCCALL
-static CYTHON_INLINE PyObject *__Pyx_PyCFunction_FastCall(PyObject *func, PyObject **args, Py_ssize_t nargs);
-#else
-#define __Pyx_PyCFunction_FastCall(func, args, nargs)  (assert(0), NULL)
-#endif
-
-/* ListAppend.proto */
-#if CYTHON_USE_PYLIST_INTERNALS && CYTHON_ASSUME_SAFE_MACROS
-static CYTHON_INLINE int __Pyx_PyList_Append(PyObject* list, PyObject* x) {
-    PyListObject* L = (PyListObject*) list;
-    Py_ssize_t len = Py_SIZE(list);
-    if (likely(L->allocated > len) & likely(len > (L->allocated >> 1))) {
-        Py_INCREF(x);
-        PyList_SET_ITEM(list, len, x);
-        __Pyx_SET_SIZE(list, len + 1);
-        return 0;
-    }
-    return PyList_Append(list, x);
-}
-#else
-#define __Pyx_PyList_Append(L,x) PyList_Append(L,x)
-#endif
+/* GetBuiltinName.proto */
+static PyObject *__Pyx_GetBuiltinName(PyObject *name);
 
 /* PyDictVersioning.proto */
 #if CYTHON_USE_DICT_VERSIONS && CYTHON_USE_TYPE_SLOTS
@@ -1341,6 +1260,92 @@ static PyObject *__Pyx__GetModuleGlobalName(PyObject *name, PY_UINT64_T *dict_ve
 #define __Pyx_GetModuleGlobalName(var, name)  (var) = __Pyx__GetModuleGlobalName(name)
 #define __Pyx_GetModuleGlobalNameUncached(var, name)  (var) = __Pyx__GetModuleGlobalName(name)
 static CYTHON_INLINE PyObject *__Pyx__GetModuleGlobalName(PyObject *name);
+#endif
+
+/* GetItemInt.proto */
+#define __Pyx_GetItemInt(o, i, type, is_signed, to_py_func, is_list, wraparound, boundscheck)\
+    (__Pyx_fits_Py_ssize_t(i, type, is_signed) ?\
+    __Pyx_GetItemInt_Fast(o, (Py_ssize_t)i, is_list, wraparound, boundscheck) :\
+    (is_list ? (PyErr_SetString(PyExc_IndexError, "list index out of range"), (PyObject*)NULL) :\
+               __Pyx_GetItemInt_Generic(o, to_py_func(i))))
+#define __Pyx_GetItemInt_List(o, i, type, is_signed, to_py_func, is_list, wraparound, boundscheck)\
+    (__Pyx_fits_Py_ssize_t(i, type, is_signed) ?\
+    __Pyx_GetItemInt_List_Fast(o, (Py_ssize_t)i, wraparound, boundscheck) :\
+    (PyErr_SetString(PyExc_IndexError, "list index out of range"), (PyObject*)NULL))
+static CYTHON_INLINE PyObject *__Pyx_GetItemInt_List_Fast(PyObject *o, Py_ssize_t i,
+                                                              int wraparound, int boundscheck);
+#define __Pyx_GetItemInt_Tuple(o, i, type, is_signed, to_py_func, is_list, wraparound, boundscheck)\
+    (__Pyx_fits_Py_ssize_t(i, type, is_signed) ?\
+    __Pyx_GetItemInt_Tuple_Fast(o, (Py_ssize_t)i, wraparound, boundscheck) :\
+    (PyErr_SetString(PyExc_IndexError, "tuple index out of range"), (PyObject*)NULL))
+static CYTHON_INLINE PyObject *__Pyx_GetItemInt_Tuple_Fast(PyObject *o, Py_ssize_t i,
+                                                              int wraparound, int boundscheck);
+static PyObject *__Pyx_GetItemInt_Generic(PyObject *o, PyObject* j);
+static CYTHON_INLINE PyObject *__Pyx_GetItemInt_Fast(PyObject *o, Py_ssize_t i,
+                                                     int is_list, int wraparound, int boundscheck);
+
+/* ObjectGetItem.proto */
+#if CYTHON_USE_TYPE_SLOTS
+static CYTHON_INLINE PyObject *__Pyx_PyObject_GetItem(PyObject *obj, PyObject* key);
+#else
+#define __Pyx_PyObject_GetItem(obj, key)  PyObject_GetItem(obj, key)
+#endif
+
+/* ExtTypeTest.proto */
+static CYTHON_INLINE int __Pyx_TypeTest(PyObject *obj, PyTypeObject *type);
+
+/* ListAppend.proto */
+#if CYTHON_USE_PYLIST_INTERNALS && CYTHON_ASSUME_SAFE_MACROS
+static CYTHON_INLINE int __Pyx_PyList_Append(PyObject* list, PyObject* x) {
+    PyListObject* L = (PyListObject*) list;
+    Py_ssize_t len = Py_SIZE(list);
+    if (likely(L->allocated > len) & likely(len > (L->allocated >> 1))) {
+        Py_INCREF(x);
+        PyList_SET_ITEM(list, len, x);
+        __Pyx_SET_SIZE(list, len + 1);
+        return 0;
+    }
+    return PyList_Append(list, x);
+}
+#else
+#define __Pyx_PyList_Append(L,x) PyList_Append(L,x)
+#endif
+
+/* PyFunctionFastCall.proto */
+#if CYTHON_FAST_PYCALL
+#define __Pyx_PyFunction_FastCall(func, args, nargs)\
+    __Pyx_PyFunction_FastCallDict((func), (args), (nargs), NULL)
+#if 1 || PY_VERSION_HEX < 0x030600B1
+static PyObject *__Pyx_PyFunction_FastCallDict(PyObject *func, PyObject **args, Py_ssize_t nargs, PyObject *kwargs);
+#else
+#define __Pyx_PyFunction_FastCallDict(func, args, nargs, kwargs) _PyFunction_FastCallDict(func, args, nargs, kwargs)
+#endif
+#define __Pyx_BUILD_ASSERT_EXPR(cond)\
+    (sizeof(char [1 - 2*!(cond)]) - 1)
+#ifndef Py_MEMBER_SIZE
+#define Py_MEMBER_SIZE(type, member) sizeof(((type *)0)->member)
+#endif
+  static size_t __pyx_pyframe_localsplus_offset = 0;
+  #include "frameobject.h"
+  #define __Pxy_PyFrame_Initialize_Offsets()\
+    ((void)__Pyx_BUILD_ASSERT_EXPR(sizeof(PyFrameObject) == offsetof(PyFrameObject, f_localsplus) + Py_MEMBER_SIZE(PyFrameObject, f_localsplus)),\
+     (void)(__pyx_pyframe_localsplus_offset = ((size_t)PyFrame_Type.tp_basicsize) - Py_MEMBER_SIZE(PyFrameObject, f_localsplus)))
+  #define __Pyx_PyFrame_GetLocalsplus(frame)\
+    (assert(__pyx_pyframe_localsplus_offset), (PyObject **)(((char *)(frame)) + __pyx_pyframe_localsplus_offset))
+#endif
+
+/* PyCFunctionFastCall.proto */
+#if CYTHON_FAST_PYCCALL
+static CYTHON_INLINE PyObject *__Pyx_PyCFunction_FastCall(PyObject *func, PyObject **args, Py_ssize_t nargs);
+#else
+#define __Pyx_PyCFunction_FastCall(func, args, nargs)  (assert(0), NULL)
+#endif
+
+/* PyObjectCall.proto */
+#if CYTHON_COMPILING_IN_CPYTHON
+static CYTHON_INLINE PyObject* __Pyx_PyObject_Call(PyObject *func, PyObject *arg, PyObject *kw);
+#else
+#define __Pyx_PyObject_Call(func, arg, kw) PyObject_Call(func, arg, kw)
 #endif
 
 /* RaiseException.proto */
@@ -1428,35 +1433,6 @@ static CYTHON_INLINE int __Pyx_PyObject_SetAttrStr(PyObject* obj, PyObject* attr
 #else
 #define __Pyx_PyObject_DelAttrStr(o,n)   PyObject_DelAttr(o,n)
 #define __Pyx_PyObject_SetAttrStr(o,n,v) PyObject_SetAttr(o,n,v)
-#endif
-
-/* GetItemInt.proto */
-#define __Pyx_GetItemInt(o, i, type, is_signed, to_py_func, is_list, wraparound, boundscheck)\
-    (__Pyx_fits_Py_ssize_t(i, type, is_signed) ?\
-    __Pyx_GetItemInt_Fast(o, (Py_ssize_t)i, is_list, wraparound, boundscheck) :\
-    (is_list ? (PyErr_SetString(PyExc_IndexError, "list index out of range"), (PyObject*)NULL) :\
-               __Pyx_GetItemInt_Generic(o, to_py_func(i))))
-#define __Pyx_GetItemInt_List(o, i, type, is_signed, to_py_func, is_list, wraparound, boundscheck)\
-    (__Pyx_fits_Py_ssize_t(i, type, is_signed) ?\
-    __Pyx_GetItemInt_List_Fast(o, (Py_ssize_t)i, wraparound, boundscheck) :\
-    (PyErr_SetString(PyExc_IndexError, "list index out of range"), (PyObject*)NULL))
-static CYTHON_INLINE PyObject *__Pyx_GetItemInt_List_Fast(PyObject *o, Py_ssize_t i,
-                                                              int wraparound, int boundscheck);
-#define __Pyx_GetItemInt_Tuple(o, i, type, is_signed, to_py_func, is_list, wraparound, boundscheck)\
-    (__Pyx_fits_Py_ssize_t(i, type, is_signed) ?\
-    __Pyx_GetItemInt_Tuple_Fast(o, (Py_ssize_t)i, wraparound, boundscheck) :\
-    (PyErr_SetString(PyExc_IndexError, "tuple index out of range"), (PyObject*)NULL))
-static CYTHON_INLINE PyObject *__Pyx_GetItemInt_Tuple_Fast(PyObject *o, Py_ssize_t i,
-                                                              int wraparound, int boundscheck);
-static PyObject *__Pyx_GetItemInt_Generic(PyObject *o, PyObject* j);
-static CYTHON_INLINE PyObject *__Pyx_GetItemInt_Fast(PyObject *o, Py_ssize_t i,
-                                                     int is_list, int wraparound, int boundscheck);
-
-/* ObjectGetItem.proto */
-#if CYTHON_USE_TYPE_SLOTS
-static CYTHON_INLINE PyObject *__Pyx_PyObject_GetItem(PyObject *obj, PyObject* key);
-#else
-#define __Pyx_PyObject_GetItem(obj, key)  PyObject_GetItem(obj, key)
 #endif
 
 /* PyObjectCall2Args.proto */
@@ -1571,6 +1547,9 @@ static CYTHON_INLINE int __Pyx_PyErr_GivenExceptionMatches2(PyObject *err, PyObj
 /* CheckBinaryVersion.proto */
 static int __Pyx_check_binary_version(void);
 
+/* FunctionImport.proto */
+static int __Pyx_ImportFunction(PyObject *module, const char *funcname, void (**f)(void), const char *sig);
+
 /* InitStrings.proto */
 static int __Pyx_InitStrings(__Pyx_StringTabEntry *t);
 
@@ -1662,23 +1641,23 @@ static PyTypeObject *__pyx_ptype_7cpython_7complex_complex = 0;
 
 /* Module declarations from 'libcpp' */
 
+/* Module declarations from 'overload.signature' */
+static PyTypeObject *__pyx_ptype_8overload_9signature_Signature = 0;
+static struct __pyx_obj_8overload_9signature_Signature *(*__pyx_f_8overload_9signature_createSignature)(PyObject *); /*proto*/
+
 /* Module declarations from 'overload.bind_with' */
-static PyTypeObject *__pyx_ptype_8overload_9bind_with_Signature = 0;
+static PyObject *(*__pyx_f_8overload_9bind_with_bind_with)(struct __pyx_obj_8overload_9signature_Signature *, PyObject *, PyObject *, PyObject *); /*proto*/
 
 /* Module declarations from 'overload.overload' */
 static PyTypeObject *__pyx_ptype_8overload_8overload___pyx_scope_struct____pyx_f_8overload_8overload_make_overloaded = 0;
-static PyTypeObject *__pyx_ptype_8overload_8overload___pyx_scope_struct_1_decorator = 0;
-static PyObject *__pyx_f_8overload_8overload_perform_overload_resolution(PyObject *, PyObject *, PyObject *, PyObject *, PyObject *, PyObject *); /*proto*/
-static PyObject *__pyx_f_8overload_8overload_make_overloaded(PyObject *, PyObject *); /*proto*/
+static PyObject *__pyx_f_8overload_8overload_perform_overload_resolution(PyObject *, PyObject *, PyObject *, PyObject *, PyObject *); /*proto*/
+static PyObject *__pyx_f_8overload_8overload_make_overloaded(PyObject *); /*proto*/
 #define __Pyx_MODULE_NAME "overload.overload"
 extern int __pyx_module_is_main_overload__overload;
 int __pyx_module_is_main_overload__overload = 0;
 
 /* Implementation of 'overload.overload' */
-static PyObject *__pyx_builtin_zip;
-static const char __pyx_k_zip[] = "zip";
 static const char __pyx_k_args[] = "args";
-static const char __pyx_k_bind[] = "bind";
 static const char __pyx_k_func[] = "func";
 static const char __pyx_k_main[] = "__main__";
 static const char __pyx_k_name[] = "__name__";
@@ -1688,48 +1667,35 @@ static const char __pyx_k_append[] = "append";
 static const char __pyx_k_import[] = "__import__";
 static const char __pyx_k_kwargs[] = "kwargs";
 static const char __pyx_k_module[] = "__module__";
-static const char __pyx_k_binders[] = "binders";
 static const char __pyx_k_inspect[] = "inspect";
 static const char __pyx_k_overload[] = "overload";
 static const char __pyx_k_qualname[] = "__qualname__";
 static const char __pyx_k_registry[] = "_registry";
-static const char __pyx_k_bind_func[] = "bind_func";
-static const char __pyx_k_decorator[] = "decorator";
 static const char __pyx_k_functions[] = "functions";
 static const char __pyx_k_itertools[] = "itertools";
 static const char __pyx_k_signature[] = "signature";
-static const char __pyx_k_overload_2[] = "_overload";
+static const char __pyx_k_isinstance[] = "isinstance";
 static const char __pyx_k_ovl_module[] = "ovl_module";
-static const char __pyx_k_bind_strict[] = "bind_strict";
-static const char __pyx_k_bind_annotated[] = "bind_annotated";
-static const char __pyx_k_overload_strict[] = "_overload_strict";
-static const char __pyx_k_signature_cache[] = "_signature_cache";
+static const char __pyx_k_overload_strict[] = "overload_strict";
+static const char __pyx_k_signature_cache[] = "signature_cache";
 static const char __pyx_k_overload_overload[] = "overload.overload";
-static const char __pyx_k_overload_strict_2[] = "overload_strict";
 static const char __pyx_k_cline_in_traceback[] = "cline_in_traceback";
 static const char __pyx_k_overloaded_function[] = "overloaded_function";
 static const char __pyx_k_overload_overload_pyx[] = "overload\\overload.pyx";
 static const char __pyx_k_AmbiguousOverloadError[] = "AmbiguousOverloadError";
 static const char __pyx_k_NoMatchingOverloadError[] = "NoMatchingOverloadError";
-static const char __pyx_k_decorator_locals_overload[] = "decorator.<locals>.overload";
 static const char __pyx_k_make_overloaded_locals_overloade[] = "make_overloaded.<locals>.overloaded_function";
 static PyObject *__pyx_n_s_AmbiguousOverloadError;
 static PyObject *__pyx_n_s_NoMatchingOverloadError;
 static PyObject *__pyx_n_s_append;
 static PyObject *__pyx_n_s_args;
-static PyObject *__pyx_n_s_bind;
-static PyObject *__pyx_n_s_bind_annotated;
-static PyObject *__pyx_n_s_bind_func;
-static PyObject *__pyx_n_s_bind_strict;
-static PyObject *__pyx_n_s_binders;
 static PyObject *__pyx_n_s_cline_in_traceback;
 static PyObject *__pyx_n_s_count;
-static PyObject *__pyx_n_s_decorator;
-static PyObject *__pyx_n_s_decorator_locals_overload;
 static PyObject *__pyx_n_s_func;
 static PyObject *__pyx_n_s_functions;
 static PyObject *__pyx_n_s_import;
 static PyObject *__pyx_n_s_inspect;
+static PyObject *__pyx_n_s_isinstance;
 static PyObject *__pyx_n_s_itertools;
 static PyObject *__pyx_n_s_kwargs;
 static PyObject *__pyx_n_s_main;
@@ -1737,11 +1703,9 @@ static PyObject *__pyx_n_s_make_overloaded_locals_overloade;
 static PyObject *__pyx_n_s_module;
 static PyObject *__pyx_n_s_name;
 static PyObject *__pyx_n_s_overload;
-static PyObject *__pyx_n_s_overload_2;
 static PyObject *__pyx_n_s_overload_overload;
 static PyObject *__pyx_kp_s_overload_overload_pyx;
 static PyObject *__pyx_n_s_overload_strict;
-static PyObject *__pyx_n_s_overload_strict_2;
 static PyObject *__pyx_n_s_overloaded_function;
 static PyObject *__pyx_n_s_ovl_module;
 static PyObject *__pyx_n_s_qualname;
@@ -1749,284 +1713,150 @@ static PyObject *__pyx_n_s_registry;
 static PyObject *__pyx_n_s_signature;
 static PyObject *__pyx_n_s_signature_cache;
 static PyObject *__pyx_n_s_test;
-static PyObject *__pyx_n_s_zip;
 static PyObject *__pyx_pf_8overload_8overload_15make_overloaded_overloaded_function(PyObject *__pyx_self, PyObject *__pyx_v_args, PyObject *__pyx_v_kwargs); /* proto */
-static PyObject *__pyx_pf_8overload_8overload_9decorator_overload(PyObject *__pyx_self, PyObject *__pyx_v_func); /* proto */
-static PyObject *__pyx_pf_8overload_8overload_decorator(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_bind_func); /* proto */
-static PyObject *__pyx_pf_8overload_8overload_2overload(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_func); /* proto */
-static PyObject *__pyx_pf_8overload_8overload_4overload_strict(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_func); /* proto */
+static PyObject *__pyx_pf_8overload_8overload_overload(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_func); /* proto */
+static PyObject *__pyx_pf_8overload_8overload_2overload_strict(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_func); /* proto */
 static PyObject *__pyx_tp_new_8overload_8overload___pyx_scope_struct____pyx_f_8overload_8overload_make_overloaded(PyTypeObject *t, PyObject *a, PyObject *k); /*proto*/
-static PyObject *__pyx_tp_new_8overload_8overload___pyx_scope_struct_1_decorator(PyTypeObject *t, PyObject *a, PyObject *k); /*proto*/
 static PyObject *__pyx_tuple_;
-static PyObject *__pyx_tuple__4;
-static PyObject *__pyx_tuple__8;
-static PyObject *__pyx_tuple__9;
-static PyObject *__pyx_tuple__10;
+static PyObject *__pyx_tuple__5;
+static PyObject *__pyx_tuple__6;
 static PyObject *__pyx_codeobj__2;
 static PyObject *__pyx_codeobj__3;
-static PyObject *__pyx_codeobj__5;
-static PyObject *__pyx_codeobj__6;
-static PyObject *__pyx_codeobj__7;
+static PyObject *__pyx_codeobj__4;
 /* Late includes */
 
-/* "overload/overload.pyx":21
+/* "overload/overload.pyx":22
  * """
  * 
- * cdef perform_overload_resolution(tuple args, dict kwargs, list functions, list binders, str module, str qualname):             # <<<<<<<<<<<<<<
+ * cdef perform_overload_resolution(tuple args, dict kwargs, list functions, str module, str qualname):             # <<<<<<<<<<<<<<
  *     cdef list candidates = []
  *     cdef list fail_reasons = []
  */
 
-static PyObject *__pyx_f_8overload_8overload_perform_overload_resolution(PyObject *__pyx_v_args, PyObject *__pyx_v_kwargs, PyObject *__pyx_v_functions, PyObject *__pyx_v_binders, PyObject *__pyx_v_module, PyObject *__pyx_v_qualname) {
+static PyObject *__pyx_f_8overload_8overload_perform_overload_resolution(PyObject *__pyx_v_args, PyObject *__pyx_v_kwargs, PyObject *__pyx_v_functions, PyObject *__pyx_v_module, PyObject *__pyx_v_qualname) {
   PyObject *__pyx_v_candidates = 0;
   PyObject *__pyx_v_fail_reasons = 0;
   PyObject *__pyx_v_func = NULL;
-  PyObject *__pyx_v_bind = NULL;
   PyObject *__pyx_v_error = NULL;
   PyObject *__pyx_r = NULL;
   __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
-  PyObject *__pyx_t_2 = NULL;
-  Py_ssize_t __pyx_t_3;
-  PyObject *(*__pyx_t_4)(PyObject *);
+  Py_ssize_t __pyx_t_2;
+  PyObject *__pyx_t_3 = NULL;
+  PyObject *__pyx_t_4 = NULL;
   PyObject *__pyx_t_5 = NULL;
-  PyObject *__pyx_t_6 = NULL;
-  PyObject *__pyx_t_7 = NULL;
-  PyObject *(*__pyx_t_8)(PyObject *);
+  int __pyx_t_6;
+  int __pyx_t_7;
+  int __pyx_t_8;
   int __pyx_t_9;
-  int __pyx_t_10;
-  int __pyx_t_11;
-  int __pyx_t_12;
+  PyObject *__pyx_t_10 = NULL;
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("perform_overload_resolution", 0);
-  __Pyx_TraceCall("perform_overload_resolution", __pyx_f[0], 21, 0, __PYX_ERR(0, 21, __pyx_L1_error));
+  __Pyx_TraceCall("perform_overload_resolution", __pyx_f[0], 22, 0, __PYX_ERR(0, 22, __pyx_L1_error));
 
-  /* "overload/overload.pyx":22
+  /* "overload/overload.pyx":23
  * 
- * cdef perform_overload_resolution(tuple args, dict kwargs, list functions, list binders, str module, str qualname):
+ * cdef perform_overload_resolution(tuple args, dict kwargs, list functions, str module, str qualname):
  *     cdef list candidates = []             # <<<<<<<<<<<<<<
  *     cdef list fail_reasons = []
  * 
  */
-  __pyx_t_1 = PyList_New(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 22, __pyx_L1_error)
+  __pyx_t_1 = PyList_New(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 23, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_v_candidates = ((PyObject*)__pyx_t_1);
   __pyx_t_1 = 0;
 
-  /* "overload/overload.pyx":23
- * cdef perform_overload_resolution(tuple args, dict kwargs, list functions, list binders, str module, str qualname):
+  /* "overload/overload.pyx":24
+ * cdef perform_overload_resolution(tuple args, dict kwargs, list functions, str module, str qualname):
  *     cdef list candidates = []
  *     cdef list fail_reasons = []             # <<<<<<<<<<<<<<
  * 
- *     for func, bind in zip(functions, binders):
+ *     for func in functions:
  */
-  __pyx_t_1 = PyList_New(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 23, __pyx_L1_error)
+  __pyx_t_1 = PyList_New(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 24, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_v_fail_reasons = ((PyObject*)__pyx_t_1);
   __pyx_t_1 = 0;
 
-  /* "overload/overload.pyx":25
+  /* "overload/overload.pyx":26
  *     cdef list fail_reasons = []
  * 
- *     for func, bind in zip(functions, binders):             # <<<<<<<<<<<<<<
- *         error = bind(func, args, kwargs)
+ *     for func in functions:             # <<<<<<<<<<<<<<
+ *         error = bind_with(signature_cache[func], isinstance, args, kwargs)
  *         if error is not None:
  */
-  __pyx_t_1 = PyTuple_New(2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 25, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_1);
-  __Pyx_INCREF(__pyx_v_functions);
-  __Pyx_GIVEREF(__pyx_v_functions);
-  PyTuple_SET_ITEM(__pyx_t_1, 0, __pyx_v_functions);
-  __Pyx_INCREF(__pyx_v_binders);
-  __Pyx_GIVEREF(__pyx_v_binders);
-  PyTuple_SET_ITEM(__pyx_t_1, 1, __pyx_v_binders);
-  __pyx_t_2 = __Pyx_PyObject_Call(__pyx_builtin_zip, __pyx_t_1, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 25, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_2);
-  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  if (likely(PyList_CheckExact(__pyx_t_2)) || PyTuple_CheckExact(__pyx_t_2)) {
-    __pyx_t_1 = __pyx_t_2; __Pyx_INCREF(__pyx_t_1); __pyx_t_3 = 0;
-    __pyx_t_4 = NULL;
-  } else {
-    __pyx_t_3 = -1; __pyx_t_1 = PyObject_GetIter(__pyx_t_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 25, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_1);
-    __pyx_t_4 = Py_TYPE(__pyx_t_1)->tp_iternext; if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 25, __pyx_L1_error)
+  if (unlikely(__pyx_v_functions == Py_None)) {
+    PyErr_SetString(PyExc_TypeError, "'NoneType' object is not iterable");
+    __PYX_ERR(0, 26, __pyx_L1_error)
   }
-  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+  __pyx_t_1 = __pyx_v_functions; __Pyx_INCREF(__pyx_t_1); __pyx_t_2 = 0;
   for (;;) {
-    if (likely(!__pyx_t_4)) {
-      if (likely(PyList_CheckExact(__pyx_t_1))) {
-        if (__pyx_t_3 >= PyList_GET_SIZE(__pyx_t_1)) break;
-        #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-        __pyx_t_2 = PyList_GET_ITEM(__pyx_t_1, __pyx_t_3); __Pyx_INCREF(__pyx_t_2); __pyx_t_3++; if (unlikely(0 < 0)) __PYX_ERR(0, 25, __pyx_L1_error)
-        #else
-        __pyx_t_2 = PySequence_ITEM(__pyx_t_1, __pyx_t_3); __pyx_t_3++; if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 25, __pyx_L1_error)
-        __Pyx_GOTREF(__pyx_t_2);
-        #endif
-      } else {
-        if (__pyx_t_3 >= PyTuple_GET_SIZE(__pyx_t_1)) break;
-        #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-        __pyx_t_2 = PyTuple_GET_ITEM(__pyx_t_1, __pyx_t_3); __Pyx_INCREF(__pyx_t_2); __pyx_t_3++; if (unlikely(0 < 0)) __PYX_ERR(0, 25, __pyx_L1_error)
-        #else
-        __pyx_t_2 = PySequence_ITEM(__pyx_t_1, __pyx_t_3); __pyx_t_3++; if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 25, __pyx_L1_error)
-        __Pyx_GOTREF(__pyx_t_2);
-        #endif
-      }
-    } else {
-      __pyx_t_2 = __pyx_t_4(__pyx_t_1);
-      if (unlikely(!__pyx_t_2)) {
-        PyObject* exc_type = PyErr_Occurred();
-        if (exc_type) {
-          if (likely(__Pyx_PyErr_GivenExceptionMatches(exc_type, PyExc_StopIteration))) PyErr_Clear();
-          else __PYX_ERR(0, 25, __pyx_L1_error)
-        }
-        break;
-      }
-      __Pyx_GOTREF(__pyx_t_2);
-    }
-    if ((likely(PyTuple_CheckExact(__pyx_t_2))) || (PyList_CheckExact(__pyx_t_2))) {
-      PyObject* sequence = __pyx_t_2;
-      Py_ssize_t size = __Pyx_PySequence_SIZE(sequence);
-      if (unlikely(size != 2)) {
-        if (size > 2) __Pyx_RaiseTooManyValuesError(2);
-        else if (size >= 0) __Pyx_RaiseNeedMoreValuesError(size);
-        __PYX_ERR(0, 25, __pyx_L1_error)
-      }
-      #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-      if (likely(PyTuple_CheckExact(sequence))) {
-        __pyx_t_5 = PyTuple_GET_ITEM(sequence, 0); 
-        __pyx_t_6 = PyTuple_GET_ITEM(sequence, 1); 
-      } else {
-        __pyx_t_5 = PyList_GET_ITEM(sequence, 0); 
-        __pyx_t_6 = PyList_GET_ITEM(sequence, 1); 
-      }
-      __Pyx_INCREF(__pyx_t_5);
-      __Pyx_INCREF(__pyx_t_6);
-      #else
-      __pyx_t_5 = PySequence_ITEM(sequence, 0); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 25, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_5);
-      __pyx_t_6 = PySequence_ITEM(sequence, 1); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 25, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_6);
-      #endif
-      __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-    } else {
-      Py_ssize_t index = -1;
-      __pyx_t_7 = PyObject_GetIter(__pyx_t_2); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 25, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_7);
-      __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-      __pyx_t_8 = Py_TYPE(__pyx_t_7)->tp_iternext;
-      index = 0; __pyx_t_5 = __pyx_t_8(__pyx_t_7); if (unlikely(!__pyx_t_5)) goto __pyx_L5_unpacking_failed;
-      __Pyx_GOTREF(__pyx_t_5);
-      index = 1; __pyx_t_6 = __pyx_t_8(__pyx_t_7); if (unlikely(!__pyx_t_6)) goto __pyx_L5_unpacking_failed;
-      __Pyx_GOTREF(__pyx_t_6);
-      if (__Pyx_IternextUnpackEndCheck(__pyx_t_8(__pyx_t_7), 2) < 0) __PYX_ERR(0, 25, __pyx_L1_error)
-      __pyx_t_8 = NULL;
-      __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
-      goto __pyx_L6_unpacking_done;
-      __pyx_L5_unpacking_failed:;
-      __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
-      __pyx_t_8 = NULL;
-      if (__Pyx_IterFinish() == 0) __Pyx_RaiseNeedMoreValuesError(index);
-      __PYX_ERR(0, 25, __pyx_L1_error)
-      __pyx_L6_unpacking_done:;
-    }
-    __Pyx_XDECREF_SET(__pyx_v_func, __pyx_t_5);
-    __pyx_t_5 = 0;
-    __Pyx_XDECREF_SET(__pyx_v_bind, __pyx_t_6);
-    __pyx_t_6 = 0;
+    if (__pyx_t_2 >= PyList_GET_SIZE(__pyx_t_1)) break;
+    #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
+    __pyx_t_3 = PyList_GET_ITEM(__pyx_t_1, __pyx_t_2); __Pyx_INCREF(__pyx_t_3); __pyx_t_2++; if (unlikely(0 < 0)) __PYX_ERR(0, 26, __pyx_L1_error)
+    #else
+    __pyx_t_3 = PySequence_ITEM(__pyx_t_1, __pyx_t_2); __pyx_t_2++; if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 26, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_3);
+    #endif
+    __Pyx_XDECREF_SET(__pyx_v_func, __pyx_t_3);
+    __pyx_t_3 = 0;
 
-    /* "overload/overload.pyx":26
+    /* "overload/overload.pyx":27
  * 
- *     for func, bind in zip(functions, binders):
- *         error = bind(func, args, kwargs)             # <<<<<<<<<<<<<<
+ *     for func in functions:
+ *         error = bind_with(signature_cache[func], isinstance, args, kwargs)             # <<<<<<<<<<<<<<
  *         if error is not None:
  *             fail_reasons.append(error)
  */
-    __Pyx_INCREF(__pyx_v_bind);
-    __pyx_t_6 = __pyx_v_bind; __pyx_t_5 = NULL;
-    __pyx_t_9 = 0;
-    if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_6))) {
-      __pyx_t_5 = PyMethod_GET_SELF(__pyx_t_6);
-      if (likely(__pyx_t_5)) {
-        PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_6);
-        __Pyx_INCREF(__pyx_t_5);
-        __Pyx_INCREF(function);
-        __Pyx_DECREF_SET(__pyx_t_6, function);
-        __pyx_t_9 = 1;
-      }
-    }
-    #if CYTHON_FAST_PYCALL
-    if (PyFunction_Check(__pyx_t_6)) {
-      PyObject *__pyx_temp[4] = {__pyx_t_5, __pyx_v_func, __pyx_v_args, __pyx_v_kwargs};
-      __pyx_t_2 = __Pyx_PyFunction_FastCall(__pyx_t_6, __pyx_temp+1-__pyx_t_9, 3+__pyx_t_9); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 26, __pyx_L1_error)
-      __Pyx_XDECREF(__pyx_t_5); __pyx_t_5 = 0;
-      __Pyx_GOTREF(__pyx_t_2);
-    } else
-    #endif
-    #if CYTHON_FAST_PYCCALL
-    if (__Pyx_PyFastCFunction_Check(__pyx_t_6)) {
-      PyObject *__pyx_temp[4] = {__pyx_t_5, __pyx_v_func, __pyx_v_args, __pyx_v_kwargs};
-      __pyx_t_2 = __Pyx_PyCFunction_FastCall(__pyx_t_6, __pyx_temp+1-__pyx_t_9, 3+__pyx_t_9); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 26, __pyx_L1_error)
-      __Pyx_XDECREF(__pyx_t_5); __pyx_t_5 = 0;
-      __Pyx_GOTREF(__pyx_t_2);
-    } else
-    #endif
-    {
-      __pyx_t_7 = PyTuple_New(3+__pyx_t_9); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 26, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_7);
-      if (__pyx_t_5) {
-        __Pyx_GIVEREF(__pyx_t_5); PyTuple_SET_ITEM(__pyx_t_7, 0, __pyx_t_5); __pyx_t_5 = NULL;
-      }
-      __Pyx_INCREF(__pyx_v_func);
-      __Pyx_GIVEREF(__pyx_v_func);
-      PyTuple_SET_ITEM(__pyx_t_7, 0+__pyx_t_9, __pyx_v_func);
-      __Pyx_INCREF(__pyx_v_args);
-      __Pyx_GIVEREF(__pyx_v_args);
-      PyTuple_SET_ITEM(__pyx_t_7, 1+__pyx_t_9, __pyx_v_args);
-      __Pyx_INCREF(__pyx_v_kwargs);
-      __Pyx_GIVEREF(__pyx_v_kwargs);
-      PyTuple_SET_ITEM(__pyx_t_7, 2+__pyx_t_9, __pyx_v_kwargs);
-      __pyx_t_2 = __Pyx_PyObject_Call(__pyx_t_6, __pyx_t_7, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 26, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_2);
-      __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
-    }
-    __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
-    __Pyx_XDECREF_SET(__pyx_v_error, __pyx_t_2);
-    __pyx_t_2 = 0;
+    __Pyx_GetModuleGlobalName(__pyx_t_3, __pyx_n_s_signature_cache); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 27, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_3);
+    __pyx_t_4 = __Pyx_PyObject_GetItem(__pyx_t_3, __pyx_v_func); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 27, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_4);
+    __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+    if (!(likely(((__pyx_t_4) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_4, __pyx_ptype_8overload_9signature_Signature))))) __PYX_ERR(0, 27, __pyx_L1_error)
+    __pyx_t_3 = __Pyx_GetBuiltinName(__pyx_n_s_isinstance); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 27, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_3);
+    __pyx_t_5 = __pyx_f_8overload_9bind_with_bind_with(((struct __pyx_obj_8overload_9signature_Signature *)__pyx_t_4), __pyx_t_3, __pyx_v_args, __pyx_v_kwargs); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 27, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_5);
+    __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
+    __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+    __Pyx_XDECREF_SET(__pyx_v_error, __pyx_t_5);
+    __pyx_t_5 = 0;
 
-    /* "overload/overload.pyx":27
- *     for func, bind in zip(functions, binders):
- *         error = bind(func, args, kwargs)
+    /* "overload/overload.pyx":28
+ *     for func in functions:
+ *         error = bind_with(signature_cache[func], isinstance, args, kwargs)
  *         if error is not None:             # <<<<<<<<<<<<<<
  *             fail_reasons.append(error)
  *         else:
  */
-    __pyx_t_10 = (__pyx_v_error != Py_None);
-    __pyx_t_11 = (__pyx_t_10 != 0);
-    if (__pyx_t_11) {
+    __pyx_t_6 = (__pyx_v_error != Py_None);
+    __pyx_t_7 = (__pyx_t_6 != 0);
+    if (__pyx_t_7) {
 
-      /* "overload/overload.pyx":28
- *         error = bind(func, args, kwargs)
+      /* "overload/overload.pyx":29
+ *         error = bind_with(signature_cache[func], isinstance, args, kwargs)
  *         if error is not None:
  *             fail_reasons.append(error)             # <<<<<<<<<<<<<<
  *         else:
  *             candidates.append(func)
  */
-      __pyx_t_12 = __Pyx_PyList_Append(__pyx_v_fail_reasons, __pyx_v_error); if (unlikely(__pyx_t_12 == ((int)-1))) __PYX_ERR(0, 28, __pyx_L1_error)
+      __pyx_t_8 = __Pyx_PyList_Append(__pyx_v_fail_reasons, __pyx_v_error); if (unlikely(__pyx_t_8 == ((int)-1))) __PYX_ERR(0, 29, __pyx_L1_error)
 
-      /* "overload/overload.pyx":27
- *     for func, bind in zip(functions, binders):
- *         error = bind(func, args, kwargs)
+      /* "overload/overload.pyx":28
+ *     for func in functions:
+ *         error = bind_with(signature_cache[func], isinstance, args, kwargs)
  *         if error is not None:             # <<<<<<<<<<<<<<
  *             fail_reasons.append(error)
  *         else:
  */
-      goto __pyx_L7;
+      goto __pyx_L5;
     }
 
-    /* "overload/overload.pyx":30
+    /* "overload/overload.pyx":31
  *             fail_reasons.append(error)
  *         else:
  *             candidates.append(func)             # <<<<<<<<<<<<<<
@@ -2034,120 +1864,120 @@ static PyObject *__pyx_f_8overload_8overload_perform_overload_resolution(PyObjec
  *     if len(candidates) == 0:
  */
     /*else*/ {
-      __pyx_t_12 = __Pyx_PyList_Append(__pyx_v_candidates, __pyx_v_func); if (unlikely(__pyx_t_12 == ((int)-1))) __PYX_ERR(0, 30, __pyx_L1_error)
+      __pyx_t_8 = __Pyx_PyList_Append(__pyx_v_candidates, __pyx_v_func); if (unlikely(__pyx_t_8 == ((int)-1))) __PYX_ERR(0, 31, __pyx_L1_error)
     }
-    __pyx_L7:;
+    __pyx_L5:;
 
-    /* "overload/overload.pyx":25
+    /* "overload/overload.pyx":26
  *     cdef list fail_reasons = []
  * 
- *     for func, bind in zip(functions, binders):             # <<<<<<<<<<<<<<
- *         error = bind(func, args, kwargs)
+ *     for func in functions:             # <<<<<<<<<<<<<<
+ *         error = bind_with(signature_cache[func], isinstance, args, kwargs)
  *         if error is not None:
  */
   }
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "overload/overload.pyx":32
+  /* "overload/overload.pyx":33
  *             candidates.append(func)
  * 
  *     if len(candidates) == 0:             # <<<<<<<<<<<<<<
  *         raise ovl_module.NoMatchingOverloadError(
  *             module, qualname, (args, kwargs), functions, fail_reasons
  */
-  __pyx_t_3 = PyList_GET_SIZE(__pyx_v_candidates); if (unlikely(__pyx_t_3 == ((Py_ssize_t)-1))) __PYX_ERR(0, 32, __pyx_L1_error)
-  __pyx_t_11 = ((__pyx_t_3 == 0) != 0);
-  if (unlikely(__pyx_t_11)) {
+  __pyx_t_2 = PyList_GET_SIZE(__pyx_v_candidates); if (unlikely(__pyx_t_2 == ((Py_ssize_t)-1))) __PYX_ERR(0, 33, __pyx_L1_error)
+  __pyx_t_7 = ((__pyx_t_2 == 0) != 0);
+  if (unlikely(__pyx_t_7)) {
 
-    /* "overload/overload.pyx":33
+    /* "overload/overload.pyx":34
  * 
  *     if len(candidates) == 0:
  *         raise ovl_module.NoMatchingOverloadError(             # <<<<<<<<<<<<<<
  *             module, qualname, (args, kwargs), functions, fail_reasons
  *         )
  */
-    __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_ovl_module); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 33, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_2);
-    __pyx_t_6 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_NoMatchingOverloadError); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 33, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_6);
-    __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+    __Pyx_GetModuleGlobalName(__pyx_t_5, __pyx_n_s_ovl_module); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 34, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_5);
+    __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_5, __pyx_n_s_NoMatchingOverloadError); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 34, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_3);
+    __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
 
-    /* "overload/overload.pyx":34
+    /* "overload/overload.pyx":35
  *     if len(candidates) == 0:
  *         raise ovl_module.NoMatchingOverloadError(
  *             module, qualname, (args, kwargs), functions, fail_reasons             # <<<<<<<<<<<<<<
  *         )
  *     if len(candidates) > 1:
  */
-    __pyx_t_2 = PyTuple_New(2); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 34, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_2);
+    __pyx_t_5 = PyTuple_New(2); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 35, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_5);
     __Pyx_INCREF(__pyx_v_args);
     __Pyx_GIVEREF(__pyx_v_args);
-    PyTuple_SET_ITEM(__pyx_t_2, 0, __pyx_v_args);
+    PyTuple_SET_ITEM(__pyx_t_5, 0, __pyx_v_args);
     __Pyx_INCREF(__pyx_v_kwargs);
     __Pyx_GIVEREF(__pyx_v_kwargs);
-    PyTuple_SET_ITEM(__pyx_t_2, 1, __pyx_v_kwargs);
-    __pyx_t_7 = NULL;
+    PyTuple_SET_ITEM(__pyx_t_5, 1, __pyx_v_kwargs);
+    __pyx_t_4 = NULL;
     __pyx_t_9 = 0;
-    if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_6))) {
-      __pyx_t_7 = PyMethod_GET_SELF(__pyx_t_6);
-      if (likely(__pyx_t_7)) {
-        PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_6);
-        __Pyx_INCREF(__pyx_t_7);
+    if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_3))) {
+      __pyx_t_4 = PyMethod_GET_SELF(__pyx_t_3);
+      if (likely(__pyx_t_4)) {
+        PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_3);
+        __Pyx_INCREF(__pyx_t_4);
         __Pyx_INCREF(function);
-        __Pyx_DECREF_SET(__pyx_t_6, function);
+        __Pyx_DECREF_SET(__pyx_t_3, function);
         __pyx_t_9 = 1;
       }
     }
     #if CYTHON_FAST_PYCALL
-    if (PyFunction_Check(__pyx_t_6)) {
-      PyObject *__pyx_temp[6] = {__pyx_t_7, __pyx_v_module, __pyx_v_qualname, __pyx_t_2, __pyx_v_functions, __pyx_v_fail_reasons};
-      __pyx_t_1 = __Pyx_PyFunction_FastCall(__pyx_t_6, __pyx_temp+1-__pyx_t_9, 5+__pyx_t_9); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 33, __pyx_L1_error)
-      __Pyx_XDECREF(__pyx_t_7); __pyx_t_7 = 0;
+    if (PyFunction_Check(__pyx_t_3)) {
+      PyObject *__pyx_temp[6] = {__pyx_t_4, __pyx_v_module, __pyx_v_qualname, __pyx_t_5, __pyx_v_functions, __pyx_v_fail_reasons};
+      __pyx_t_1 = __Pyx_PyFunction_FastCall(__pyx_t_3, __pyx_temp+1-__pyx_t_9, 5+__pyx_t_9); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 34, __pyx_L1_error)
+      __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
       __Pyx_GOTREF(__pyx_t_1);
-      __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+      __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
     } else
     #endif
     #if CYTHON_FAST_PYCCALL
-    if (__Pyx_PyFastCFunction_Check(__pyx_t_6)) {
-      PyObject *__pyx_temp[6] = {__pyx_t_7, __pyx_v_module, __pyx_v_qualname, __pyx_t_2, __pyx_v_functions, __pyx_v_fail_reasons};
-      __pyx_t_1 = __Pyx_PyCFunction_FastCall(__pyx_t_6, __pyx_temp+1-__pyx_t_9, 5+__pyx_t_9); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 33, __pyx_L1_error)
-      __Pyx_XDECREF(__pyx_t_7); __pyx_t_7 = 0;
+    if (__Pyx_PyFastCFunction_Check(__pyx_t_3)) {
+      PyObject *__pyx_temp[6] = {__pyx_t_4, __pyx_v_module, __pyx_v_qualname, __pyx_t_5, __pyx_v_functions, __pyx_v_fail_reasons};
+      __pyx_t_1 = __Pyx_PyCFunction_FastCall(__pyx_t_3, __pyx_temp+1-__pyx_t_9, 5+__pyx_t_9); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 34, __pyx_L1_error)
+      __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
       __Pyx_GOTREF(__pyx_t_1);
-      __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+      __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
     } else
     #endif
     {
-      __pyx_t_5 = PyTuple_New(5+__pyx_t_9); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 33, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_5);
-      if (__pyx_t_7) {
-        __Pyx_GIVEREF(__pyx_t_7); PyTuple_SET_ITEM(__pyx_t_5, 0, __pyx_t_7); __pyx_t_7 = NULL;
+      __pyx_t_10 = PyTuple_New(5+__pyx_t_9); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 34, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_10);
+      if (__pyx_t_4) {
+        __Pyx_GIVEREF(__pyx_t_4); PyTuple_SET_ITEM(__pyx_t_10, 0, __pyx_t_4); __pyx_t_4 = NULL;
       }
       __Pyx_INCREF(__pyx_v_module);
       __Pyx_GIVEREF(__pyx_v_module);
-      PyTuple_SET_ITEM(__pyx_t_5, 0+__pyx_t_9, __pyx_v_module);
+      PyTuple_SET_ITEM(__pyx_t_10, 0+__pyx_t_9, __pyx_v_module);
       __Pyx_INCREF(__pyx_v_qualname);
       __Pyx_GIVEREF(__pyx_v_qualname);
-      PyTuple_SET_ITEM(__pyx_t_5, 1+__pyx_t_9, __pyx_v_qualname);
-      __Pyx_GIVEREF(__pyx_t_2);
-      PyTuple_SET_ITEM(__pyx_t_5, 2+__pyx_t_9, __pyx_t_2);
+      PyTuple_SET_ITEM(__pyx_t_10, 1+__pyx_t_9, __pyx_v_qualname);
+      __Pyx_GIVEREF(__pyx_t_5);
+      PyTuple_SET_ITEM(__pyx_t_10, 2+__pyx_t_9, __pyx_t_5);
       __Pyx_INCREF(__pyx_v_functions);
       __Pyx_GIVEREF(__pyx_v_functions);
-      PyTuple_SET_ITEM(__pyx_t_5, 3+__pyx_t_9, __pyx_v_functions);
+      PyTuple_SET_ITEM(__pyx_t_10, 3+__pyx_t_9, __pyx_v_functions);
       __Pyx_INCREF(__pyx_v_fail_reasons);
       __Pyx_GIVEREF(__pyx_v_fail_reasons);
-      PyTuple_SET_ITEM(__pyx_t_5, 4+__pyx_t_9, __pyx_v_fail_reasons);
-      __pyx_t_2 = 0;
-      __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_6, __pyx_t_5, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 33, __pyx_L1_error)
+      PyTuple_SET_ITEM(__pyx_t_10, 4+__pyx_t_9, __pyx_v_fail_reasons);
+      __pyx_t_5 = 0;
+      __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_3, __pyx_t_10, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 34, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
-      __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
+      __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
     }
-    __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
+    __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
     __Pyx_Raise(__pyx_t_1, 0, 0, 0);
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-    __PYX_ERR(0, 33, __pyx_L1_error)
+    __PYX_ERR(0, 34, __pyx_L1_error)
 
-    /* "overload/overload.pyx":32
+    /* "overload/overload.pyx":33
  *             candidates.append(func)
  * 
  *     if len(candidates) == 0:             # <<<<<<<<<<<<<<
@@ -2156,95 +1986,95 @@ static PyObject *__pyx_f_8overload_8overload_perform_overload_resolution(PyObjec
  */
   }
 
-  /* "overload/overload.pyx":36
+  /* "overload/overload.pyx":37
  *             module, qualname, (args, kwargs), functions, fail_reasons
  *         )
  *     if len(candidates) > 1:             # <<<<<<<<<<<<<<
  *         raise ovl_module.AmbiguousOverloadError(module, qualname, (args, kwargs), candidates)
  * 
  */
-  __pyx_t_3 = PyList_GET_SIZE(__pyx_v_candidates); if (unlikely(__pyx_t_3 == ((Py_ssize_t)-1))) __PYX_ERR(0, 36, __pyx_L1_error)
-  __pyx_t_11 = ((__pyx_t_3 > 1) != 0);
-  if (unlikely(__pyx_t_11)) {
+  __pyx_t_2 = PyList_GET_SIZE(__pyx_v_candidates); if (unlikely(__pyx_t_2 == ((Py_ssize_t)-1))) __PYX_ERR(0, 37, __pyx_L1_error)
+  __pyx_t_7 = ((__pyx_t_2 > 1) != 0);
+  if (unlikely(__pyx_t_7)) {
 
-    /* "overload/overload.pyx":37
+    /* "overload/overload.pyx":38
  *         )
  *     if len(candidates) > 1:
  *         raise ovl_module.AmbiguousOverloadError(module, qualname, (args, kwargs), candidates)             # <<<<<<<<<<<<<<
  * 
  *     func = candidates[0]
  */
-    __Pyx_GetModuleGlobalName(__pyx_t_6, __pyx_n_s_ovl_module); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 37, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_6);
-    __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_t_6, __pyx_n_s_AmbiguousOverloadError); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 37, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_5);
-    __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
-    __pyx_t_6 = PyTuple_New(2); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 37, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_6);
+    __Pyx_GetModuleGlobalName(__pyx_t_3, __pyx_n_s_ovl_module); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 38, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_3);
+    __pyx_t_10 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_AmbiguousOverloadError); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 38, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_10);
+    __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+    __pyx_t_3 = PyTuple_New(2); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 38, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_3);
     __Pyx_INCREF(__pyx_v_args);
     __Pyx_GIVEREF(__pyx_v_args);
-    PyTuple_SET_ITEM(__pyx_t_6, 0, __pyx_v_args);
+    PyTuple_SET_ITEM(__pyx_t_3, 0, __pyx_v_args);
     __Pyx_INCREF(__pyx_v_kwargs);
     __Pyx_GIVEREF(__pyx_v_kwargs);
-    PyTuple_SET_ITEM(__pyx_t_6, 1, __pyx_v_kwargs);
-    __pyx_t_2 = NULL;
+    PyTuple_SET_ITEM(__pyx_t_3, 1, __pyx_v_kwargs);
+    __pyx_t_5 = NULL;
     __pyx_t_9 = 0;
-    if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_5))) {
-      __pyx_t_2 = PyMethod_GET_SELF(__pyx_t_5);
-      if (likely(__pyx_t_2)) {
-        PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_5);
-        __Pyx_INCREF(__pyx_t_2);
+    if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_10))) {
+      __pyx_t_5 = PyMethod_GET_SELF(__pyx_t_10);
+      if (likely(__pyx_t_5)) {
+        PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_10);
+        __Pyx_INCREF(__pyx_t_5);
         __Pyx_INCREF(function);
-        __Pyx_DECREF_SET(__pyx_t_5, function);
+        __Pyx_DECREF_SET(__pyx_t_10, function);
         __pyx_t_9 = 1;
       }
     }
     #if CYTHON_FAST_PYCALL
-    if (PyFunction_Check(__pyx_t_5)) {
-      PyObject *__pyx_temp[5] = {__pyx_t_2, __pyx_v_module, __pyx_v_qualname, __pyx_t_6, __pyx_v_candidates};
-      __pyx_t_1 = __Pyx_PyFunction_FastCall(__pyx_t_5, __pyx_temp+1-__pyx_t_9, 4+__pyx_t_9); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 37, __pyx_L1_error)
-      __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
+    if (PyFunction_Check(__pyx_t_10)) {
+      PyObject *__pyx_temp[5] = {__pyx_t_5, __pyx_v_module, __pyx_v_qualname, __pyx_t_3, __pyx_v_candidates};
+      __pyx_t_1 = __Pyx_PyFunction_FastCall(__pyx_t_10, __pyx_temp+1-__pyx_t_9, 4+__pyx_t_9); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 38, __pyx_L1_error)
+      __Pyx_XDECREF(__pyx_t_5); __pyx_t_5 = 0;
       __Pyx_GOTREF(__pyx_t_1);
-      __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
+      __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
     } else
     #endif
     #if CYTHON_FAST_PYCCALL
-    if (__Pyx_PyFastCFunction_Check(__pyx_t_5)) {
-      PyObject *__pyx_temp[5] = {__pyx_t_2, __pyx_v_module, __pyx_v_qualname, __pyx_t_6, __pyx_v_candidates};
-      __pyx_t_1 = __Pyx_PyCFunction_FastCall(__pyx_t_5, __pyx_temp+1-__pyx_t_9, 4+__pyx_t_9); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 37, __pyx_L1_error)
-      __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
+    if (__Pyx_PyFastCFunction_Check(__pyx_t_10)) {
+      PyObject *__pyx_temp[5] = {__pyx_t_5, __pyx_v_module, __pyx_v_qualname, __pyx_t_3, __pyx_v_candidates};
+      __pyx_t_1 = __Pyx_PyCFunction_FastCall(__pyx_t_10, __pyx_temp+1-__pyx_t_9, 4+__pyx_t_9); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 38, __pyx_L1_error)
+      __Pyx_XDECREF(__pyx_t_5); __pyx_t_5 = 0;
       __Pyx_GOTREF(__pyx_t_1);
-      __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
+      __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
     } else
     #endif
     {
-      __pyx_t_7 = PyTuple_New(4+__pyx_t_9); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 37, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_7);
-      if (__pyx_t_2) {
-        __Pyx_GIVEREF(__pyx_t_2); PyTuple_SET_ITEM(__pyx_t_7, 0, __pyx_t_2); __pyx_t_2 = NULL;
+      __pyx_t_4 = PyTuple_New(4+__pyx_t_9); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 38, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_4);
+      if (__pyx_t_5) {
+        __Pyx_GIVEREF(__pyx_t_5); PyTuple_SET_ITEM(__pyx_t_4, 0, __pyx_t_5); __pyx_t_5 = NULL;
       }
       __Pyx_INCREF(__pyx_v_module);
       __Pyx_GIVEREF(__pyx_v_module);
-      PyTuple_SET_ITEM(__pyx_t_7, 0+__pyx_t_9, __pyx_v_module);
+      PyTuple_SET_ITEM(__pyx_t_4, 0+__pyx_t_9, __pyx_v_module);
       __Pyx_INCREF(__pyx_v_qualname);
       __Pyx_GIVEREF(__pyx_v_qualname);
-      PyTuple_SET_ITEM(__pyx_t_7, 1+__pyx_t_9, __pyx_v_qualname);
-      __Pyx_GIVEREF(__pyx_t_6);
-      PyTuple_SET_ITEM(__pyx_t_7, 2+__pyx_t_9, __pyx_t_6);
+      PyTuple_SET_ITEM(__pyx_t_4, 1+__pyx_t_9, __pyx_v_qualname);
+      __Pyx_GIVEREF(__pyx_t_3);
+      PyTuple_SET_ITEM(__pyx_t_4, 2+__pyx_t_9, __pyx_t_3);
       __Pyx_INCREF(__pyx_v_candidates);
       __Pyx_GIVEREF(__pyx_v_candidates);
-      PyTuple_SET_ITEM(__pyx_t_7, 3+__pyx_t_9, __pyx_v_candidates);
-      __pyx_t_6 = 0;
-      __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_5, __pyx_t_7, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 37, __pyx_L1_error)
+      PyTuple_SET_ITEM(__pyx_t_4, 3+__pyx_t_9, __pyx_v_candidates);
+      __pyx_t_3 = 0;
+      __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_10, __pyx_t_4, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 38, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
-      __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
+      __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
     }
-    __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
+    __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
     __Pyx_Raise(__pyx_t_1, 0, 0, 0);
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-    __PYX_ERR(0, 37, __pyx_L1_error)
+    __PYX_ERR(0, 38, __pyx_L1_error)
 
-    /* "overload/overload.pyx":36
+    /* "overload/overload.pyx":37
  *             module, qualname, (args, kwargs), functions, fail_reasons
  *         )
  *     if len(candidates) > 1:             # <<<<<<<<<<<<<<
@@ -2253,7 +2083,7 @@ static PyObject *__pyx_f_8overload_8overload_perform_overload_resolution(PyObjec
  */
   }
 
-  /* "overload/overload.pyx":39
+  /* "overload/overload.pyx":40
  *         raise ovl_module.AmbiguousOverloadError(module, qualname, (args, kwargs), candidates)
  * 
  *     func = candidates[0]             # <<<<<<<<<<<<<<
@@ -2265,7 +2095,7 @@ static PyObject *__pyx_f_8overload_8overload_perform_overload_resolution(PyObjec
   __Pyx_XDECREF_SET(__pyx_v_func, __pyx_t_1);
   __pyx_t_1 = 0;
 
-  /* "overload/overload.pyx":40
+  /* "overload/overload.pyx":41
  * 
  *     func = candidates[0]
  *     return func(*args, **kwargs)             # <<<<<<<<<<<<<<
@@ -2275,22 +2105,22 @@ static PyObject *__pyx_f_8overload_8overload_perform_overload_resolution(PyObjec
   __Pyx_XDECREF(__pyx_r);
   if (unlikely(__pyx_v_args == Py_None)) {
     PyErr_SetString(PyExc_TypeError, "'NoneType' object is not iterable");
-    __PYX_ERR(0, 40, __pyx_L1_error)
+    __PYX_ERR(0, 41, __pyx_L1_error)
   }
   if (unlikely(__pyx_v_kwargs == Py_None)) {
     PyErr_SetString(PyExc_TypeError, "argument after ** must be a mapping, not NoneType");
-    __PYX_ERR(0, 40, __pyx_L1_error)
+    __PYX_ERR(0, 41, __pyx_L1_error)
   }
-  __pyx_t_1 = __Pyx_PyObject_Call(__pyx_v_func, __pyx_v_args, __pyx_v_kwargs); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 40, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_Call(__pyx_v_func, __pyx_v_args, __pyx_v_kwargs); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 41, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
   goto __pyx_L0;
 
-  /* "overload/overload.pyx":21
+  /* "overload/overload.pyx":22
  * """
  * 
- * cdef perform_overload_resolution(tuple args, dict kwargs, list functions, list binders, str module, str qualname):             # <<<<<<<<<<<<<<
+ * cdef perform_overload_resolution(tuple args, dict kwargs, list functions, str module, str qualname):             # <<<<<<<<<<<<<<
  *     cdef list candidates = []
  *     cdef list fail_reasons = []
  */
@@ -2298,17 +2128,16 @@ static PyObject *__pyx_f_8overload_8overload_perform_overload_resolution(PyObjec
   /* function exit code */
   __pyx_L1_error:;
   __Pyx_XDECREF(__pyx_t_1);
-  __Pyx_XDECREF(__pyx_t_2);
+  __Pyx_XDECREF(__pyx_t_3);
+  __Pyx_XDECREF(__pyx_t_4);
   __Pyx_XDECREF(__pyx_t_5);
-  __Pyx_XDECREF(__pyx_t_6);
-  __Pyx_XDECREF(__pyx_t_7);
+  __Pyx_XDECREF(__pyx_t_10);
   __Pyx_AddTraceback("overload.overload.perform_overload_resolution", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = 0;
   __pyx_L0:;
   __Pyx_XDECREF(__pyx_v_candidates);
   __Pyx_XDECREF(__pyx_v_fail_reasons);
   __Pyx_XDECREF(__pyx_v_func);
-  __Pyx_XDECREF(__pyx_v_bind);
   __Pyx_XDECREF(__pyx_v_error);
   __Pyx_XGIVEREF(__pyx_r);
   __Pyx_TraceReturn(__pyx_r, 0);
@@ -2357,7 +2186,6 @@ static PyObject *__pyx_pf_8overload_8overload_15make_overloaded_overloaded_funct
   PyObject *__pyx_t_2 = NULL;
   PyObject *__pyx_t_3 = NULL;
   PyObject *__pyx_t_4 = NULL;
-  PyObject *__pyx_t_5 = NULL;
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
@@ -2371,53 +2199,49 @@ static PyObject *__pyx_pf_8overload_8overload_15make_overloaded_overloaded_funct
  *         def overloaded_function(*args, **kwargs):
  *             return perform_overload_resolution(             # <<<<<<<<<<<<<<
  *                 args, kwargs,
- *                 functions, binders,
+ *                 functions,
  */
   __Pyx_XDECREF(__pyx_r);
 
   /* "overload/overload.pyx":60
  *             return perform_overload_resolution(
  *                 args, kwargs,
- *                 functions, binders,             # <<<<<<<<<<<<<<
+ *                 functions,             # <<<<<<<<<<<<<<
  *                 __module__, __qualname__
  *             )
  */
   if (unlikely(!__pyx_cur_scope->__pyx_v_functions)) { __Pyx_RaiseClosureNameError("functions"); __PYX_ERR(0, 60, __pyx_L1_error) }
   __pyx_t_1 = __pyx_cur_scope->__pyx_v_functions;
   __Pyx_INCREF(__pyx_t_1);
-  if (unlikely(!__pyx_cur_scope->__pyx_v_binders)) { __Pyx_RaiseClosureNameError("binders"); __PYX_ERR(0, 60, __pyx_L1_error) }
-  __pyx_t_2 = __pyx_cur_scope->__pyx_v_binders;
-  __Pyx_INCREF(__pyx_t_2);
 
   /* "overload/overload.pyx":61
  *                 args, kwargs,
- *                 functions, binders,
+ *                 functions,
  *                 __module__, __qualname__             # <<<<<<<<<<<<<<
  *             )
  * 
  */
   if (unlikely(!__pyx_cur_scope->__pyx_v___module__)) { __Pyx_RaiseClosureNameError("__module__"); __PYX_ERR(0, 61, __pyx_L1_error) }
-  __pyx_t_3 = __pyx_cur_scope->__pyx_v___module__;
-  __Pyx_INCREF(__pyx_t_3);
+  __pyx_t_2 = __pyx_cur_scope->__pyx_v___module__;
+  __Pyx_INCREF(__pyx_t_2);
   if (unlikely(!__pyx_cur_scope->__pyx_v___qualname__)) { __Pyx_RaiseClosureNameError("__qualname__"); __PYX_ERR(0, 61, __pyx_L1_error) }
-  __pyx_t_4 = __pyx_cur_scope->__pyx_v___qualname__;
-  __Pyx_INCREF(__pyx_t_4);
+  __pyx_t_3 = __pyx_cur_scope->__pyx_v___qualname__;
+  __Pyx_INCREF(__pyx_t_3);
 
   /* "overload/overload.pyx":58
  *     if (func.__module__, func.__qualname__) not in _registry:
  *         def overloaded_function(*args, **kwargs):
  *             return perform_overload_resolution(             # <<<<<<<<<<<<<<
  *                 args, kwargs,
- *                 functions, binders,
+ *                 functions,
  */
-  __pyx_t_5 = __pyx_f_8overload_8overload_perform_overload_resolution(__pyx_v_args, __pyx_v_kwargs, ((PyObject*)__pyx_t_1), ((PyObject*)__pyx_t_2), ((PyObject*)__pyx_t_3), ((PyObject*)__pyx_t_4)); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 58, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_5);
+  __pyx_t_4 = __pyx_f_8overload_8overload_perform_overload_resolution(__pyx_v_args, __pyx_v_kwargs, ((PyObject*)__pyx_t_1), ((PyObject*)__pyx_t_2), ((PyObject*)__pyx_t_3)); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 58, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_4);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-  __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-  __pyx_r = __pyx_t_5;
-  __pyx_t_5 = 0;
+  __pyx_r = __pyx_t_4;
+  __pyx_t_4 = 0;
   goto __pyx_L0;
 
   /* "overload/overload.pyx":57
@@ -2434,7 +2258,6 @@ static PyObject *__pyx_pf_8overload_8overload_15make_overloaded_overloaded_funct
   __Pyx_XDECREF(__pyx_t_2);
   __Pyx_XDECREF(__pyx_t_3);
   __Pyx_XDECREF(__pyx_t_4);
-  __Pyx_XDECREF(__pyx_t_5);
   __Pyx_AddTraceback("overload.overload.make_overloaded.overloaded_function", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
@@ -2444,15 +2267,15 @@ static PyObject *__pyx_pf_8overload_8overload_15make_overloaded_overloaded_funct
   return __pyx_r;
 }
 
-/* "overload/overload.pyx":43
+/* "overload/overload.pyx":44
  * 
  * 
- * cdef make_overloaded(func, bind_func):             # <<<<<<<<<<<<<<
+ * cdef make_overloaded(func):             # <<<<<<<<<<<<<<
  *     """Make a function `func` overloaded.
  * 
  */
 
-static PyObject *__pyx_f_8overload_8overload_make_overloaded(PyObject *__pyx_v_func, PyObject *__pyx_v_bind_func) {
+static PyObject *__pyx_f_8overload_8overload_make_overloaded(PyObject *__pyx_v_func) {
   struct __pyx_obj_8overload_8overload___pyx_scope_struct____pyx_f_8overload_8overload_make_overloaded *__pyx_cur_scope;
   PyObject *__pyx_v_overloaded_function = 0;
   PyObject *__pyx_r = NULL;
@@ -2473,68 +2296,55 @@ static PyObject *__pyx_f_8overload_8overload_make_overloaded(PyObject *__pyx_v_f
   if (unlikely(!__pyx_cur_scope)) {
     __pyx_cur_scope = ((struct __pyx_obj_8overload_8overload___pyx_scope_struct____pyx_f_8overload_8overload_make_overloaded *)Py_None);
     __Pyx_INCREF(Py_None);
-    __PYX_ERR(0, 43, __pyx_L1_error)
+    __PYX_ERR(0, 44, __pyx_L1_error)
   } else {
     __Pyx_GOTREF(__pyx_cur_scope);
   }
-  __Pyx_TraceCall("make_overloaded", __pyx_f[0], 43, 0, __PYX_ERR(0, 43, __pyx_L1_error));
+  __Pyx_TraceCall("make_overloaded", __pyx_f[0], 44, 0, __PYX_ERR(0, 44, __pyx_L1_error));
 
-  /* "overload/overload.pyx":51
+  /* "overload/overload.pyx":52
  *     argument is considered matching.
  *     """
  *     cdef str __module__ = func.__module__             # <<<<<<<<<<<<<<
  *     cdef str __qualname__ = func.__qualname__
  *     cdef list functions = []
  */
-  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_func, __pyx_n_s_module); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 51, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_func, __pyx_n_s_module); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 52, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (!(likely(PyUnicode_CheckExact(__pyx_t_1))||((__pyx_t_1) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "unicode", Py_TYPE(__pyx_t_1)->tp_name), 0))) __PYX_ERR(0, 51, __pyx_L1_error)
+  if (!(likely(PyUnicode_CheckExact(__pyx_t_1))||((__pyx_t_1) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "unicode", Py_TYPE(__pyx_t_1)->tp_name), 0))) __PYX_ERR(0, 52, __pyx_L1_error)
   __Pyx_GIVEREF(__pyx_t_1);
   __pyx_cur_scope->__pyx_v___module__ = ((PyObject*)__pyx_t_1);
   __pyx_t_1 = 0;
 
-  /* "overload/overload.pyx":52
+  /* "overload/overload.pyx":53
  *     """
  *     cdef str __module__ = func.__module__
  *     cdef str __qualname__ = func.__qualname__             # <<<<<<<<<<<<<<
  *     cdef list functions = []
- *     cdef list binders = []
+ * 
  */
-  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_func, __pyx_n_s_qualname); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 52, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_func, __pyx_n_s_qualname); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 53, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (!(likely(PyUnicode_CheckExact(__pyx_t_1))||((__pyx_t_1) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "unicode", Py_TYPE(__pyx_t_1)->tp_name), 0))) __PYX_ERR(0, 52, __pyx_L1_error)
+  if (!(likely(PyUnicode_CheckExact(__pyx_t_1))||((__pyx_t_1) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "unicode", Py_TYPE(__pyx_t_1)->tp_name), 0))) __PYX_ERR(0, 53, __pyx_L1_error)
   __Pyx_GIVEREF(__pyx_t_1);
   __pyx_cur_scope->__pyx_v___qualname__ = ((PyObject*)__pyx_t_1);
   __pyx_t_1 = 0;
 
-  /* "overload/overload.pyx":53
+  /* "overload/overload.pyx":54
  *     cdef str __module__ = func.__module__
  *     cdef str __qualname__ = func.__qualname__
  *     cdef list functions = []             # <<<<<<<<<<<<<<
- *     cdef list binders = []
- * 
- */
-  __pyx_t_1 = PyList_New(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 53, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_1);
-  __Pyx_GIVEREF(__pyx_t_1);
-  __pyx_cur_scope->__pyx_v_functions = ((PyObject*)__pyx_t_1);
-  __pyx_t_1 = 0;
-
-  /* "overload/overload.pyx":54
- *     cdef str __qualname__ = func.__qualname__
- *     cdef list functions = []
- *     cdef list binders = []             # <<<<<<<<<<<<<<
  * 
  *     if (func.__module__, func.__qualname__) not in _registry:
  */
   __pyx_t_1 = PyList_New(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 54, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_GIVEREF(__pyx_t_1);
-  __pyx_cur_scope->__pyx_v_binders = ((PyObject*)__pyx_t_1);
+  __pyx_cur_scope->__pyx_v_functions = ((PyObject*)__pyx_t_1);
   __pyx_t_1 = 0;
 
   /* "overload/overload.pyx":56
- *     cdef list binders = []
+ *     cdef list functions = []
  * 
  *     if (func.__module__, func.__qualname__) not in _registry:             # <<<<<<<<<<<<<<
  *         def overloaded_function(*args, **kwargs):
@@ -2586,7 +2396,7 @@ static PyObject *__pyx_f_8overload_8overload_make_overloaded(PyObject *__pyx_v_f
  *         overloaded_function.__module__ = __module__
  *         overloaded_function.__qualname__ = __qualname__             # <<<<<<<<<<<<<<
  *         overloaded_function.functions = functions
- *         overloaded_function.binders = binders
+ * 
  */
     if (__Pyx_PyObject_SetAttrStr(__pyx_v_overloaded_function, __pyx_n_s_qualname, __pyx_cur_scope->__pyx_v___qualname__) < 0) __PYX_ERR(0, 65, __pyx_L1_error)
 
@@ -2594,34 +2404,25 @@ static PyObject *__pyx_f_8overload_8overload_make_overloaded(PyObject *__pyx_v_f
  *         overloaded_function.__module__ = __module__
  *         overloaded_function.__qualname__ = __qualname__
  *         overloaded_function.functions = functions             # <<<<<<<<<<<<<<
- *         overloaded_function.binders = binders
- * 
- */
-    if (__Pyx_PyObject_SetAttrStr(__pyx_v_overloaded_function, __pyx_n_s_functions, __pyx_cur_scope->__pyx_v_functions) < 0) __PYX_ERR(0, 66, __pyx_L1_error)
-
-    /* "overload/overload.pyx":67
- *         overloaded_function.__qualname__ = __qualname__
- *         overloaded_function.functions = functions
- *         overloaded_function.binders = binders             # <<<<<<<<<<<<<<
  * 
  *         _registry[func.__module__, func.__qualname__] = overloaded_function
  */
-    if (__Pyx_PyObject_SetAttrStr(__pyx_v_overloaded_function, __pyx_n_s_binders, __pyx_cur_scope->__pyx_v_binders) < 0) __PYX_ERR(0, 67, __pyx_L1_error)
+    if (__Pyx_PyObject_SetAttrStr(__pyx_v_overloaded_function, __pyx_n_s_functions, __pyx_cur_scope->__pyx_v_functions) < 0) __PYX_ERR(0, 66, __pyx_L1_error)
 
-    /* "overload/overload.pyx":69
- *         overloaded_function.binders = binders
+    /* "overload/overload.pyx":68
+ *         overloaded_function.functions = functions
  * 
  *         _registry[func.__module__, func.__qualname__] = overloaded_function             # <<<<<<<<<<<<<<
  *     else:
  *         overloaded_function = _registry[func.__module__, func.__qualname__]
  */
-    __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_registry); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 69, __pyx_L1_error)
+    __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_registry); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 68, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
-    __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_func, __pyx_n_s_module); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 69, __pyx_L1_error)
+    __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_func, __pyx_n_s_module); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 68, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
-    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_func, __pyx_n_s_qualname); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 69, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_func, __pyx_n_s_qualname); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 68, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
-    __pyx_t_6 = PyTuple_New(2); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 69, __pyx_L1_error)
+    __pyx_t_6 = PyTuple_New(2); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 68, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_6);
     __Pyx_GIVEREF(__pyx_t_3);
     PyTuple_SET_ITEM(__pyx_t_6, 0, __pyx_t_3);
@@ -2629,12 +2430,12 @@ static PyObject *__pyx_f_8overload_8overload_make_overloaded(PyObject *__pyx_v_f
     PyTuple_SET_ITEM(__pyx_t_6, 1, __pyx_t_1);
     __pyx_t_3 = 0;
     __pyx_t_1 = 0;
-    if (unlikely(PyObject_SetItem(__pyx_t_2, __pyx_t_6, __pyx_v_overloaded_function) < 0)) __PYX_ERR(0, 69, __pyx_L1_error)
+    if (unlikely(PyObject_SetItem(__pyx_t_2, __pyx_t_6, __pyx_v_overloaded_function) < 0)) __PYX_ERR(0, 68, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
     __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
 
     /* "overload/overload.pyx":56
- *     cdef list binders = []
+ *     cdef list functions = []
  * 
  *     if (func.__module__, func.__qualname__) not in _registry:             # <<<<<<<<<<<<<<
  *         def overloaded_function(*args, **kwargs):
@@ -2643,7 +2444,7 @@ static PyObject *__pyx_f_8overload_8overload_make_overloaded(PyObject *__pyx_v_f
     goto __pyx_L3;
   }
 
-  /* "overload/overload.pyx":71
+  /* "overload/overload.pyx":70
  *         _registry[func.__module__, func.__qualname__] = overloaded_function
  *     else:
  *         overloaded_function = _registry[func.__module__, func.__qualname__]             # <<<<<<<<<<<<<<
@@ -2651,13 +2452,13 @@ static PyObject *__pyx_f_8overload_8overload_make_overloaded(PyObject *__pyx_v_f
  *     overloaded_function.functions.append(func)
  */
   /*else*/ {
-    __Pyx_GetModuleGlobalName(__pyx_t_6, __pyx_n_s_registry); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 71, __pyx_L1_error)
+    __Pyx_GetModuleGlobalName(__pyx_t_6, __pyx_n_s_registry); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 70, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_6);
-    __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_func, __pyx_n_s_module); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 71, __pyx_L1_error)
+    __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_func, __pyx_n_s_module); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 70, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
-    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_func, __pyx_n_s_qualname); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 71, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_func, __pyx_n_s_qualname); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 70, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
-    __pyx_t_3 = PyTuple_New(2); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 71, __pyx_L1_error)
+    __pyx_t_3 = PyTuple_New(2); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 70, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
     __Pyx_GIVEREF(__pyx_t_2);
     PyTuple_SET_ITEM(__pyx_t_3, 0, __pyx_t_2);
@@ -2665,7 +2466,7 @@ static PyObject *__pyx_f_8overload_8overload_make_overloaded(PyObject *__pyx_v_f
     PyTuple_SET_ITEM(__pyx_t_3, 1, __pyx_t_1);
     __pyx_t_2 = 0;
     __pyx_t_1 = 0;
-    __pyx_t_1 = __Pyx_PyObject_GetItem(__pyx_t_6, __pyx_t_3); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 71, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyObject_GetItem(__pyx_t_6, __pyx_t_3); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 70, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
@@ -2674,46 +2475,34 @@ static PyObject *__pyx_f_8overload_8overload_make_overloaded(PyObject *__pyx_v_f
   }
   __pyx_L3:;
 
-  /* "overload/overload.pyx":73
+  /* "overload/overload.pyx":72
  *         overloaded_function = _registry[func.__module__, func.__qualname__]
  * 
  *     overloaded_function.functions.append(func)             # <<<<<<<<<<<<<<
- *     overloaded_function.binders.append(bind_func)
- * 
- */
-  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_overloaded_function, __pyx_n_s_functions); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 73, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_7 = __Pyx_PyObject_Append(__pyx_t_1, __pyx_v_func); if (unlikely(__pyx_t_7 == ((int)-1))) __PYX_ERR(0, 73, __pyx_L1_error)
-  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-
-  /* "overload/overload.pyx":74
- * 
- *     overloaded_function.functions.append(func)
- *     overloaded_function.binders.append(bind_func)             # <<<<<<<<<<<<<<
  * 
  *     return overloaded_function
  */
-  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_overloaded_function, __pyx_n_s_binders); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 74, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_overloaded_function, __pyx_n_s_functions); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 72, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_7 = __Pyx_PyObject_Append(__pyx_t_1, __pyx_v_bind_func); if (unlikely(__pyx_t_7 == ((int)-1))) __PYX_ERR(0, 74, __pyx_L1_error)
+  __pyx_t_7 = __Pyx_PyObject_Append(__pyx_t_1, __pyx_v_func); if (unlikely(__pyx_t_7 == ((int)-1))) __PYX_ERR(0, 72, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "overload/overload.pyx":76
- *     overloaded_function.binders.append(bind_func)
+  /* "overload/overload.pyx":74
+ *     overloaded_function.functions.append(func)
  * 
  *     return overloaded_function             # <<<<<<<<<<<<<<
  * 
- * def decorator(bind_func):
+ * 
  */
   __Pyx_XDECREF(__pyx_r);
   __Pyx_INCREF(__pyx_v_overloaded_function);
   __pyx_r = __pyx_v_overloaded_function;
   goto __pyx_L0;
 
-  /* "overload/overload.pyx":43
+  /* "overload/overload.pyx":44
  * 
  * 
- * cdef make_overloaded(func, bind_func):             # <<<<<<<<<<<<<<
+ * cdef make_overloaded(func):             # <<<<<<<<<<<<<<
  *     """Make a function `func` overloaded.
  * 
  */
@@ -2735,210 +2524,30 @@ static PyObject *__pyx_f_8overload_8overload_make_overloaded(PyObject *__pyx_v_f
   return __pyx_r;
 }
 
-/* "overload/overload.pyx":78
- *     return overloaded_function
- * 
- * def decorator(bind_func):             # <<<<<<<<<<<<<<
- *     """Create an overload decorator with a particular bind function."""
- *     def overload(func):
- */
-
-/* Python wrapper */
-static PyObject *__pyx_pw_8overload_8overload_1decorator(PyObject *__pyx_self, PyObject *__pyx_v_bind_func); /*proto*/
-static char __pyx_doc_8overload_8overload_decorator[] = "Create an overload decorator with a particular bind function.";
-static PyMethodDef __pyx_mdef_8overload_8overload_1decorator = {"decorator", (PyCFunction)__pyx_pw_8overload_8overload_1decorator, METH_O, __pyx_doc_8overload_8overload_decorator};
-static PyObject *__pyx_pw_8overload_8overload_1decorator(PyObject *__pyx_self, PyObject *__pyx_v_bind_func) {
-  PyObject *__pyx_r = 0;
-  __Pyx_RefNannyDeclarations
-  __Pyx_RefNannySetupContext("decorator (wrapper)", 0);
-  __pyx_r = __pyx_pf_8overload_8overload_decorator(__pyx_self, ((PyObject *)__pyx_v_bind_func));
-
-  /* function exit code */
-  __Pyx_RefNannyFinishContext();
-  return __pyx_r;
-}
-
-/* "overload/overload.pyx":80
- * def decorator(bind_func):
- *     """Create an overload decorator with a particular bind function."""
- *     def overload(func):             # <<<<<<<<<<<<<<
- *         """Decorator that makes a function with this name overloaded.
- * 
- */
-
-/* Python wrapper */
-static PyObject *__pyx_pw_8overload_8overload_9decorator_1overload(PyObject *__pyx_self, PyObject *__pyx_v_func); /*proto*/
-static char __pyx_doc_8overload_8overload_9decorator_overload[] = "Decorator that makes a function with this name overloaded.\n        \n        To create an overload set, create several functions with the same name in one scope and mark them with this\n        decorator.\n        ";
-static PyMethodDef __pyx_mdef_8overload_8overload_9decorator_1overload = {"overload", (PyCFunction)__pyx_pw_8overload_8overload_9decorator_1overload, METH_O, __pyx_doc_8overload_8overload_9decorator_overload};
-static PyObject *__pyx_pw_8overload_8overload_9decorator_1overload(PyObject *__pyx_self, PyObject *__pyx_v_func) {
-  PyObject *__pyx_r = 0;
-  __Pyx_RefNannyDeclarations
-  __Pyx_RefNannySetupContext("overload (wrapper)", 0);
-  __pyx_r = __pyx_pf_8overload_8overload_9decorator_overload(__pyx_self, ((PyObject *)__pyx_v_func));
-
-  /* function exit code */
-  __Pyx_RefNannyFinishContext();
-  return __pyx_r;
-}
-
-static PyObject *__pyx_pf_8overload_8overload_9decorator_overload(PyObject *__pyx_self, PyObject *__pyx_v_func) {
-  struct __pyx_obj_8overload_8overload___pyx_scope_struct_1_decorator *__pyx_cur_scope;
-  struct __pyx_obj_8overload_8overload___pyx_scope_struct_1_decorator *__pyx_outer_scope;
-  PyObject *__pyx_r = NULL;
-  __Pyx_TraceDeclarations
-  __Pyx_RefNannyDeclarations
-  PyObject *__pyx_t_1 = NULL;
-  PyObject *__pyx_t_2 = NULL;
-  int __pyx_lineno = 0;
-  const char *__pyx_filename = NULL;
-  int __pyx_clineno = 0;
-  __Pyx_RefNannySetupContext("overload", 0);
-  __pyx_outer_scope = (struct __pyx_obj_8overload_8overload___pyx_scope_struct_1_decorator *) __Pyx_CyFunction_GetClosure(__pyx_self);
-  __pyx_cur_scope = __pyx_outer_scope;
-  __Pyx_TraceCall("overload", __pyx_f[0], 80, 0, __PYX_ERR(0, 80, __pyx_L1_error));
-
-  /* "overload/overload.pyx":86
- *         decorator.
- *         """
- *         return make_overloaded(func, bind_func)             # <<<<<<<<<<<<<<
- * 
- *     return overload
- */
-  __Pyx_XDECREF(__pyx_r);
-  if (unlikely(!__pyx_cur_scope->__pyx_v_bind_func)) { __Pyx_RaiseClosureNameError("bind_func"); __PYX_ERR(0, 86, __pyx_L1_error) }
-  __pyx_t_1 = __pyx_cur_scope->__pyx_v_bind_func;
-  __Pyx_INCREF(__pyx_t_1);
-  __pyx_t_2 = __pyx_f_8overload_8overload_make_overloaded(__pyx_v_func, __pyx_t_1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 86, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_2);
-  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  __pyx_r = __pyx_t_2;
-  __pyx_t_2 = 0;
-  goto __pyx_L0;
-
-  /* "overload/overload.pyx":80
- * def decorator(bind_func):
- *     """Create an overload decorator with a particular bind function."""
- *     def overload(func):             # <<<<<<<<<<<<<<
- *         """Decorator that makes a function with this name overloaded.
- * 
- */
-
-  /* function exit code */
-  __pyx_L1_error:;
-  __Pyx_XDECREF(__pyx_t_1);
-  __Pyx_XDECREF(__pyx_t_2);
-  __Pyx_AddTraceback("overload.overload.decorator.overload", __pyx_clineno, __pyx_lineno, __pyx_filename);
-  __pyx_r = NULL;
-  __pyx_L0:;
-  __Pyx_XGIVEREF(__pyx_r);
-  __Pyx_TraceReturn(__pyx_r, 0);
-  __Pyx_RefNannyFinishContext();
-  return __pyx_r;
-}
-
-/* "overload/overload.pyx":78
- *     return overloaded_function
- * 
- * def decorator(bind_func):             # <<<<<<<<<<<<<<
- *     """Create an overload decorator with a particular bind function."""
- *     def overload(func):
- */
-
-static PyObject *__pyx_pf_8overload_8overload_decorator(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_bind_func) {
-  struct __pyx_obj_8overload_8overload___pyx_scope_struct_1_decorator *__pyx_cur_scope;
-  PyObject *__pyx_v_overload = 0;
-  PyObject *__pyx_r = NULL;
-  __Pyx_TraceDeclarations
-  __Pyx_RefNannyDeclarations
-  PyObject *__pyx_t_1 = NULL;
-  int __pyx_lineno = 0;
-  const char *__pyx_filename = NULL;
-  int __pyx_clineno = 0;
-  __Pyx_TraceFrameInit(__pyx_codeobj__3)
-  __Pyx_RefNannySetupContext("decorator", 0);
-  __pyx_cur_scope = (struct __pyx_obj_8overload_8overload___pyx_scope_struct_1_decorator *)__pyx_tp_new_8overload_8overload___pyx_scope_struct_1_decorator(__pyx_ptype_8overload_8overload___pyx_scope_struct_1_decorator, __pyx_empty_tuple, NULL);
-  if (unlikely(!__pyx_cur_scope)) {
-    __pyx_cur_scope = ((struct __pyx_obj_8overload_8overload___pyx_scope_struct_1_decorator *)Py_None);
-    __Pyx_INCREF(Py_None);
-    __PYX_ERR(0, 78, __pyx_L1_error)
-  } else {
-    __Pyx_GOTREF(__pyx_cur_scope);
-  }
-  __Pyx_TraceCall("decorator", __pyx_f[0], 78, 0, __PYX_ERR(0, 78, __pyx_L1_error));
-  __pyx_cur_scope->__pyx_v_bind_func = __pyx_v_bind_func;
-  __Pyx_INCREF(__pyx_cur_scope->__pyx_v_bind_func);
-  __Pyx_GIVEREF(__pyx_cur_scope->__pyx_v_bind_func);
-
-  /* "overload/overload.pyx":80
- * def decorator(bind_func):
- *     """Create an overload decorator with a particular bind function."""
- *     def overload(func):             # <<<<<<<<<<<<<<
- *         """Decorator that makes a function with this name overloaded.
- * 
- */
-  __pyx_t_1 = __Pyx_CyFunction_New(&__pyx_mdef_8overload_8overload_9decorator_1overload, 0, __pyx_n_s_decorator_locals_overload, ((PyObject*)__pyx_cur_scope), __pyx_n_s_overload_overload, __pyx_d, ((PyObject *)__pyx_codeobj__5)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 80, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_1);
-  __pyx_v_overload = __pyx_t_1;
-  __pyx_t_1 = 0;
-
-  /* "overload/overload.pyx":88
- *         return make_overloaded(func, bind_func)
- * 
- *     return overload             # <<<<<<<<<<<<<<
+/* "overload/overload.pyx":77
  * 
  * 
- */
-  __Pyx_XDECREF(__pyx_r);
-  __Pyx_INCREF(__pyx_v_overload);
-  __pyx_r = __pyx_v_overload;
-  goto __pyx_L0;
-
-  /* "overload/overload.pyx":78
- *     return overloaded_function
- * 
- * def decorator(bind_func):             # <<<<<<<<<<<<<<
- *     """Create an overload decorator with a particular bind function."""
- *     def overload(func):
- */
-
-  /* function exit code */
-  __pyx_L1_error:;
-  __Pyx_XDECREF(__pyx_t_1);
-  __Pyx_AddTraceback("overload.overload.decorator", __pyx_clineno, __pyx_lineno, __pyx_filename);
-  __pyx_r = NULL;
-  __pyx_L0:;
-  __Pyx_XDECREF(__pyx_v_overload);
-  __Pyx_DECREF(((PyObject *)__pyx_cur_scope));
-  __Pyx_XGIVEREF(__pyx_r);
-  __Pyx_TraceReturn(__pyx_r, 0);
-  __Pyx_RefNannyFinishContext();
-  return __pyx_r;
-}
-
-/* "overload/overload.pyx":92
- * 
- * _overload = decorator(bind_annotated)
  * def overload(func):             # <<<<<<<<<<<<<<
  *     """Decorator that makes a function with this name overloaded.
  * 
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_8overload_8overload_3overload(PyObject *__pyx_self, PyObject *__pyx_v_func); /*proto*/
-static char __pyx_doc_8overload_8overload_2overload[] = "Decorator that makes a function with this name overloaded.\n\n    To create an overload set, create several functions with the same name in one scope and mark them with this\n    decorator. This decorator supports annotations from the `typing` module.\n    ";
-static PyMethodDef __pyx_mdef_8overload_8overload_3overload = {"overload", (PyCFunction)__pyx_pw_8overload_8overload_3overload, METH_O, __pyx_doc_8overload_8overload_2overload};
-static PyObject *__pyx_pw_8overload_8overload_3overload(PyObject *__pyx_self, PyObject *__pyx_v_func) {
+static PyObject *__pyx_pw_8overload_8overload_1overload(PyObject *__pyx_self, PyObject *__pyx_v_func); /*proto*/
+static char __pyx_doc_8overload_8overload_overload[] = "Decorator that makes a function with this name overloaded.\n\n    To create an overload set, create several functions with the same name in one scope and mark them with this\n    decorator. This decorator supports annotations from the `typing` module.\n    ";
+static PyMethodDef __pyx_mdef_8overload_8overload_1overload = {"overload", (PyCFunction)__pyx_pw_8overload_8overload_1overload, METH_O, __pyx_doc_8overload_8overload_overload};
+static PyObject *__pyx_pw_8overload_8overload_1overload(PyObject *__pyx_self, PyObject *__pyx_v_func) {
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("overload (wrapper)", 0);
-  __pyx_r = __pyx_pf_8overload_8overload_2overload(__pyx_self, ((PyObject *)__pyx_v_func));
+  __pyx_r = __pyx_pf_8overload_8overload_overload(__pyx_self, ((PyObject *)__pyx_v_func));
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_8overload_8overload_2overload(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_func) {
+static PyObject *__pyx_pf_8overload_8overload_overload(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_func) {
   PyObject *__pyx_r = NULL;
   __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
@@ -2948,18 +2557,18 @@ static PyObject *__pyx_pf_8overload_8overload_2overload(CYTHON_UNUSED PyObject *
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
-  __Pyx_TraceFrameInit(__pyx_codeobj__6)
+  __Pyx_TraceFrameInit(__pyx_codeobj__3)
   __Pyx_RefNannySetupContext("overload", 0);
-  __Pyx_TraceCall("overload", __pyx_f[0], 92, 0, __PYX_ERR(0, 92, __pyx_L1_error));
+  __Pyx_TraceCall("overload", __pyx_f[0], 77, 0, __PYX_ERR(0, 77, __pyx_L1_error));
 
-  /* "overload/overload.pyx":99
+  /* "overload/overload.pyx":84
  *     """
  *     # Cache function signature (this will be used during overload resolution)
- *     _signature_cache[func] = OptimizedSignature(signature(func))             # <<<<<<<<<<<<<<
+ *     signature_cache[func] = createSignature(signature(func))             # <<<<<<<<<<<<<<
  * 
- *     return _overload(func)
+ *     return None
  */
-  __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_signature); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 99, __pyx_L1_error)
+  __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_signature); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 84, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __pyx_t_3 = NULL;
   if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_2))) {
@@ -2973,50 +2582,32 @@ static PyObject *__pyx_pf_8overload_8overload_2overload(CYTHON_UNUSED PyObject *
   }
   __pyx_t_1 = (__pyx_t_3) ? __Pyx_PyObject_Call2Args(__pyx_t_2, __pyx_t_3, __pyx_v_func) : __Pyx_PyObject_CallOneArg(__pyx_t_2, __pyx_v_func);
   __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
-  if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 99, __pyx_L1_error)
+  if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 84, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  __pyx_t_2 = __Pyx_PyObject_CallOneArg(((PyObject *)__pyx_ptype_8overload_9bind_with_Signature), __pyx_t_1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 99, __pyx_L1_error)
+  __pyx_t_2 = ((PyObject *)__pyx_f_8overload_9signature_createSignature(__pyx_t_1)); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 84, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  __Pyx_GetModuleGlobalName(__pyx_t_1, __pyx_n_s_signature_cache); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 99, __pyx_L1_error)
+  __Pyx_GetModuleGlobalName(__pyx_t_1, __pyx_n_s_signature_cache); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 84, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (unlikely(PyObject_SetItem(__pyx_t_1, __pyx_v_func, __pyx_t_2) < 0)) __PYX_ERR(0, 99, __pyx_L1_error)
+  if (unlikely(PyObject_SetItem(__pyx_t_1, __pyx_v_func, __pyx_t_2) < 0)) __PYX_ERR(0, 84, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-  /* "overload/overload.pyx":101
- *     _signature_cache[func] = OptimizedSignature(signature(func))
+  /* "overload/overload.pyx":86
+ *     signature_cache[func] = createSignature(signature(func))
  * 
- *     return _overload(func)             # <<<<<<<<<<<<<<
+ *     return None             # <<<<<<<<<<<<<<
+ *     #return make_overloaded(func, bind_annotated)
  * 
- * _overload_strict = decorator(bind_strict)
  */
   __Pyx_XDECREF(__pyx_r);
-  __Pyx_GetModuleGlobalName(__pyx_t_1, __pyx_n_s_overload_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 101, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_3 = NULL;
-  if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_1))) {
-    __pyx_t_3 = PyMethod_GET_SELF(__pyx_t_1);
-    if (likely(__pyx_t_3)) {
-      PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_1);
-      __Pyx_INCREF(__pyx_t_3);
-      __Pyx_INCREF(function);
-      __Pyx_DECREF_SET(__pyx_t_1, function);
-    }
-  }
-  __pyx_t_2 = (__pyx_t_3) ? __Pyx_PyObject_Call2Args(__pyx_t_1, __pyx_t_3, __pyx_v_func) : __Pyx_PyObject_CallOneArg(__pyx_t_1, __pyx_v_func);
-  __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
-  if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 101, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_2);
-  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  __pyx_r = __pyx_t_2;
-  __pyx_t_2 = 0;
+  __pyx_r = Py_None; __Pyx_INCREF(Py_None);
   goto __pyx_L0;
 
-  /* "overload/overload.pyx":92
+  /* "overload/overload.pyx":77
  * 
- * _overload = decorator(bind_annotated)
+ * 
  * def overload(func):             # <<<<<<<<<<<<<<
  *     """Decorator that makes a function with this name overloaded.
  * 
@@ -3036,30 +2627,30 @@ static PyObject *__pyx_pf_8overload_8overload_2overload(CYTHON_UNUSED PyObject *
   return __pyx_r;
 }
 
-/* "overload/overload.pyx":104
+/* "overload/overload.pyx":90
  * 
- * _overload_strict = decorator(bind_strict)
+ * 
  * def overload_strict(func):             # <<<<<<<<<<<<<<
  *     """Decorator that makes a function with this name overloaded.
  * 
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_8overload_8overload_5overload_strict(PyObject *__pyx_self, PyObject *__pyx_v_func); /*proto*/
-static char __pyx_doc_8overload_8overload_4overload_strict[] = "Decorator that makes a function with this name overloaded.\n    \n    To create an overload set, create several functions with the same name in one scope and mark them with this\n    decorator. This decorator uses `isinstance` to match arguments to annotations, and does not support the `typing`\n    module.\n    ";
-static PyMethodDef __pyx_mdef_8overload_8overload_5overload_strict = {"overload_strict", (PyCFunction)__pyx_pw_8overload_8overload_5overload_strict, METH_O, __pyx_doc_8overload_8overload_4overload_strict};
-static PyObject *__pyx_pw_8overload_8overload_5overload_strict(PyObject *__pyx_self, PyObject *__pyx_v_func) {
+static PyObject *__pyx_pw_8overload_8overload_3overload_strict(PyObject *__pyx_self, PyObject *__pyx_v_func); /*proto*/
+static char __pyx_doc_8overload_8overload_2overload_strict[] = "Decorator that makes a function with this name overloaded.\n    \n    To create an overload set, create several functions with the same name in one scope and mark them with this\n    decorator. This decorator uses `isinstance` to match arguments to annotations, and does not support the `typing`\n    module.\n    ";
+static PyMethodDef __pyx_mdef_8overload_8overload_3overload_strict = {"overload_strict", (PyCFunction)__pyx_pw_8overload_8overload_3overload_strict, METH_O, __pyx_doc_8overload_8overload_2overload_strict};
+static PyObject *__pyx_pw_8overload_8overload_3overload_strict(PyObject *__pyx_self, PyObject *__pyx_v_func) {
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("overload_strict (wrapper)", 0);
-  __pyx_r = __pyx_pf_8overload_8overload_4overload_strict(__pyx_self, ((PyObject *)__pyx_v_func));
+  __pyx_r = __pyx_pf_8overload_8overload_2overload_strict(__pyx_self, ((PyObject *)__pyx_v_func));
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_8overload_8overload_4overload_strict(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_func) {
+static PyObject *__pyx_pf_8overload_8overload_2overload_strict(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_func) {
   PyObject *__pyx_r = NULL;
   __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
@@ -3069,18 +2660,18 @@ static PyObject *__pyx_pf_8overload_8overload_4overload_strict(CYTHON_UNUSED PyO
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
-  __Pyx_TraceFrameInit(__pyx_codeobj__7)
+  __Pyx_TraceFrameInit(__pyx_codeobj__4)
   __Pyx_RefNannySetupContext("overload_strict", 0);
-  __Pyx_TraceCall("overload_strict", __pyx_f[0], 104, 0, __PYX_ERR(0, 104, __pyx_L1_error));
+  __Pyx_TraceCall("overload_strict", __pyx_f[0], 90, 0, __PYX_ERR(0, 90, __pyx_L1_error));
 
-  /* "overload/overload.pyx":112
+  /* "overload/overload.pyx":98
  *     """
  *     # Cache function signature (this will be used during overload resolution)
- *     _signature_cache[func] = OptimizedSignature(signature(func))             # <<<<<<<<<<<<<<
+ *     signature_cache[func] = createSignature(signature(func))             # <<<<<<<<<<<<<<
  * 
- *     return _overload_strict(func)
+ *     return make_overloaded(func)
  */
-  __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_signature); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 112, __pyx_L1_error)
+  __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_signature); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 98, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __pyx_t_3 = NULL;
   if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_2))) {
@@ -3094,48 +2685,33 @@ static PyObject *__pyx_pf_8overload_8overload_4overload_strict(CYTHON_UNUSED PyO
   }
   __pyx_t_1 = (__pyx_t_3) ? __Pyx_PyObject_Call2Args(__pyx_t_2, __pyx_t_3, __pyx_v_func) : __Pyx_PyObject_CallOneArg(__pyx_t_2, __pyx_v_func);
   __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
-  if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 112, __pyx_L1_error)
+  if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 98, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  __pyx_t_2 = __Pyx_PyObject_CallOneArg(((PyObject *)__pyx_ptype_8overload_9bind_with_Signature), __pyx_t_1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 112, __pyx_L1_error)
+  __pyx_t_2 = ((PyObject *)__pyx_f_8overload_9signature_createSignature(__pyx_t_1)); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 98, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  __Pyx_GetModuleGlobalName(__pyx_t_1, __pyx_n_s_signature_cache); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 112, __pyx_L1_error)
+  __Pyx_GetModuleGlobalName(__pyx_t_1, __pyx_n_s_signature_cache); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 98, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (unlikely(PyObject_SetItem(__pyx_t_1, __pyx_v_func, __pyx_t_2) < 0)) __PYX_ERR(0, 112, __pyx_L1_error)
+  if (unlikely(PyObject_SetItem(__pyx_t_1, __pyx_v_func, __pyx_t_2) < 0)) __PYX_ERR(0, 98, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-  /* "overload/overload.pyx":114
- *     _signature_cache[func] = OptimizedSignature(signature(func))
+  /* "overload/overload.pyx":100
+ *     signature_cache[func] = createSignature(signature(func))
  * 
- *     return _overload_strict(func)             # <<<<<<<<<<<<<<
+ *     return make_overloaded(func)             # <<<<<<<<<<<<<<
  */
   __Pyx_XDECREF(__pyx_r);
-  __Pyx_GetModuleGlobalName(__pyx_t_1, __pyx_n_s_overload_strict); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 114, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_3 = NULL;
-  if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_1))) {
-    __pyx_t_3 = PyMethod_GET_SELF(__pyx_t_1);
-    if (likely(__pyx_t_3)) {
-      PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_1);
-      __Pyx_INCREF(__pyx_t_3);
-      __Pyx_INCREF(function);
-      __Pyx_DECREF_SET(__pyx_t_1, function);
-    }
-  }
-  __pyx_t_2 = (__pyx_t_3) ? __Pyx_PyObject_Call2Args(__pyx_t_1, __pyx_t_3, __pyx_v_func) : __Pyx_PyObject_CallOneArg(__pyx_t_1, __pyx_v_func);
-  __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
-  if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 114, __pyx_L1_error)
+  __pyx_t_2 = __pyx_f_8overload_8overload_make_overloaded(__pyx_v_func); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 100, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __pyx_r = __pyx_t_2;
   __pyx_t_2 = 0;
   goto __pyx_L0;
 
-  /* "overload/overload.pyx":104
+  /* "overload/overload.pyx":90
  * 
- * _overload_strict = decorator(bind_strict)
+ * 
  * def overload_strict(func):             # <<<<<<<<<<<<<<
  *     """Decorator that makes a function with this name overloaded.
  * 
@@ -3177,7 +2753,6 @@ static void __pyx_tp_dealloc_8overload_8overload___pyx_scope_struct____pyx_f_8ov
   PyObject_GC_UnTrack(o);
   Py_CLEAR(p->__pyx_v___module__);
   Py_CLEAR(p->__pyx_v___qualname__);
-  Py_CLEAR(p->__pyx_v_binders);
   Py_CLEAR(p->__pyx_v_functions);
   if (CYTHON_COMPILING_IN_CPYTHON && ((__pyx_freecount_8overload_8overload___pyx_scope_struct____pyx_f_8overload_8overload_make_overloaded < 8) & (Py_TYPE(o)->tp_basicsize == sizeof(struct __pyx_obj_8overload_8overload___pyx_scope_struct____pyx_f_8overload_8overload_make_overloaded)))) {
     __pyx_freelist_8overload_8overload___pyx_scope_struct____pyx_f_8overload_8overload_make_overloaded[__pyx_freecount_8overload_8overload___pyx_scope_struct____pyx_f_8overload_8overload_make_overloaded++] = ((struct __pyx_obj_8overload_8overload___pyx_scope_struct____pyx_f_8overload_8overload_make_overloaded *)o);
@@ -3189,9 +2764,6 @@ static void __pyx_tp_dealloc_8overload_8overload___pyx_scope_struct____pyx_f_8ov
 static int __pyx_tp_traverse_8overload_8overload___pyx_scope_struct____pyx_f_8overload_8overload_make_overloaded(PyObject *o, visitproc v, void *a) {
   int e;
   struct __pyx_obj_8overload_8overload___pyx_scope_struct____pyx_f_8overload_8overload_make_overloaded *p = (struct __pyx_obj_8overload_8overload___pyx_scope_struct____pyx_f_8overload_8overload_make_overloaded *)o;
-  if (p->__pyx_v_binders) {
-    e = (*v)(p->__pyx_v_binders, a); if (e) return e;
-  }
   if (p->__pyx_v_functions) {
     e = (*v)(p->__pyx_v_functions, a); if (e) return e;
   }
@@ -3201,9 +2773,6 @@ static int __pyx_tp_traverse_8overload_8overload___pyx_scope_struct____pyx_f_8ov
 static int __pyx_tp_clear_8overload_8overload___pyx_scope_struct____pyx_f_8overload_8overload_make_overloaded(PyObject *o) {
   PyObject* tmp;
   struct __pyx_obj_8overload_8overload___pyx_scope_struct____pyx_f_8overload_8overload_make_overloaded *p = (struct __pyx_obj_8overload_8overload___pyx_scope_struct____pyx_f_8overload_8overload_make_overloaded *)o;
-  tmp = ((PyObject*)p->__pyx_v_binders);
-  p->__pyx_v_binders = ((PyObject*)Py_None); Py_INCREF(Py_None);
-  Py_XDECREF(tmp);
   tmp = ((PyObject*)p->__pyx_v_functions);
   p->__pyx_v_functions = ((PyObject*)Py_None); Py_INCREF(Py_None);
   Py_XDECREF(tmp);
@@ -3279,121 +2848,6 @@ static PyTypeObject __pyx_type_8overload_8overload___pyx_scope_struct____pyx_f_8
   #endif
 };
 
-static struct __pyx_obj_8overload_8overload___pyx_scope_struct_1_decorator *__pyx_freelist_8overload_8overload___pyx_scope_struct_1_decorator[8];
-static int __pyx_freecount_8overload_8overload___pyx_scope_struct_1_decorator = 0;
-
-static PyObject *__pyx_tp_new_8overload_8overload___pyx_scope_struct_1_decorator(PyTypeObject *t, CYTHON_UNUSED PyObject *a, CYTHON_UNUSED PyObject *k) {
-  PyObject *o;
-  if (CYTHON_COMPILING_IN_CPYTHON && likely((__pyx_freecount_8overload_8overload___pyx_scope_struct_1_decorator > 0) & (t->tp_basicsize == sizeof(struct __pyx_obj_8overload_8overload___pyx_scope_struct_1_decorator)))) {
-    o = (PyObject*)__pyx_freelist_8overload_8overload___pyx_scope_struct_1_decorator[--__pyx_freecount_8overload_8overload___pyx_scope_struct_1_decorator];
-    memset(o, 0, sizeof(struct __pyx_obj_8overload_8overload___pyx_scope_struct_1_decorator));
-    (void) PyObject_INIT(o, t);
-    PyObject_GC_Track(o);
-  } else {
-    o = (*t->tp_alloc)(t, 0);
-    if (unlikely(!o)) return 0;
-  }
-  return o;
-}
-
-static void __pyx_tp_dealloc_8overload_8overload___pyx_scope_struct_1_decorator(PyObject *o) {
-  struct __pyx_obj_8overload_8overload___pyx_scope_struct_1_decorator *p = (struct __pyx_obj_8overload_8overload___pyx_scope_struct_1_decorator *)o;
-  PyObject_GC_UnTrack(o);
-  Py_CLEAR(p->__pyx_v_bind_func);
-  if (CYTHON_COMPILING_IN_CPYTHON && ((__pyx_freecount_8overload_8overload___pyx_scope_struct_1_decorator < 8) & (Py_TYPE(o)->tp_basicsize == sizeof(struct __pyx_obj_8overload_8overload___pyx_scope_struct_1_decorator)))) {
-    __pyx_freelist_8overload_8overload___pyx_scope_struct_1_decorator[__pyx_freecount_8overload_8overload___pyx_scope_struct_1_decorator++] = ((struct __pyx_obj_8overload_8overload___pyx_scope_struct_1_decorator *)o);
-  } else {
-    (*Py_TYPE(o)->tp_free)(o);
-  }
-}
-
-static int __pyx_tp_traverse_8overload_8overload___pyx_scope_struct_1_decorator(PyObject *o, visitproc v, void *a) {
-  int e;
-  struct __pyx_obj_8overload_8overload___pyx_scope_struct_1_decorator *p = (struct __pyx_obj_8overload_8overload___pyx_scope_struct_1_decorator *)o;
-  if (p->__pyx_v_bind_func) {
-    e = (*v)(p->__pyx_v_bind_func, a); if (e) return e;
-  }
-  return 0;
-}
-
-static int __pyx_tp_clear_8overload_8overload___pyx_scope_struct_1_decorator(PyObject *o) {
-  PyObject* tmp;
-  struct __pyx_obj_8overload_8overload___pyx_scope_struct_1_decorator *p = (struct __pyx_obj_8overload_8overload___pyx_scope_struct_1_decorator *)o;
-  tmp = ((PyObject*)p->__pyx_v_bind_func);
-  p->__pyx_v_bind_func = Py_None; Py_INCREF(Py_None);
-  Py_XDECREF(tmp);
-  return 0;
-}
-
-static PyTypeObject __pyx_type_8overload_8overload___pyx_scope_struct_1_decorator = {
-  PyVarObject_HEAD_INIT(0, 0)
-  "overload.overload.__pyx_scope_struct_1_decorator", /*tp_name*/
-  sizeof(struct __pyx_obj_8overload_8overload___pyx_scope_struct_1_decorator), /*tp_basicsize*/
-  0, /*tp_itemsize*/
-  __pyx_tp_dealloc_8overload_8overload___pyx_scope_struct_1_decorator, /*tp_dealloc*/
-  #if PY_VERSION_HEX < 0x030800b4
-  0, /*tp_print*/
-  #endif
-  #if PY_VERSION_HEX >= 0x030800b4
-  0, /*tp_vectorcall_offset*/
-  #endif
-  0, /*tp_getattr*/
-  0, /*tp_setattr*/
-  #if PY_MAJOR_VERSION < 3
-  0, /*tp_compare*/
-  #endif
-  #if PY_MAJOR_VERSION >= 3
-  0, /*tp_as_async*/
-  #endif
-  0, /*tp_repr*/
-  0, /*tp_as_number*/
-  0, /*tp_as_sequence*/
-  0, /*tp_as_mapping*/
-  0, /*tp_hash*/
-  0, /*tp_call*/
-  0, /*tp_str*/
-  0, /*tp_getattro*/
-  0, /*tp_setattro*/
-  0, /*tp_as_buffer*/
-  Py_TPFLAGS_DEFAULT|Py_TPFLAGS_HAVE_VERSION_TAG|Py_TPFLAGS_CHECKTYPES|Py_TPFLAGS_HAVE_NEWBUFFER|Py_TPFLAGS_HAVE_GC, /*tp_flags*/
-  0, /*tp_doc*/
-  __pyx_tp_traverse_8overload_8overload___pyx_scope_struct_1_decorator, /*tp_traverse*/
-  __pyx_tp_clear_8overload_8overload___pyx_scope_struct_1_decorator, /*tp_clear*/
-  0, /*tp_richcompare*/
-  0, /*tp_weaklistoffset*/
-  0, /*tp_iter*/
-  0, /*tp_iternext*/
-  0, /*tp_methods*/
-  0, /*tp_members*/
-  0, /*tp_getset*/
-  0, /*tp_base*/
-  0, /*tp_dict*/
-  0, /*tp_descr_get*/
-  0, /*tp_descr_set*/
-  0, /*tp_dictoffset*/
-  0, /*tp_init*/
-  0, /*tp_alloc*/
-  __pyx_tp_new_8overload_8overload___pyx_scope_struct_1_decorator, /*tp_new*/
-  0, /*tp_free*/
-  0, /*tp_is_gc*/
-  0, /*tp_bases*/
-  0, /*tp_mro*/
-  0, /*tp_cache*/
-  0, /*tp_subclasses*/
-  0, /*tp_weaklist*/
-  0, /*tp_del*/
-  0, /*tp_version_tag*/
-  #if PY_VERSION_HEX >= 0x030400a1
-  0, /*tp_finalize*/
-  #endif
-  #if PY_VERSION_HEX >= 0x030800b1
-  0, /*tp_vectorcall*/
-  #endif
-  #if PY_VERSION_HEX >= 0x030800b4 && PY_VERSION_HEX < 0x03090000
-  0, /*tp_print*/
-  #endif
-};
-
 static PyMethodDef __pyx_methods[] = {
   {0, 0, 0, 0}
 };
@@ -3444,19 +2898,13 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_NoMatchingOverloadError, __pyx_k_NoMatchingOverloadError, sizeof(__pyx_k_NoMatchingOverloadError), 0, 0, 1, 1},
   {&__pyx_n_s_append, __pyx_k_append, sizeof(__pyx_k_append), 0, 0, 1, 1},
   {&__pyx_n_s_args, __pyx_k_args, sizeof(__pyx_k_args), 0, 0, 1, 1},
-  {&__pyx_n_s_bind, __pyx_k_bind, sizeof(__pyx_k_bind), 0, 0, 1, 1},
-  {&__pyx_n_s_bind_annotated, __pyx_k_bind_annotated, sizeof(__pyx_k_bind_annotated), 0, 0, 1, 1},
-  {&__pyx_n_s_bind_func, __pyx_k_bind_func, sizeof(__pyx_k_bind_func), 0, 0, 1, 1},
-  {&__pyx_n_s_bind_strict, __pyx_k_bind_strict, sizeof(__pyx_k_bind_strict), 0, 0, 1, 1},
-  {&__pyx_n_s_binders, __pyx_k_binders, sizeof(__pyx_k_binders), 0, 0, 1, 1},
   {&__pyx_n_s_cline_in_traceback, __pyx_k_cline_in_traceback, sizeof(__pyx_k_cline_in_traceback), 0, 0, 1, 1},
   {&__pyx_n_s_count, __pyx_k_count, sizeof(__pyx_k_count), 0, 0, 1, 1},
-  {&__pyx_n_s_decorator, __pyx_k_decorator, sizeof(__pyx_k_decorator), 0, 0, 1, 1},
-  {&__pyx_n_s_decorator_locals_overload, __pyx_k_decorator_locals_overload, sizeof(__pyx_k_decorator_locals_overload), 0, 0, 1, 1},
   {&__pyx_n_s_func, __pyx_k_func, sizeof(__pyx_k_func), 0, 0, 1, 1},
   {&__pyx_n_s_functions, __pyx_k_functions, sizeof(__pyx_k_functions), 0, 0, 1, 1},
   {&__pyx_n_s_import, __pyx_k_import, sizeof(__pyx_k_import), 0, 0, 1, 1},
   {&__pyx_n_s_inspect, __pyx_k_inspect, sizeof(__pyx_k_inspect), 0, 0, 1, 1},
+  {&__pyx_n_s_isinstance, __pyx_k_isinstance, sizeof(__pyx_k_isinstance), 0, 0, 1, 1},
   {&__pyx_n_s_itertools, __pyx_k_itertools, sizeof(__pyx_k_itertools), 0, 0, 1, 1},
   {&__pyx_n_s_kwargs, __pyx_k_kwargs, sizeof(__pyx_k_kwargs), 0, 0, 1, 1},
   {&__pyx_n_s_main, __pyx_k_main, sizeof(__pyx_k_main), 0, 0, 1, 1},
@@ -3464,11 +2912,9 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_module, __pyx_k_module, sizeof(__pyx_k_module), 0, 0, 1, 1},
   {&__pyx_n_s_name, __pyx_k_name, sizeof(__pyx_k_name), 0, 0, 1, 1},
   {&__pyx_n_s_overload, __pyx_k_overload, sizeof(__pyx_k_overload), 0, 0, 1, 1},
-  {&__pyx_n_s_overload_2, __pyx_k_overload_2, sizeof(__pyx_k_overload_2), 0, 0, 1, 1},
   {&__pyx_n_s_overload_overload, __pyx_k_overload_overload, sizeof(__pyx_k_overload_overload), 0, 0, 1, 1},
   {&__pyx_kp_s_overload_overload_pyx, __pyx_k_overload_overload_pyx, sizeof(__pyx_k_overload_overload_pyx), 0, 0, 1, 0},
   {&__pyx_n_s_overload_strict, __pyx_k_overload_strict, sizeof(__pyx_k_overload_strict), 0, 0, 1, 1},
-  {&__pyx_n_s_overload_strict_2, __pyx_k_overload_strict_2, sizeof(__pyx_k_overload_strict_2), 0, 0, 1, 1},
   {&__pyx_n_s_overloaded_function, __pyx_k_overloaded_function, sizeof(__pyx_k_overloaded_function), 0, 0, 1, 1},
   {&__pyx_n_s_ovl_module, __pyx_k_ovl_module, sizeof(__pyx_k_ovl_module), 0, 0, 1, 1},
   {&__pyx_n_s_qualname, __pyx_k_qualname, sizeof(__pyx_k_qualname), 0, 0, 1, 1},
@@ -3476,14 +2922,10 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_signature, __pyx_k_signature, sizeof(__pyx_k_signature), 0, 0, 1, 1},
   {&__pyx_n_s_signature_cache, __pyx_k_signature_cache, sizeof(__pyx_k_signature_cache), 0, 0, 1, 1},
   {&__pyx_n_s_test, __pyx_k_test, sizeof(__pyx_k_test), 0, 0, 1, 1},
-  {&__pyx_n_s_zip, __pyx_k_zip, sizeof(__pyx_k_zip), 0, 0, 1, 1},
   {0, 0, 0, 0, 0, 0, 0}
 };
 static CYTHON_SMALL_CODE int __Pyx_InitCachedBuiltins(void) {
-  __pyx_builtin_zip = __Pyx_GetBuiltinName(__pyx_n_s_zip); if (!__pyx_builtin_zip) __PYX_ERR(0, 25, __pyx_L1_error)
   return 0;
-  __pyx_L1_error:;
-  return -1;
 }
 
 static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
@@ -3502,53 +2944,29 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
   __Pyx_GIVEREF(__pyx_tuple_);
   __pyx_codeobj__2 = (PyObject*)__Pyx_PyCode_New(0, 0, 2, 0, CO_OPTIMIZED|CO_NEWLOCALS|CO_VARARGS|CO_VARKEYWORDS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple_, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_overload_overload_pyx, __pyx_n_s_overloaded_function, 57, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__2)) __PYX_ERR(0, 57, __pyx_L1_error)
 
-  /* "overload/overload.pyx":80
- * def decorator(bind_func):
- *     """Create an overload decorator with a particular bind function."""
- *     def overload(func):             # <<<<<<<<<<<<<<
- *         """Decorator that makes a function with this name overloaded.
+  /* "overload/overload.pyx":77
  * 
- */
-  __pyx_tuple__4 = PyTuple_Pack(1, __pyx_n_s_func); if (unlikely(!__pyx_tuple__4)) __PYX_ERR(0, 80, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__4);
-  __Pyx_GIVEREF(__pyx_tuple__4);
-  __pyx_codeobj__5 = (PyObject*)__Pyx_PyCode_New(1, 0, 1, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__4, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_overload_overload_pyx, __pyx_n_s_overload, 80, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__5)) __PYX_ERR(0, 80, __pyx_L1_error)
-
-  /* "overload/overload.pyx":78
- *     return overloaded_function
  * 
- * def decorator(bind_func):             # <<<<<<<<<<<<<<
- *     """Create an overload decorator with a particular bind function."""
- *     def overload(func):
- */
-  __pyx_tuple__8 = PyTuple_Pack(3, __pyx_n_s_bind_func, __pyx_n_s_overload, __pyx_n_s_overload); if (unlikely(!__pyx_tuple__8)) __PYX_ERR(0, 78, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__8);
-  __Pyx_GIVEREF(__pyx_tuple__8);
-  __pyx_codeobj__3 = (PyObject*)__Pyx_PyCode_New(1, 0, 3, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__8, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_overload_overload_pyx, __pyx_n_s_decorator, 78, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__3)) __PYX_ERR(0, 78, __pyx_L1_error)
-
-  /* "overload/overload.pyx":92
- * 
- * _overload = decorator(bind_annotated)
  * def overload(func):             # <<<<<<<<<<<<<<
  *     """Decorator that makes a function with this name overloaded.
  * 
  */
-  __pyx_tuple__9 = PyTuple_Pack(1, __pyx_n_s_func); if (unlikely(!__pyx_tuple__9)) __PYX_ERR(0, 92, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__9);
-  __Pyx_GIVEREF(__pyx_tuple__9);
-  __pyx_codeobj__6 = (PyObject*)__Pyx_PyCode_New(1, 0, 1, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__9, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_overload_overload_pyx, __pyx_n_s_overload, 92, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__6)) __PYX_ERR(0, 92, __pyx_L1_error)
+  __pyx_tuple__5 = PyTuple_Pack(1, __pyx_n_s_func); if (unlikely(!__pyx_tuple__5)) __PYX_ERR(0, 77, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__5);
+  __Pyx_GIVEREF(__pyx_tuple__5);
+  __pyx_codeobj__3 = (PyObject*)__Pyx_PyCode_New(1, 0, 1, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__5, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_overload_overload_pyx, __pyx_n_s_overload, 77, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__3)) __PYX_ERR(0, 77, __pyx_L1_error)
 
-  /* "overload/overload.pyx":104
+  /* "overload/overload.pyx":90
  * 
- * _overload_strict = decorator(bind_strict)
+ * 
  * def overload_strict(func):             # <<<<<<<<<<<<<<
  *     """Decorator that makes a function with this name overloaded.
  * 
  */
-  __pyx_tuple__10 = PyTuple_Pack(1, __pyx_n_s_func); if (unlikely(!__pyx_tuple__10)) __PYX_ERR(0, 104, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__10);
-  __Pyx_GIVEREF(__pyx_tuple__10);
-  __pyx_codeobj__7 = (PyObject*)__Pyx_PyCode_New(1, 0, 1, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__10, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_overload_overload_pyx, __pyx_n_s_overload_strict_2, 104, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__7)) __PYX_ERR(0, 104, __pyx_L1_error)
+  __pyx_tuple__6 = PyTuple_Pack(1, __pyx_n_s_func); if (unlikely(!__pyx_tuple__6)) __PYX_ERR(0, 90, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__6);
+  __Pyx_GIVEREF(__pyx_tuple__6);
+  __pyx_codeobj__4 = (PyObject*)__Pyx_PyCode_New(1, 0, 1, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__6, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_overload_overload_pyx, __pyx_n_s_overload_strict, 90, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__4)) __PYX_ERR(0, 90, __pyx_L1_error)
   __Pyx_RefNannyFinishContext();
   return 0;
   __pyx_L1_error:;
@@ -3602,7 +3020,7 @@ static int __Pyx_modinit_type_init_code(void) {
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("__Pyx_modinit_type_init_code", 0);
   /*--- Type init code ---*/
-  if (PyType_Ready(&__pyx_type_8overload_8overload___pyx_scope_struct____pyx_f_8overload_8overload_make_overloaded) < 0) __PYX_ERR(0, 43, __pyx_L1_error)
+  if (PyType_Ready(&__pyx_type_8overload_8overload___pyx_scope_struct____pyx_f_8overload_8overload_make_overloaded) < 0) __PYX_ERR(0, 44, __pyx_L1_error)
   #if PY_VERSION_HEX < 0x030800B1
   __pyx_type_8overload_8overload___pyx_scope_struct____pyx_f_8overload_8overload_make_overloaded.tp_print = 0;
   #endif
@@ -3610,14 +3028,6 @@ static int __Pyx_modinit_type_init_code(void) {
     __pyx_type_8overload_8overload___pyx_scope_struct____pyx_f_8overload_8overload_make_overloaded.tp_getattro = __Pyx_PyObject_GenericGetAttrNoDict;
   }
   __pyx_ptype_8overload_8overload___pyx_scope_struct____pyx_f_8overload_8overload_make_overloaded = &__pyx_type_8overload_8overload___pyx_scope_struct____pyx_f_8overload_8overload_make_overloaded;
-  if (PyType_Ready(&__pyx_type_8overload_8overload___pyx_scope_struct_1_decorator) < 0) __PYX_ERR(0, 78, __pyx_L1_error)
-  #if PY_VERSION_HEX < 0x030800B1
-  __pyx_type_8overload_8overload___pyx_scope_struct_1_decorator.tp_print = 0;
-  #endif
-  if ((CYTHON_USE_TYPE_SLOTS && CYTHON_USE_PYTYPE_LOOKUP) && likely(!__pyx_type_8overload_8overload___pyx_scope_struct_1_decorator.tp_dictoffset && __pyx_type_8overload_8overload___pyx_scope_struct_1_decorator.tp_getattro == PyObject_GenericGetAttr)) {
-    __pyx_type_8overload_8overload___pyx_scope_struct_1_decorator.tp_getattro = __Pyx_PyObject_GenericGetAttrNoDict;
-  }
-  __pyx_ptype_8overload_8overload___pyx_scope_struct_1_decorator = &__pyx_type_8overload_8overload___pyx_scope_struct_1_decorator;
   __Pyx_RefNannyFinishContext();
   return 0;
   __pyx_L1_error:;
@@ -3654,10 +3064,10 @@ static int __Pyx_modinit_type_import_code(void) {
   __pyx_ptype_7cpython_7complex_complex = __Pyx_ImportType(__pyx_t_1, __Pyx_BUILTIN_MODULE_NAME, "complex", sizeof(PyComplexObject), __Pyx_ImportType_CheckSize_Warn);
    if (!__pyx_ptype_7cpython_7complex_complex) __PYX_ERR(3, 15, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  __pyx_t_1 = PyImport_ImportModule("overload.bind_with"); if (unlikely(!__pyx_t_1)) __PYX_ERR(4, 17, __pyx_L1_error)
+  __pyx_t_1 = PyImport_ImportModule("overload.signature"); if (unlikely(!__pyx_t_1)) __PYX_ERR(4, 19, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_ptype_8overload_9bind_with_Signature = __Pyx_ImportType(__pyx_t_1, "overload.bind_with", "Signature", sizeof(struct __pyx_obj_8overload_9bind_with_Signature), __Pyx_ImportType_CheckSize_Warn);
-   if (!__pyx_ptype_8overload_9bind_with_Signature) __PYX_ERR(4, 17, __pyx_L1_error)
+  __pyx_ptype_8overload_9signature_Signature = __Pyx_ImportType(__pyx_t_1, "overload.signature", "Signature", sizeof(struct __pyx_obj_8overload_9signature_Signature), __Pyx_ImportType_CheckSize_Warn);
+   if (!__pyx_ptype_8overload_9signature_Signature) __PYX_ERR(4, 19, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __Pyx_RefNannyFinishContext();
   return 0;
@@ -3677,10 +3087,26 @@ static int __Pyx_modinit_variable_import_code(void) {
 
 static int __Pyx_modinit_function_import_code(void) {
   __Pyx_RefNannyDeclarations
+  PyObject *__pyx_t_1 = NULL;
+  int __pyx_lineno = 0;
+  const char *__pyx_filename = NULL;
+  int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("__Pyx_modinit_function_import_code", 0);
   /*--- Function import code ---*/
+  __pyx_t_1 = PyImport_ImportModule("overload.signature"); if (!__pyx_t_1) __PYX_ERR(0, 1, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  if (__Pyx_ImportFunction(__pyx_t_1, "createSignature", (void (**)(void))&__pyx_f_8overload_9signature_createSignature, "struct __pyx_obj_8overload_9signature_Signature *(PyObject *)") < 0) __PYX_ERR(0, 1, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+  __pyx_t_1 = PyImport_ImportModule("overload.bind_with"); if (!__pyx_t_1) __PYX_ERR(0, 1, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  if (__Pyx_ImportFunction(__pyx_t_1, "bind_with", (void (**)(void))&__pyx_f_8overload_9bind_with_bind_with, "PyObject *(struct __pyx_obj_8overload_9signature_Signature *, PyObject *, PyObject *, PyObject *)") < 0) __PYX_ERR(0, 1, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __Pyx_RefNannyFinishContext();
   return 0;
+  __pyx_L1_error:;
+  __Pyx_XDECREF(__pyx_t_1);
+  __Pyx_RefNannyFinishContext();
+  return -1;
 }
 
 
@@ -3780,7 +3206,6 @@ static CYTHON_SMALL_CODE int __pyx_pymod_exec_overload(PyObject *__pyx_pyinit_mo
   __Pyx_TraceDeclarations
   PyObject *__pyx_t_1 = NULL;
   PyObject *__pyx_t_2 = NULL;
-  PyObject *__pyx_t_3 = NULL;
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
@@ -3882,7 +3307,7 @@ if (!__Pyx_RefNanny) {
   if (unlikely(__Pyx_modinit_type_init_code() < 0)) __PYX_ERR(0, 1, __pyx_L1_error)
   if (unlikely(__Pyx_modinit_type_import_code() < 0)) __PYX_ERR(0, 1, __pyx_L1_error)
   (void)__Pyx_modinit_variable_import_code();
-  (void)__Pyx_modinit_function_import_code();
+  if (unlikely(__Pyx_modinit_function_import_code() < 0)) __PYX_ERR(0, 1, __pyx_L1_error)
   /*--- Execution code ---*/
   #if defined(__Pyx_Generator_USED) || defined(__Pyx_Coroutine_USED)
   if (__Pyx_patch_abc() < 0) __PYX_ERR(0, 1, __pyx_L1_error)
@@ -3935,8 +3360,8 @@ if (!__Pyx_RefNanny) {
  * from cpython cimport PyObject
  * from libcpp.vector cimport vector
  * import overload as ovl_module             # <<<<<<<<<<<<<<
- * from .bind_with cimport Signature as OptimizedSignature
- * from .bind import bind_strict, bind_annotated, _signature_cache
+ * from .bind_with cimport bind_with
+ * from .signature import signature_cache
  */
   __pyx_t_1 = __Pyx_Import(__pyx_n_s_overload, 0, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 11, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
@@ -3945,32 +3370,18 @@ if (!__Pyx_RefNanny) {
 
   /* "overload/overload.pyx":13
  * import overload as ovl_module
- * from .bind_with cimport Signature as OptimizedSignature
- * from .bind import bind_strict, bind_annotated, _signature_cache             # <<<<<<<<<<<<<<
+ * from .bind_with cimport bind_with
+ * from .signature import signature_cache             # <<<<<<<<<<<<<<
+ * from .signature cimport createSignature
  * 
- * _registry = {}
  */
-  __pyx_t_1 = PyList_New(3); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 13, __pyx_L1_error)
+  __pyx_t_1 = PyList_New(1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 13, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __Pyx_INCREF(__pyx_n_s_bind_strict);
-  __Pyx_GIVEREF(__pyx_n_s_bind_strict);
-  PyList_SET_ITEM(__pyx_t_1, 0, __pyx_n_s_bind_strict);
-  __Pyx_INCREF(__pyx_n_s_bind_annotated);
-  __Pyx_GIVEREF(__pyx_n_s_bind_annotated);
-  PyList_SET_ITEM(__pyx_t_1, 1, __pyx_n_s_bind_annotated);
   __Pyx_INCREF(__pyx_n_s_signature_cache);
   __Pyx_GIVEREF(__pyx_n_s_signature_cache);
-  PyList_SET_ITEM(__pyx_t_1, 2, __pyx_n_s_signature_cache);
-  __pyx_t_2 = __Pyx_Import(__pyx_n_s_bind, __pyx_t_1, 1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 13, __pyx_L1_error)
+  PyList_SET_ITEM(__pyx_t_1, 0, __pyx_n_s_signature_cache);
+  __pyx_t_2 = __Pyx_Import(__pyx_n_s_signature, __pyx_t_1, 1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 13, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  __pyx_t_1 = __Pyx_ImportFrom(__pyx_t_2, __pyx_n_s_bind_strict); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 13, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_1);
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_bind_strict, __pyx_t_1) < 0) __PYX_ERR(0, 13, __pyx_L1_error)
-  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  __pyx_t_1 = __Pyx_ImportFrom(__pyx_t_2, __pyx_n_s_bind_annotated); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 13, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_1);
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_bind_annotated, __pyx_t_1) < 0) __PYX_ERR(0, 13, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __pyx_t_1 = __Pyx_ImportFrom(__pyx_t_2, __pyx_n_s_signature_cache); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 13, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
@@ -3978,88 +3389,40 @@ if (!__Pyx_RefNanny) {
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-  /* "overload/overload.pyx":15
- * from .bind import bind_strict, bind_annotated, _signature_cache
+  /* "overload/overload.pyx":16
+ * from .signature cimport createSignature
  * 
  * _registry = {}             # <<<<<<<<<<<<<<
  * """A registry of all overloaded functions.
  * This is how decorated functions communicate with each other to merge several functions into one.
  */
-  __pyx_t_2 = __Pyx_PyDict_NewPresized(0); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 15, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyDict_NewPresized(0); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 16, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_registry, __pyx_t_2) < 0) __PYX_ERR(0, 15, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_registry, __pyx_t_2) < 0) __PYX_ERR(0, 16, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-  /* "overload/overload.pyx":78
- *     return overloaded_function
- * 
- * def decorator(bind_func):             # <<<<<<<<<<<<<<
- *     """Create an overload decorator with a particular bind function."""
- *     def overload(func):
- */
-  __pyx_t_2 = PyCFunction_NewEx(&__pyx_mdef_8overload_8overload_1decorator, NULL, __pyx_n_s_overload_overload); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 78, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_2);
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_decorator, __pyx_t_2) < 0) __PYX_ERR(0, 78, __pyx_L1_error)
-  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-
-  /* "overload/overload.pyx":91
+  /* "overload/overload.pyx":77
  * 
  * 
- * _overload = decorator(bind_annotated)             # <<<<<<<<<<<<<<
- * def overload(func):
- *     """Decorator that makes a function with this name overloaded.
- */
-  __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_decorator); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 91, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_2);
-  __Pyx_GetModuleGlobalName(__pyx_t_1, __pyx_n_s_bind_annotated); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 91, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_3 = __Pyx_PyObject_CallOneArg(__pyx_t_2, __pyx_t_1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 91, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_3);
-  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_overload_2, __pyx_t_3) < 0) __PYX_ERR(0, 91, __pyx_L1_error)
-  __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-
-  /* "overload/overload.pyx":92
- * 
- * _overload = decorator(bind_annotated)
  * def overload(func):             # <<<<<<<<<<<<<<
  *     """Decorator that makes a function with this name overloaded.
  * 
  */
-  __pyx_t_3 = PyCFunction_NewEx(&__pyx_mdef_8overload_8overload_3overload, NULL, __pyx_n_s_overload_overload); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 92, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_3);
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_overload, __pyx_t_3) < 0) __PYX_ERR(0, 92, __pyx_L1_error)
-  __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-
-  /* "overload/overload.pyx":103
- *     return _overload(func)
- * 
- * _overload_strict = decorator(bind_strict)             # <<<<<<<<<<<<<<
- * def overload_strict(func):
- *     """Decorator that makes a function with this name overloaded.
- */
-  __Pyx_GetModuleGlobalName(__pyx_t_3, __pyx_n_s_decorator); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 103, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_3);
-  __Pyx_GetModuleGlobalName(__pyx_t_1, __pyx_n_s_bind_strict); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 103, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_2 = __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_t_1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 103, __pyx_L1_error)
+  __pyx_t_2 = PyCFunction_NewEx(&__pyx_mdef_8overload_8overload_1overload, NULL, __pyx_n_s_overload_overload); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 77, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_overload_strict, __pyx_t_2) < 0) __PYX_ERR(0, 103, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_overload, __pyx_t_2) < 0) __PYX_ERR(0, 77, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-  /* "overload/overload.pyx":104
+  /* "overload/overload.pyx":90
  * 
- * _overload_strict = decorator(bind_strict)
+ * 
  * def overload_strict(func):             # <<<<<<<<<<<<<<
  *     """Decorator that makes a function with this name overloaded.
  * 
  */
-  __pyx_t_2 = PyCFunction_NewEx(&__pyx_mdef_8overload_8overload_5overload_strict, NULL, __pyx_n_s_overload_overload); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 104, __pyx_L1_error)
+  __pyx_t_2 = PyCFunction_NewEx(&__pyx_mdef_8overload_8overload_3overload_strict, NULL, __pyx_n_s_overload_overload); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 90, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_overload_strict_2, __pyx_t_2) < 0) __PYX_ERR(0, 104, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_overload_strict, __pyx_t_2) < 0) __PYX_ERR(0, 90, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
   /* "overload/overload.pyx":1
@@ -4079,7 +3442,6 @@ if (!__Pyx_RefNanny) {
   __pyx_L1_error:;
   __Pyx_XDECREF(__pyx_t_1);
   __Pyx_XDECREF(__pyx_t_2);
-  __Pyx_XDECREF(__pyx_t_3);
   if (__pyx_m) {
     if (__pyx_d) {
       __Pyx_AddTraceback("init overload.overload", __pyx_clineno, __pyx_lineno, __pyx_filename);
@@ -4116,34 +3478,6 @@ end:
     return (__Pyx_RefNannyAPIStruct *)r;
 }
 #endif
-
-/* PyObjectGetAttrStr */
-#if CYTHON_USE_TYPE_SLOTS
-static CYTHON_INLINE PyObject* __Pyx_PyObject_GetAttrStr(PyObject* obj, PyObject* attr_name) {
-    PyTypeObject* tp = Py_TYPE(obj);
-    if (likely(tp->tp_getattro))
-        return tp->tp_getattro(obj, attr_name);
-#if PY_MAJOR_VERSION < 3
-    if (likely(tp->tp_getattr))
-        return tp->tp_getattr(obj, PyString_AS_STRING(attr_name));
-#endif
-    return PyObject_GetAttr(obj, attr_name);
-}
-#endif
-
-/* GetBuiltinName */
-static PyObject *__Pyx_GetBuiltinName(PyObject *name) {
-    PyObject* result = __Pyx_PyObject_GetAttrStr(__pyx_b, name);
-    if (unlikely(!result)) {
-        PyErr_Format(PyExc_NameError,
-#if PY_MAJOR_VERSION >= 3
-            "name '%U' is not defined", name);
-#else
-            "name '%.200s' is not defined", PyString_AS_STRING(name));
-#endif
-    }
-    return result;
-}
 
 /* PyErrFetchRestore */
 #if CYTHON_FAST_THREAD_STATE
@@ -4262,83 +3596,221 @@ bad:
 }
 #endif
 
-/* PyObjectCall */
-#if CYTHON_COMPILING_IN_CPYTHON
-static CYTHON_INLINE PyObject* __Pyx_PyObject_Call(PyObject *func, PyObject *arg, PyObject *kw) {
-    PyObject *result;
-    ternaryfunc call = func->ob_type->tp_call;
-    if (unlikely(!call))
-        return PyObject_Call(func, arg, kw);
-    if (unlikely(Py_EnterRecursiveCall((char*)" while calling a Python object")))
-        return NULL;
-    result = (*call)(func, arg, kw);
-    Py_LeaveRecursiveCall();
-    if (unlikely(!result) && unlikely(!PyErr_Occurred())) {
-        PyErr_SetString(
-            PyExc_SystemError,
-            "NULL result without error in PyObject_Call");
+/* PyObjectGetAttrStr */
+#if CYTHON_USE_TYPE_SLOTS
+static CYTHON_INLINE PyObject* __Pyx_PyObject_GetAttrStr(PyObject* obj, PyObject* attr_name) {
+    PyTypeObject* tp = Py_TYPE(obj);
+    if (likely(tp->tp_getattro))
+        return tp->tp_getattro(obj, attr_name);
+#if PY_MAJOR_VERSION < 3
+    if (likely(tp->tp_getattr))
+        return tp->tp_getattr(obj, PyString_AS_STRING(attr_name));
+#endif
+    return PyObject_GetAttr(obj, attr_name);
+}
+#endif
+
+/* GetBuiltinName */
+static PyObject *__Pyx_GetBuiltinName(PyObject *name) {
+    PyObject* result = __Pyx_PyObject_GetAttrStr(__pyx_b, name);
+    if (unlikely(!result)) {
+        PyErr_Format(PyExc_NameError,
+#if PY_MAJOR_VERSION >= 3
+            "name '%U' is not defined", name);
+#else
+            "name '%.200s' is not defined", PyString_AS_STRING(name));
+#endif
     }
     return result;
 }
-#endif
 
-/* RaiseTooManyValuesToUnpack */
-static CYTHON_INLINE void __Pyx_RaiseTooManyValuesError(Py_ssize_t expected) {
-    PyErr_Format(PyExc_ValueError,
-                 "too many values to unpack (expected %" CYTHON_FORMAT_SSIZE_T "d)", expected);
+/* PyDictVersioning */
+#if CYTHON_USE_DICT_VERSIONS && CYTHON_USE_TYPE_SLOTS
+static CYTHON_INLINE PY_UINT64_T __Pyx_get_tp_dict_version(PyObject *obj) {
+    PyObject *dict = Py_TYPE(obj)->tp_dict;
+    return likely(dict) ? __PYX_GET_DICT_VERSION(dict) : 0;
 }
-
-/* RaiseNeedMoreValuesToUnpack */
-static CYTHON_INLINE void __Pyx_RaiseNeedMoreValuesError(Py_ssize_t index) {
-    PyErr_Format(PyExc_ValueError,
-                 "need more than %" CYTHON_FORMAT_SSIZE_T "d value%.1s to unpack",
-                 index, (index == 1) ? "" : "s");
-}
-
-/* IterFinish */
-static CYTHON_INLINE int __Pyx_IterFinish(void) {
-#if CYTHON_FAST_THREAD_STATE
-    PyThreadState *tstate = __Pyx_PyThreadState_Current;
-    PyObject* exc_type = tstate->curexc_type;
-    if (unlikely(exc_type)) {
-        if (likely(__Pyx_PyErr_GivenExceptionMatches(exc_type, PyExc_StopIteration))) {
-            PyObject *exc_value, *exc_tb;
-            exc_value = tstate->curexc_value;
-            exc_tb = tstate->curexc_traceback;
-            tstate->curexc_type = 0;
-            tstate->curexc_value = 0;
-            tstate->curexc_traceback = 0;
-            Py_DECREF(exc_type);
-            Py_XDECREF(exc_value);
-            Py_XDECREF(exc_tb);
-            return 0;
-        } else {
-            return -1;
-        }
-    }
-    return 0;
+static CYTHON_INLINE PY_UINT64_T __Pyx_get_object_dict_version(PyObject *obj) {
+    PyObject **dictptr = NULL;
+    Py_ssize_t offset = Py_TYPE(obj)->tp_dictoffset;
+    if (offset) {
+#if CYTHON_COMPILING_IN_CPYTHON
+        dictptr = (likely(offset > 0)) ? (PyObject **) ((char *)obj + offset) : _PyObject_GetDictPtr(obj);
 #else
-    if (unlikely(PyErr_Occurred())) {
-        if (likely(PyErr_ExceptionMatches(PyExc_StopIteration))) {
-            PyErr_Clear();
-            return 0;
-        } else {
-            return -1;
-        }
-    }
-    return 0;
+        dictptr = _PyObject_GetDictPtr(obj);
 #endif
+    }
+    return (dictptr && *dictptr) ? __PYX_GET_DICT_VERSION(*dictptr) : 0;
+}
+static CYTHON_INLINE int __Pyx_object_dict_version_matches(PyObject* obj, PY_UINT64_T tp_dict_version, PY_UINT64_T obj_dict_version) {
+    PyObject *dict = Py_TYPE(obj)->tp_dict;
+    if (unlikely(!dict) || unlikely(tp_dict_version != __PYX_GET_DICT_VERSION(dict)))
+        return 0;
+    return obj_dict_version == __Pyx_get_object_dict_version(obj);
+}
+#endif
+
+/* GetModuleGlobalName */
+#if CYTHON_USE_DICT_VERSIONS
+static PyObject *__Pyx__GetModuleGlobalName(PyObject *name, PY_UINT64_T *dict_version, PyObject **dict_cached_value)
+#else
+static CYTHON_INLINE PyObject *__Pyx__GetModuleGlobalName(PyObject *name)
+#endif
+{
+    PyObject *result;
+#if !CYTHON_AVOID_BORROWED_REFS
+#if CYTHON_COMPILING_IN_CPYTHON && PY_VERSION_HEX >= 0x030500A1
+    result = _PyDict_GetItem_KnownHash(__pyx_d, name, ((PyASCIIObject *) name)->hash);
+    __PYX_UPDATE_DICT_CACHE(__pyx_d, result, *dict_cached_value, *dict_version)
+    if (likely(result)) {
+        return __Pyx_NewRef(result);
+    } else if (unlikely(PyErr_Occurred())) {
+        return NULL;
+    }
+#else
+    result = PyDict_GetItem(__pyx_d, name);
+    __PYX_UPDATE_DICT_CACHE(__pyx_d, result, *dict_cached_value, *dict_version)
+    if (likely(result)) {
+        return __Pyx_NewRef(result);
+    }
+#endif
+#else
+    result = PyObject_GetItem(__pyx_d, name);
+    __PYX_UPDATE_DICT_CACHE(__pyx_d, result, *dict_cached_value, *dict_version)
+    if (likely(result)) {
+        return __Pyx_NewRef(result);
+    }
+    PyErr_Clear();
+#endif
+    return __Pyx_GetBuiltinName(name);
 }
 
-/* UnpackItemEndCheck */
-static int __Pyx_IternextUnpackEndCheck(PyObject *retval, Py_ssize_t expected) {
-    if (unlikely(retval)) {
-        Py_DECREF(retval);
-        __Pyx_RaiseTooManyValuesError(expected);
-        return -1;
-    } else {
-        return __Pyx_IterFinish();
+/* GetItemInt */
+static PyObject *__Pyx_GetItemInt_Generic(PyObject *o, PyObject* j) {
+    PyObject *r;
+    if (!j) return NULL;
+    r = PyObject_GetItem(o, j);
+    Py_DECREF(j);
+    return r;
+}
+static CYTHON_INLINE PyObject *__Pyx_GetItemInt_List_Fast(PyObject *o, Py_ssize_t i,
+                                                              CYTHON_NCP_UNUSED int wraparound,
+                                                              CYTHON_NCP_UNUSED int boundscheck) {
+#if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
+    Py_ssize_t wrapped_i = i;
+    if (wraparound & unlikely(i < 0)) {
+        wrapped_i += PyList_GET_SIZE(o);
     }
+    if ((!boundscheck) || likely(__Pyx_is_valid_index(wrapped_i, PyList_GET_SIZE(o)))) {
+        PyObject *r = PyList_GET_ITEM(o, wrapped_i);
+        Py_INCREF(r);
+        return r;
+    }
+    return __Pyx_GetItemInt_Generic(o, PyInt_FromSsize_t(i));
+#else
+    return PySequence_GetItem(o, i);
+#endif
+}
+static CYTHON_INLINE PyObject *__Pyx_GetItemInt_Tuple_Fast(PyObject *o, Py_ssize_t i,
+                                                              CYTHON_NCP_UNUSED int wraparound,
+                                                              CYTHON_NCP_UNUSED int boundscheck) {
+#if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
+    Py_ssize_t wrapped_i = i;
+    if (wraparound & unlikely(i < 0)) {
+        wrapped_i += PyTuple_GET_SIZE(o);
+    }
+    if ((!boundscheck) || likely(__Pyx_is_valid_index(wrapped_i, PyTuple_GET_SIZE(o)))) {
+        PyObject *r = PyTuple_GET_ITEM(o, wrapped_i);
+        Py_INCREF(r);
+        return r;
+    }
+    return __Pyx_GetItemInt_Generic(o, PyInt_FromSsize_t(i));
+#else
+    return PySequence_GetItem(o, i);
+#endif
+}
+static CYTHON_INLINE PyObject *__Pyx_GetItemInt_Fast(PyObject *o, Py_ssize_t i, int is_list,
+                                                     CYTHON_NCP_UNUSED int wraparound,
+                                                     CYTHON_NCP_UNUSED int boundscheck) {
+#if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS && CYTHON_USE_TYPE_SLOTS
+    if (is_list || PyList_CheckExact(o)) {
+        Py_ssize_t n = ((!wraparound) | likely(i >= 0)) ? i : i + PyList_GET_SIZE(o);
+        if ((!boundscheck) || (likely(__Pyx_is_valid_index(n, PyList_GET_SIZE(o))))) {
+            PyObject *r = PyList_GET_ITEM(o, n);
+            Py_INCREF(r);
+            return r;
+        }
+    }
+    else if (PyTuple_CheckExact(o)) {
+        Py_ssize_t n = ((!wraparound) | likely(i >= 0)) ? i : i + PyTuple_GET_SIZE(o);
+        if ((!boundscheck) || likely(__Pyx_is_valid_index(n, PyTuple_GET_SIZE(o)))) {
+            PyObject *r = PyTuple_GET_ITEM(o, n);
+            Py_INCREF(r);
+            return r;
+        }
+    } else {
+        PySequenceMethods *m = Py_TYPE(o)->tp_as_sequence;
+        if (likely(m && m->sq_item)) {
+            if (wraparound && unlikely(i < 0) && likely(m->sq_length)) {
+                Py_ssize_t l = m->sq_length(o);
+                if (likely(l >= 0)) {
+                    i += l;
+                } else {
+                    if (!PyErr_ExceptionMatches(PyExc_OverflowError))
+                        return NULL;
+                    PyErr_Clear();
+                }
+            }
+            return m->sq_item(o, i);
+        }
+    }
+#else
+    if (is_list || PySequence_Check(o)) {
+        return PySequence_GetItem(o, i);
+    }
+#endif
+    return __Pyx_GetItemInt_Generic(o, PyInt_FromSsize_t(i));
+}
+
+/* ObjectGetItem */
+#if CYTHON_USE_TYPE_SLOTS
+static PyObject *__Pyx_PyObject_GetIndex(PyObject *obj, PyObject* index) {
+    PyObject *runerr;
+    Py_ssize_t key_value;
+    PySequenceMethods *m = Py_TYPE(obj)->tp_as_sequence;
+    if (unlikely(!(m && m->sq_item))) {
+        PyErr_Format(PyExc_TypeError, "'%.200s' object is not subscriptable", Py_TYPE(obj)->tp_name);
+        return NULL;
+    }
+    key_value = __Pyx_PyIndex_AsSsize_t(index);
+    if (likely(key_value != -1 || !(runerr = PyErr_Occurred()))) {
+        return __Pyx_GetItemInt_Fast(obj, key_value, 0, 1, 1);
+    }
+    if (PyErr_GivenExceptionMatches(runerr, PyExc_OverflowError)) {
+        PyErr_Clear();
+        PyErr_Format(PyExc_IndexError, "cannot fit '%.200s' into an index-sized integer", Py_TYPE(index)->tp_name);
+    }
+    return NULL;
+}
+static PyObject *__Pyx_PyObject_GetItem(PyObject *obj, PyObject* key) {
+    PyMappingMethods *m = Py_TYPE(obj)->tp_as_mapping;
+    if (likely(m && m->mp_subscript)) {
+        return m->mp_subscript(obj, key);
+    }
+    return __Pyx_PyObject_GetIndex(obj, key);
+}
+#endif
+
+/* ExtTypeTest */
+static CYTHON_INLINE int __Pyx_TypeTest(PyObject *obj, PyTypeObject *type) {
+    if (unlikely(!type)) {
+        PyErr_SetString(PyExc_SystemError, "Missing type object");
+        return 0;
+    }
+    if (likely(__Pyx_TypeCheck(obj, type)))
+        return 1;
+    PyErr_Format(PyExc_TypeError, "Cannot convert %.200s to %.200s",
+                 Py_TYPE(obj)->tp_name, type->tp_name);
     return 0;
 }
 
@@ -4484,66 +3956,25 @@ static CYTHON_INLINE PyObject * __Pyx_PyCFunction_FastCall(PyObject *func_obj, P
 }
 #endif
 
-/* PyDictVersioning */
-#if CYTHON_USE_DICT_VERSIONS && CYTHON_USE_TYPE_SLOTS
-static CYTHON_INLINE PY_UINT64_T __Pyx_get_tp_dict_version(PyObject *obj) {
-    PyObject *dict = Py_TYPE(obj)->tp_dict;
-    return likely(dict) ? __PYX_GET_DICT_VERSION(dict) : 0;
-}
-static CYTHON_INLINE PY_UINT64_T __Pyx_get_object_dict_version(PyObject *obj) {
-    PyObject **dictptr = NULL;
-    Py_ssize_t offset = Py_TYPE(obj)->tp_dictoffset;
-    if (offset) {
+/* PyObjectCall */
 #if CYTHON_COMPILING_IN_CPYTHON
-        dictptr = (likely(offset > 0)) ? (PyObject **) ((char *)obj + offset) : _PyObject_GetDictPtr(obj);
-#else
-        dictptr = _PyObject_GetDictPtr(obj);
-#endif
-    }
-    return (dictptr && *dictptr) ? __PYX_GET_DICT_VERSION(*dictptr) : 0;
-}
-static CYTHON_INLINE int __Pyx_object_dict_version_matches(PyObject* obj, PY_UINT64_T tp_dict_version, PY_UINT64_T obj_dict_version) {
-    PyObject *dict = Py_TYPE(obj)->tp_dict;
-    if (unlikely(!dict) || unlikely(tp_dict_version != __PYX_GET_DICT_VERSION(dict)))
-        return 0;
-    return obj_dict_version == __Pyx_get_object_dict_version(obj);
-}
-#endif
-
-/* GetModuleGlobalName */
-#if CYTHON_USE_DICT_VERSIONS
-static PyObject *__Pyx__GetModuleGlobalName(PyObject *name, PY_UINT64_T *dict_version, PyObject **dict_cached_value)
-#else
-static CYTHON_INLINE PyObject *__Pyx__GetModuleGlobalName(PyObject *name)
-#endif
-{
+static CYTHON_INLINE PyObject* __Pyx_PyObject_Call(PyObject *func, PyObject *arg, PyObject *kw) {
     PyObject *result;
-#if !CYTHON_AVOID_BORROWED_REFS
-#if CYTHON_COMPILING_IN_CPYTHON && PY_VERSION_HEX >= 0x030500A1
-    result = _PyDict_GetItem_KnownHash(__pyx_d, name, ((PyASCIIObject *) name)->hash);
-    __PYX_UPDATE_DICT_CACHE(__pyx_d, result, *dict_cached_value, *dict_version)
-    if (likely(result)) {
-        return __Pyx_NewRef(result);
-    } else if (unlikely(PyErr_Occurred())) {
+    ternaryfunc call = func->ob_type->tp_call;
+    if (unlikely(!call))
+        return PyObject_Call(func, arg, kw);
+    if (unlikely(Py_EnterRecursiveCall((char*)" while calling a Python object")))
         return NULL;
+    result = (*call)(func, arg, kw);
+    Py_LeaveRecursiveCall();
+    if (unlikely(!result) && unlikely(!PyErr_Occurred())) {
+        PyErr_SetString(
+            PyExc_SystemError,
+            "NULL result without error in PyObject_Call");
     }
-#else
-    result = PyDict_GetItem(__pyx_d, name);
-    __PYX_UPDATE_DICT_CACHE(__pyx_d, result, *dict_cached_value, *dict_version)
-    if (likely(result)) {
-        return __Pyx_NewRef(result);
-    }
-#endif
-#else
-    result = PyObject_GetItem(__pyx_d, name);
-    __PYX_UPDATE_DICT_CACHE(__pyx_d, result, *dict_cached_value, *dict_version)
-    if (likely(result)) {
-        return __Pyx_NewRef(result);
-    }
-    PyErr_Clear();
-#endif
-    return __Pyx_GetBuiltinName(name);
+    return result;
 }
+#endif
 
 /* RaiseException */
 #if PY_MAJOR_VERSION < 3
@@ -5416,122 +4847,6 @@ static CYTHON_INLINE int __Pyx_PyObject_SetAttrStr(PyObject* obj, PyObject* attr
         return tp->tp_setattr(obj, PyString_AS_STRING(attr_name), value);
 #endif
     return PyObject_SetAttr(obj, attr_name, value);
-}
-#endif
-
-/* GetItemInt */
-static PyObject *__Pyx_GetItemInt_Generic(PyObject *o, PyObject* j) {
-    PyObject *r;
-    if (!j) return NULL;
-    r = PyObject_GetItem(o, j);
-    Py_DECREF(j);
-    return r;
-}
-static CYTHON_INLINE PyObject *__Pyx_GetItemInt_List_Fast(PyObject *o, Py_ssize_t i,
-                                                              CYTHON_NCP_UNUSED int wraparound,
-                                                              CYTHON_NCP_UNUSED int boundscheck) {
-#if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-    Py_ssize_t wrapped_i = i;
-    if (wraparound & unlikely(i < 0)) {
-        wrapped_i += PyList_GET_SIZE(o);
-    }
-    if ((!boundscheck) || likely(__Pyx_is_valid_index(wrapped_i, PyList_GET_SIZE(o)))) {
-        PyObject *r = PyList_GET_ITEM(o, wrapped_i);
-        Py_INCREF(r);
-        return r;
-    }
-    return __Pyx_GetItemInt_Generic(o, PyInt_FromSsize_t(i));
-#else
-    return PySequence_GetItem(o, i);
-#endif
-}
-static CYTHON_INLINE PyObject *__Pyx_GetItemInt_Tuple_Fast(PyObject *o, Py_ssize_t i,
-                                                              CYTHON_NCP_UNUSED int wraparound,
-                                                              CYTHON_NCP_UNUSED int boundscheck) {
-#if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-    Py_ssize_t wrapped_i = i;
-    if (wraparound & unlikely(i < 0)) {
-        wrapped_i += PyTuple_GET_SIZE(o);
-    }
-    if ((!boundscheck) || likely(__Pyx_is_valid_index(wrapped_i, PyTuple_GET_SIZE(o)))) {
-        PyObject *r = PyTuple_GET_ITEM(o, wrapped_i);
-        Py_INCREF(r);
-        return r;
-    }
-    return __Pyx_GetItemInt_Generic(o, PyInt_FromSsize_t(i));
-#else
-    return PySequence_GetItem(o, i);
-#endif
-}
-static CYTHON_INLINE PyObject *__Pyx_GetItemInt_Fast(PyObject *o, Py_ssize_t i, int is_list,
-                                                     CYTHON_NCP_UNUSED int wraparound,
-                                                     CYTHON_NCP_UNUSED int boundscheck) {
-#if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS && CYTHON_USE_TYPE_SLOTS
-    if (is_list || PyList_CheckExact(o)) {
-        Py_ssize_t n = ((!wraparound) | likely(i >= 0)) ? i : i + PyList_GET_SIZE(o);
-        if ((!boundscheck) || (likely(__Pyx_is_valid_index(n, PyList_GET_SIZE(o))))) {
-            PyObject *r = PyList_GET_ITEM(o, n);
-            Py_INCREF(r);
-            return r;
-        }
-    }
-    else if (PyTuple_CheckExact(o)) {
-        Py_ssize_t n = ((!wraparound) | likely(i >= 0)) ? i : i + PyTuple_GET_SIZE(o);
-        if ((!boundscheck) || likely(__Pyx_is_valid_index(n, PyTuple_GET_SIZE(o)))) {
-            PyObject *r = PyTuple_GET_ITEM(o, n);
-            Py_INCREF(r);
-            return r;
-        }
-    } else {
-        PySequenceMethods *m = Py_TYPE(o)->tp_as_sequence;
-        if (likely(m && m->sq_item)) {
-            if (wraparound && unlikely(i < 0) && likely(m->sq_length)) {
-                Py_ssize_t l = m->sq_length(o);
-                if (likely(l >= 0)) {
-                    i += l;
-                } else {
-                    if (!PyErr_ExceptionMatches(PyExc_OverflowError))
-                        return NULL;
-                    PyErr_Clear();
-                }
-            }
-            return m->sq_item(o, i);
-        }
-    }
-#else
-    if (is_list || PySequence_Check(o)) {
-        return PySequence_GetItem(o, i);
-    }
-#endif
-    return __Pyx_GetItemInt_Generic(o, PyInt_FromSsize_t(i));
-}
-
-/* ObjectGetItem */
-#if CYTHON_USE_TYPE_SLOTS
-static PyObject *__Pyx_PyObject_GetIndex(PyObject *obj, PyObject* index) {
-    PyObject *runerr;
-    Py_ssize_t key_value;
-    PySequenceMethods *m = Py_TYPE(obj)->tp_as_sequence;
-    if (unlikely(!(m && m->sq_item))) {
-        PyErr_Format(PyExc_TypeError, "'%.200s' object is not subscriptable", Py_TYPE(obj)->tp_name);
-        return NULL;
-    }
-    key_value = __Pyx_PyIndex_AsSsize_t(index);
-    if (likely(key_value != -1 || !(runerr = PyErr_Occurred()))) {
-        return __Pyx_GetItemInt_Fast(obj, key_value, 0, 1, 1);
-    }
-    if (PyErr_GivenExceptionMatches(runerr, PyExc_OverflowError)) {
-        PyErr_Clear();
-        PyErr_Format(PyExc_IndexError, "cannot fit '%.200s' into an index-sized integer", Py_TYPE(index)->tp_name);
-    }
-    return NULL;
-}
-static PyObject *__Pyx_PyObject_GetItem(PyObject *obj, PyObject* key) {
-    PyMappingMethods *m = Py_TYPE(obj)->tp_as_mapping;
-    if (likely(m && m->mp_subscript)) {
-        return m->mp_subscript(obj, key);
-    }
-    return __Pyx_PyObject_GetIndex(obj, key);
 }
 #endif
 
@@ -6770,6 +6085,60 @@ static int __Pyx_check_binary_version(void) {
     }
     return 0;
 }
+
+/* FunctionImport */
+#ifndef __PYX_HAVE_RT_ImportFunction
+#define __PYX_HAVE_RT_ImportFunction
+static int __Pyx_ImportFunction(PyObject *module, const char *funcname, void (**f)(void), const char *sig) {
+    PyObject *d = 0;
+    PyObject *cobj = 0;
+    union {
+        void (*fp)(void);
+        void *p;
+    } tmp;
+    d = PyObject_GetAttrString(module, (char *)"__pyx_capi__");
+    if (!d)
+        goto bad;
+    cobj = PyDict_GetItemString(d, funcname);
+    if (!cobj) {
+        PyErr_Format(PyExc_ImportError,
+            "%.200s does not export expected C function %.200s",
+                PyModule_GetName(module), funcname);
+        goto bad;
+    }
+#if PY_VERSION_HEX >= 0x02070000
+    if (!PyCapsule_IsValid(cobj, sig)) {
+        PyErr_Format(PyExc_TypeError,
+            "C function %.200s.%.200s has wrong signature (expected %.500s, got %.500s)",
+             PyModule_GetName(module), funcname, sig, PyCapsule_GetName(cobj));
+        goto bad;
+    }
+    tmp.p = PyCapsule_GetPointer(cobj, sig);
+#else
+    {const char *desc, *s1, *s2;
+    desc = (const char *)PyCObject_GetDesc(cobj);
+    if (!desc)
+        goto bad;
+    s1 = desc; s2 = sig;
+    while (*s1 != '\0' && *s1 == *s2) { s1++; s2++; }
+    if (*s1 != *s2) {
+        PyErr_Format(PyExc_TypeError,
+            "C function %.200s.%.200s has wrong signature (expected %.500s, got %.500s)",
+             PyModule_GetName(module), funcname, sig, desc);
+        goto bad;
+    }
+    tmp.p = PyCObject_AsVoidPtr(cobj);}
+#endif
+    *f = tmp.fp;
+    if (!(*f))
+        goto bad;
+    Py_DECREF(d);
+    return 0;
+bad:
+    Py_XDECREF(d);
+    return -1;
+}
+#endif
 
 /* InitStrings */
 static int __Pyx_InitStrings(__Pyx_StringTabEntry *t) {

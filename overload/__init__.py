@@ -6,9 +6,6 @@ __all__ = [
     "overload",
     "overload_strict",
 
-    # Decorator factory
-    "decorator",
-
     # Exceptions
     "OverloadError",
     "AmbiguousOverloadError",
@@ -71,4 +68,4 @@ class NoMatchingOverloadError(OverloadError):
         return title + reasons
 
 
-from .overload import overload, overload_strict, decorator
+from .overload import overload, overload_strict

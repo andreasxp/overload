@@ -28,7 +28,7 @@ def func_normal(*args):
         raise TypeError
 
 def main():
-    N = 10000  # Number of tests
+    N = 100000  # Number of tests
 
     # Different argument types
     variants = [
@@ -50,6 +50,8 @@ def main():
         for arg in args:
             func_normal(*arg)
     
+    print("Running benchmark...")
+
     time_ovl = timeit.timeit(run_ovl, number=1) / N
     time_normal = timeit.timeit(run_normal, number=1) / N
 
@@ -58,7 +60,7 @@ def main():
     convert(profiler.getstats(), "C:/Users/andreasxp/Desktop/callgrind.profile")
 
     print(f"Average over {N} runs:")
-    print(f"Overloaded function:     {time_ovl * 1000000:.2f} mcs")
+    print(f"Overloaded function:     {time_ovl * 1000000:.2f} mcs ({time_ovl / time_normal:.2f}x)")
     print(f"Non-overloaded function: {time_normal * 1000000:.2f} mcs")
 
 

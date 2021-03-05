@@ -6,47 +6,13 @@
 #cython: language_level = 3
 from inspect import _POSITIONAL_ONLY, _VAR_POSITIONAL, _KEYWORD_ONLY, _VAR_KEYWORD, _empty
 import itertools
-from cpython cimport PyObject, Py_INCREF, Py_DECREF
 from libcpp cimport bool
+from .signature cimport Signature
 
 cdef int _c_positional_only = _POSITIONAL_ONLY
 cdef int _c_var_positional = _VAR_POSITIONAL
 cdef int _c_keyword_only = _KEYWORD_ONLY
 cdef int _c_var_keyword = _VAR_KEYWORD
-
-cdef Parameter parameter(object py_param):
-	cdef Parameter param
-
-	param.name = <PyObject*> py_param.name
-	param.kind = py_param.kind
-	param.annotation = <PyObject*> py_param.annotation
-	param.has_default = py_param.default is not _empty
-
-	Py_INCREF(py_param.name)
-	Py_INCREF(py_param.annotation)
-
-	return param
-
-
-cdef void delparameter(Parameter param):
-	Py_DECREF(<object> param.name)
-	Py_DECREF(<object> param.annotation)
-
-
-cdef class Signature:
-	def __init__(self, py_sig):
-		# Note that the `parameter(py_param)` pseudoconstructor calls Py_INCREF.
-		# Matching Py_DECREF is called in `delparameter` during __dealloc__.
-		# While __dealloc__ is guaranteed to run once, __init__ is not. If any memory leaks occur, it's likely because
-		# of this.
-		self.parameters.reserve(len(py_sig.parameters))
-		for py_param in py_sig.parameters.values():
-			self.parameters.push_back(parameter(py_param))
-	
-	def __dealloc__(self):
-		cdef Parameter param
-		for param in self.parameters:
-			delparameter(param)
 
 
 cdef bind_with(Signature sig, object bind_func, tuple args, dict kwargs):
