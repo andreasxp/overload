@@ -1,9 +1,15 @@
 #distutils: language = c++
+#cython: profile=True
+#cython: infer_types=True
+#cython: boundscheck=False
+#cython: wraparound=False
 #cython: language_level = 3
 from inspect import signature
 from itertools import count
+from cpython cimport PyObject
+from libcpp.vector cimport vector
 import overload as ovl_module
-from .bind_with import Signature as OptimizedSignature
+from .bind_with cimport Signature as OptimizedSignature
 from .bind import bind_strict, bind_annotated, _signature_cache
 
 _registry = {}
@@ -12,7 +18,29 @@ This is how decorated functions communicate with each other to merge several fun
 Not for manual editing.
 """
 
-def make_overloaded(func, bind_func):
+cdef perform_overload_resolution(tuple args, dict kwargs, list functions, list binders, str module, str qualname):
+    cdef list candidates = []
+    cdef list fail_reasons = []
+
+    for func, bind in zip(functions, binders):
+        error = bind(func, args, kwargs)
+        if error is not None:
+            fail_reasons.append(error)
+        else:
+            candidates.append(func)
+    
+    if len(candidates) == 0:
+        raise ovl_module.NoMatchingOverloadError(
+            module, qualname, (args, kwargs), functions, fail_reasons
+        )
+    if len(candidates) > 1:
+        raise ovl_module.AmbiguousOverloadError(module, qualname, (args, kwargs), candidates)
+
+    func = candidates[0]
+    return func(*args, **kwargs)
+
+
+cdef make_overloaded(func, bind_func):
     """Make a function `func` overloaded.
     
     Add this to all functions with the same name in one scope. When calling a function with 
@@ -20,69 +48,32 @@ def make_overloaded(func, bind_func):
     Argument checking is performed by calling `bind_func(argument, annotation)`. If this call returns true, this
     argument is considered matching.
     """
+    cdef str __module__ = func.__module__
+    cdef str __qualname__ = func.__qualname__
+    cdef list functions = []
+    cdef list binders = []
+
     if (func.__module__, func.__qualname__) not in _registry:
-        overloads = []
-
-        __name__ = func.__name__
-        __qualname__ = func.__qualname__
-        __module__ = func.__module__
-
-        # Create the function --------------------------------------------------------------------------------------
-        def ovl(*args, **kwargs):
-            candidates = []
-            fail_reasons = []
-
-            for func, bind in overloads:
-                error = bind(func, args, kwargs)
-                if error is not None:
-                    fail_reasons.append(error)
-                else:
-                    candidates.append(func)
-            
-            if len(candidates) == 0:
-                raise ovl_module.NoMatchingOverloadError(
-                    __module__, __qualname__, (args, kwargs), overloads, fail_reasons
-                )
-            if len(candidates) > 1:
-                raise ovl_module.AmbiguousOverloadError(__module__, __qualname__, (args, kwargs), candidates)
+        def overloaded_function(*args, **kwargs):
+            return perform_overload_resolution(
+                args, kwargs, 
+                functions, binders, 
+                __module__, __qualname__
+            )
         
-            func = candidates[0]
-            return func(*args, **kwargs)
+        overloaded_function.__module__ = __module__
+        overloaded_function.__qualname__ = __qualname__
+        overloaded_function.functions = functions
+        overloaded_function.binders = binders
 
-        # Customize function attributes ----------------------------------------------------------------------------
-        # Add overloads as an attribute
-        ovl.overloads = overloads
-
-        # Overload special attributes to make this function as similar as possible to a normal function
-        ovl.__name__ = __name__
-        ovl.__qualname__ = __qualname__
-        ovl.__module__ = __module__
-        
-        # repr does not work :(
-        # def __repr__():
-        #     return "<overloaded function {}.{} at {}>".format(__module__, __qualname__, id(ovl))
-        # ovl.__repr__ = __repr__
-        # ----------------------------------------------------------------------------------------------------------
-
-        _registry[func.__module__, func.__qualname__] = ovl
+        _registry[func.__module__, func.__qualname__] = overloaded_function
     else:
-        ovl = _registry[func.__module__, func.__qualname__]
+        overloaded_function = _registry[func.__module__, func.__qualname__]
 
-    ovl.overloads.append((func, bind_func))
+    overloaded_function.functions.append(func)
+    overloaded_function.binders.append(bind_func)
 
-    # Build documentation ------------------------------------------------------------------------------------------
-    doc_decl = []
-    doc_desc = []
-    for i, func in zip(count(1), (func for func, _ in ovl.overloads)):
-        doc_decl.append(f"{i}: {ovl.__name__}{signature(func)}")
-
-        if func.__doc__ is not None:
-            doc_desc.append(f"({i}) {func.__doc__}")
-    
-    ovl.__doc__ = "Overloaded function:\n" + "\n".join(doc_decl) + "\n\n" + "\n".join(doc_desc)
-    # --------------------------------------------------------------------------------------------------------------
-
-    return ovl
+    return overloaded_function
 
 def decorator(bind_func):
     """Create an overload decorator with a particular bind function."""

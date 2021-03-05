@@ -1,4 +1,8 @@
 #distutils: language = c++
+#cython: profile=True
+#cython: infer_types=True
+#cython: boundscheck=False
+#cython: wraparound=False
 #cython: language_level = 3
 from cpython cimport PyObject
 from libcpp cimport bool
