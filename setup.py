@@ -2,7 +2,7 @@ from setuptools import setup, Extension
 
 setup(
     name="overload",
-    version="0.1",
+    version="0.2-dev",
     description="Overload function decorator",
     author="Andrey Zhukov",
     author_email="andres.zhukov@gmail.com",
