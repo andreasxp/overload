@@ -21,18 +21,17 @@ uref nameFromQualname(ref qualname) {
     return uref {PyUnicode_Substring(qualname, last_dot, qualname_size)};
 }
 
-extern "C" {
-
-// Exceptions ==========================================================================================================
-// OverloadError -------------------------------------------------------------------------------------------------------
-uref OverloadError;
-
 void implMethodOverloadErrorInit(ref self, ref module, ref qualname, ref args, ref kwargs) {
     PyObject_SetAttrString(self, "module", module);
     PyObject_SetAttrString(self, "qualname", qualname);
     PyObject_SetAttrString(self, "args", args);
     PyObject_SetAttrString(self, "kwargs", kwargs);
 }
+
+extern "C" {
+
+// Exceptions ==========================================================================================================
+// OverloadError -------------------------------------------------------------------------------------------------------
 
 ref methodOverloadErrorInit(ref, ref _a, ref _kw) {
     PARSEARGS(self, module, qualname, args, kwargs);
@@ -58,8 +57,6 @@ PyMethodDef defOverloadErrorMethods[] = {
 };
 
 // AmbiguousOverloadError ----------------------------------------------------------------------------------------------
-uref AmbiguousOverloadError;
-
 ref methodAmbiguousOverloadErrorInit(ref, ref _a, ref _kw) {
     PARSEARGS(self, module, qualname, args, kwargs, candidates);
 
@@ -106,9 +103,7 @@ PyMethodDef defAmbiguousOverloadErrorMethods[] = {
     {nullptr, nullptr, 0, nullptr}
 };
 
-// NoMatchingOverloadError ----------------------------------------------------------------------------------------------
-uref NoMatchingOverloadError;
-
+// NoMatchingOverloadError ---------------------------------------------------------------------------------------------
 ref methodNoMatchingOverloadErrorInit(ref, ref _a, ref _kw) {
     PARSEARGS(self, module, qualname, args, kwargs, candidates, fail_reasons);
 
