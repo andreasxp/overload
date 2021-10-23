@@ -24,7 +24,7 @@
 
 #define FE_CALLITn01(a,b)  a b
 #define FE_CALLITn02(a,b)  a b
-#define FE_CALLITn03(a,b)  a b 
+#define FE_CALLITn03(a,b)  a b
 #define FE_CALLITn04(a,b)  a b
 #define FE_CALLITn04(a,b)  a b
 #define FE_CALLITn05(a,b)  a b
@@ -87,6 +87,18 @@
 
 #define VA_SIZE(...) (FOR_EACH(ONE_PLUS, __VA_ARGS__) 0)
 
+/**
+ * @brief Parse arguments for a python function call with args and kwargs.
+ * The function using this macro has to have the following signature:
+ * ref methodHello(ref, ref _a, ref _kw)
+ * The first argument (unnamed) is the current module object. The second is *args, and the third - *kwargs.
+ *
+ * In this macro's parameters, write function argument names:
+ * PARSEARGS(arg1, arg2, arg3)
+ * For class methods, don't forget to add self:
+ * PARSEARGS(self, arg1, arg2, arg3)
+ * The macro will create variables in local scope with the specified names, with types of uref.
+ */
 #define PARSEARGS(...) \
 FOR_EACH(CREATE_POINTER, __VA_ARGS__); \
 { \

@@ -6,6 +6,7 @@
 #include "hello.hpp"
 #include "util/ref.hpp"
 #include "util/macros.hpp"
+#include "util/submodules.hpp"
 
 namespace {
 extern "C" {
@@ -19,63 +20,19 @@ PyMethodDef defModuleMethods[] = {
 PyModuleDef defModule = {PyModuleDef_HEAD_INIT, "overload", "Overloading functions module", -1, defModuleMethods};
 
 PyMODINIT_FUNC PyInit_overload() {
+    // Developer note:
+    // To simplify project structure, all functions and exceptions are compiled to a single python module, "overload".
+    // To make code more manageable, this module is split into so-called "submodules" - hpp files.
+    // Each hpp file is wrapped in unnamed namespace, and contains a statement like this:
+    // AT_SUBMODULE_INIT(ref module) { ... };
+    // The code in AT_SUBMODULE_INIT is similar in purpose to top-level code in python files. It performs initialization
+    // for the functions and other things contained in that (sub)module.
+    // All this code is executed here by calling submodules::init(&*module);
+
     uref module {PyModule_Create(&defModule)};
     if (!module) return nullptr;
 
-    uref moduleInspect {PyImport_ImportModule("inspect")};
-    uref methodInspectSignature {PyObject_GetAttrString(&*moduleInspect, "signature")};
-
-    // Exceptions ======================================================================================================
-    // OverloadError ---------------------------------------------------------------------------------------------------
-    static const char* docOverloadError =
-        "An exception that is raised when there was an error during overload resolution.\n"
-        "This exception is not raised - it serves as a base class for AmbiguousOverloadError and"
-        "NoMatchingOverloadError.\n";
-    uref dictOverloadError {PyDict_New()};
-    uref OverloadError {PyErr_NewExceptionWithDoc(
-        "overload.OverloadError", docOverloadError, PyExc_TypeError, &*dictOverloadError
-    )};
-
-    for (PyMethodDef* iDefMethod = defOverloadErrorMethods; iDefMethod->ml_name != nullptr; iDefMethod++) {
-        uref func {PyCFunction_New(iDefMethod, nullptr)};
-        uref method {PyMethod_New(&*func, &*OverloadError)};
-        PyObject_SetAttrString(&*OverloadError, iDefMethod->ml_name, &*method);
-    }
-
-    // AmbiguousOverloadError ------------------------------------------------------------------------------------------
-    static const char* docAmbiguousOverloadError =
-        "An exception that is raised when arguments passed to a function match more that one overload.\n";
-    uref dictAmbiguousOverloadError {PyDict_New()};
-
-    uref AmbiguousOverloadError {PyErr_NewExceptionWithDoc(
-        "overload.AmbiguousOverloadError", docAmbiguousOverloadError, &*OverloadError, &*dictAmbiguousOverloadError
-    )};
-
-    for (PyMethodDef* iDefMethod = defAmbiguousOverloadErrorMethods; iDefMethod->ml_name != nullptr; iDefMethod++) {
-        uref func {PyCFunction_New(iDefMethod, nullptr)};
-        uref method {PyMethod_New(&*func, &*AmbiguousOverloadError)};
-        PyObject_SetAttrString(&*AmbiguousOverloadError, iDefMethod->ml_name, &*method);
-    }
-
-    // NoMatchingOverloadError ------------------------------------------------------------------------------------------
-    static const char* docNoMatchingOverloadError =
-        "An exception that is raised when arguments passed to a function match none of the overloads.\n";
-    uref dictNoMatchingOverloadError {PyDict_New()};
-
-    uref NoMatchingOverloadError {PyErr_NewExceptionWithDoc(
-        "overload.NoMatchingOverloadError", docNoMatchingOverloadError, &*OverloadError, &*dictNoMatchingOverloadError
-    )};
-
-    for (PyMethodDef* iDefMethod = defNoMatchingOverloadErrorMethods; iDefMethod->ml_name != nullptr; iDefMethod++) {
-        uref func {PyCFunction_New(iDefMethod, nullptr)};
-        uref method {PyMethod_New(&*func, &*NoMatchingOverloadError)};
-        PyObject_SetAttrString(&*NoMatchingOverloadError, iDefMethod->ml_name, &*method);
-    }
-
-    PyModule_AddObject(&*module, "OverloadError", OverloadError.release());
-    PyModule_AddObject(&*module, "AmbiguousOverloadError", AmbiguousOverloadError.release());
-    PyModule_AddObject(&*module, "NoMatchingOverloadError", NoMatchingOverloadError.release());
-
+    submodules::init(&*module);
     return module.release();
 }
 

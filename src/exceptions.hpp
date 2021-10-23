@@ -5,6 +5,7 @@
 #include <vector>
 #include "util/ref.hpp"
 #include "util/macros.hpp"
+#include "util/submodules.hpp"
 
 namespace {
 
@@ -22,9 +23,6 @@ uref nameFromQualname(ref qualname) {
 
 extern "C" {
 
-uref moduleInspect;
-uref methodInspectSignature;
-
 // Exceptions ==========================================================================================================
 // OverloadError -------------------------------------------------------------------------------------------------------
 uref OverloadError;
@@ -40,7 +38,7 @@ ref methodOverloadErrorInit(ref, ref _a, ref _kw) {
     PARSEARGS(self, module, qualname, args, kwargs);
 
     implMethodOverloadErrorInit(&*self, &*module, &*qualname, &*args, &*kwargs);
-    
+
     Py_RETURN_NONE;
 }
 
@@ -78,7 +76,10 @@ ref methodAmbiguousOverloadErrorStr(ref, ref _a, ref _kw) {
     uref qualname {PyObject_GetAttrString(&*self, "qualname")};
     uref candidates {PyObject_GetAttrString(&*self, "candidates")};
     uref name {nameFromQualname(&*qualname)};
-    
+
+    uref moduleInspect {PyImport_ImportModule("inspect")};
+    uref methodInspectSignature {PyObject_GetAttrString(&*moduleInspect, "signature")};
+
     ssize candidates_size = PyList_Size(&*candidates);
     std::vector<uref> candidates_str_vec;
     candidates_str_vec.reserve(candidates_size);
@@ -86,7 +87,7 @@ ref methodAmbiguousOverloadErrorStr(ref, ref _a, ref _kw) {
         ref candidate = PyList_GetItem(&*candidates, i);
         uref candidate_sig_args {PyTuple_Pack(1, candidate)};
         uref candidate_sig {PyObject_Call(&*methodInspectSignature, &*candidate_sig_args, nullptr)};
-    
+
         candidates_str_vec.emplace_back(PyUnicode_FromFormat("  %U%S", &*name, &*candidate_sig));
     }
 
@@ -95,7 +96,7 @@ ref methodAmbiguousOverloadErrorStr(ref, ref _a, ref _kw) {
 
     uref title_str {PyUnicode_FromFormat(
         "ambiguous overloaded call to %U.%U\nPossible candidates:\n", &*module, &*qualname)};
-    
+
     return PyUnicode_Concat(&*title_str, &*candidates_str);
 }
 
@@ -126,7 +127,10 @@ ref methodNoMatchingOverloadErrorStr(ref, ref _a, ref _kw) {
     uref candidates {PyObject_GetAttrString(&*self, "candidates")};
     uref fail_reasons {PyObject_GetAttrString(&*self, "fail_reasons")};
     uref name = nameFromQualname(&*qualname);
-    
+
+    uref moduleInspect {PyImport_ImportModule("inspect")};
+    uref methodInspectSignature {PyObject_GetAttrString(&*moduleInspect, "signature")};
+
     ssize size = PyList_Size(&*candidates);
     std::vector<uref> reasons_str_vec;
     reasons_str_vec.reserve(size);
@@ -136,7 +140,7 @@ ref methodNoMatchingOverloadErrorStr(ref, ref _a, ref _kw) {
 
         uref candidate_sig_args {PyTuple_Pack(1, candidate)};
         uref candidate_sig {PyObject_Call(&*methodInspectSignature, &*candidate_sig_args, nullptr)};
-    
+
         reasons_str_vec.emplace_back(PyUnicode_FromFormat("  %U%S: %S", &*name, &*candidate_sig, reason));
     }
 
@@ -145,7 +149,7 @@ ref methodNoMatchingOverloadErrorStr(ref, ref _a, ref _kw) {
 
     uref title_str {PyUnicode_FromFormat(
         "no matching overload found for %U.%U\nReason:\n", &*module, &*qualname)};
-    
+
     return PyUnicode_Concat(&*title_str, &*reasons_str);
 }
 
@@ -156,4 +160,60 @@ PyMethodDef defNoMatchingOverloadErrorMethods[] = {
 };
 
 } // extern "C"
+
+AT_SUBMODULE_INIT(ref module) {
+    // Pre-load inspect module
+    uref moduleInspect {PyImport_ImportModule("inspect")};
+
+    // OverloadError ---------------------------------------------------------------------------------------------------
+    static const char* docOverloadError =
+        "An exception that is raised when there was an error during overload resolution.\n"
+        "This exception is not raised - it serves as a base class for AmbiguousOverloadError and"
+        "NoMatchingOverloadError.\n";
+    uref dictOverloadError {PyDict_New()};
+    uref OverloadError {PyErr_NewExceptionWithDoc(
+        "overload.OverloadError", docOverloadError, PyExc_TypeError, &*dictOverloadError
+    )};
+
+    for (PyMethodDef* iDefMethod = defOverloadErrorMethods; iDefMethod->ml_name != nullptr; iDefMethod++) {
+        uref func {PyCFunction_New(iDefMethod, nullptr)};
+        uref method {PyMethod_New(&*func, &*OverloadError)};
+        PyObject_SetAttrString(&*OverloadError, iDefMethod->ml_name, &*method);
+    }
+
+    // AmbiguousOverloadError ------------------------------------------------------------------------------------------
+    static const char* docAmbiguousOverloadError =
+        "An exception that is raised when arguments passed to a function match more that one overload.\n";
+    uref dictAmbiguousOverloadError {PyDict_New()};
+
+    uref AmbiguousOverloadError {PyErr_NewExceptionWithDoc(
+        "overload.AmbiguousOverloadError", docAmbiguousOverloadError, &*OverloadError, &*dictAmbiguousOverloadError
+    )};
+
+    for (PyMethodDef* iDefMethod = defAmbiguousOverloadErrorMethods; iDefMethod->ml_name != nullptr; iDefMethod++) {
+        uref func {PyCFunction_New(iDefMethod, nullptr)};
+        uref method {PyMethod_New(&*func, &*AmbiguousOverloadError)};
+        PyObject_SetAttrString(&*AmbiguousOverloadError, iDefMethod->ml_name, &*method);
+    }
+
+    // NoMatchingOverloadError ------------------------------------------------------------------------------------------
+    static const char* docNoMatchingOverloadError =
+        "An exception that is raised when arguments passed to a function match none of the overloads.\n";
+    uref dictNoMatchingOverloadError {PyDict_New()};
+
+    uref NoMatchingOverloadError {PyErr_NewExceptionWithDoc(
+        "overload.NoMatchingOverloadError", docNoMatchingOverloadError, &*OverloadError, &*dictNoMatchingOverloadError
+    )};
+
+    for (PyMethodDef* iDefMethod = defNoMatchingOverloadErrorMethods; iDefMethod->ml_name != nullptr; iDefMethod++) {
+        uref func {PyCFunction_New(iDefMethod, nullptr)};
+        uref method {PyMethod_New(&*func, &*NoMatchingOverloadError)};
+        PyObject_SetAttrString(&*NoMatchingOverloadError, iDefMethod->ml_name, &*method);
+    }
+
+    PyModule_AddObjectRef(module, "OverloadError", &*OverloadError);
+    PyModule_AddObjectRef(module, "AmbiguousOverloadError", &*AmbiguousOverloadError);
+    PyModule_AddObjectRef(module, "NoMatchingOverloadError", &*NoMatchingOverloadError);
+};
+
 } // namespace

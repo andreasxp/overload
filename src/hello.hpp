@@ -15,9 +15,7 @@ ref methodHello(ref, ref _a, ref _kw) {
 	uref moduleBuiltin {PyImport_ImportModule("builtins")};
 	uref methodPrint {PyObject_GetAttrString(&*moduleBuiltin, "print")};
 
-	//uref args {Py_BuildValue("sO", "Hello", name)};
-	//uref args {Py_BuildValue("s", "Hello")};
-	uref result {PyObject_CallFunction(&*methodPrint, "sO", "Hello", &*name)};
+	uref result {PyObject_CallFunction(&*methodPrint, "sO", "Hello2", &*name)};
 
     Py_RETURN_NONE;
 }

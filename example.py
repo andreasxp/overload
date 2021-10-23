@@ -7,7 +7,7 @@
 #     def __init__(self, val: int):
 #         """Initialize text from an integer."""
 #         self.text = str(val)
-    
+
 #     @overload
 #     def __init__(self, val: bool):
 #         """Initialize text from a boolean."""
@@ -25,7 +25,7 @@
 #     # ------------------------------------------------------------------------------------------------------------------
 #     print("When calling an overloaded function, an appropriate overload is picked:")
 #     print("pos(1, 2):", pos(1, 2))
-    
+
 #     p = (1, 2)
 #     print("pos(some_tuple):", pos(p))
 
@@ -36,7 +36,7 @@
 #         print(pos("apple"))
 #     except NoMatchingOverloadError as err:
 #         print(err)
-    
+
 #     # ------------------------------------------------------------------------------------------------------------------
 #     print("\n\nOverloaded functions document their overloads:")
 #     help(pos)
@@ -52,11 +52,13 @@ def func2(x, y, /):
 
 if __name__ == "__main__":
     import overload
-    overload.hello(1, 2, 3, "a", "b")
+    overload.hello("andreasxp")
 
     x = overload.OverloadError("module", "function", (1, 2), {})
     y = overload.AmbiguousOverloadError("module", "function", (1, 2), {}, [func1, func2])
     z = overload.NoMatchingOverloadError("module", "function", (1, 2), {}, [func1, func2], ["bad args", "bad kwargs"])
-    print(x)
-    print(y)
-    print(z)
+    print("OverloadError:", x)
+    print("AmbiguousOverloadError:", y)
+    print("NoMatchingOverloadError:", z)
+
+    print("Done")
