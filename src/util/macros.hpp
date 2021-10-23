@@ -82,21 +82,17 @@
 #define ONE_PLUS(token) 1+
 #define TO_STRING(token) #token,
 #define O_STRING(token) "O"
-#define CREATE_POINTER(name) ref name ## _raw = nullptr;
-#define ADDRESS(var) ,&var ## _raw
-#define CREATE_UPOINTER(name) uref name;
-#define SET_UPOINTER(name) name.reset(name ## _raw);
+#define CREATE_POINTER(name) ref name = nullptr;
+#define ADDRESS(var) ,&var
 
 #define VA_SIZE(...) (FOR_EACH(ONE_PLUS, __VA_ARGS__) 0)
 
 #define PARSEARGS(...) \
-FOR_EACH(CREATE_UPOINTER, __VA_ARGS__); \
+FOR_EACH(CREATE_POINTER, __VA_ARGS__); \
 { \
 const int argcount = VA_SIZE(__VA_ARGS__); \
 static const char* argnames[argcount+1] = {FOR_EACH(TO_STRING, __VA_ARGS__) nullptr}; \
 const char* format = FOR_EACH(O_STRING, __VA_ARGS__); \
-FOR_EACH(CREATE_POINTER, __VA_ARGS__); \
 if (!PyArg_ParseTupleAndKeywords(_a, _kw, format, (char**)argnames FOR_EACH(ADDRESS, __VA_ARGS__))) \
     {return nullptr;} \
-FOR_EACH(SET_UPOINTER, __VA_ARGS__); \
 }
