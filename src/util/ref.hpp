@@ -20,8 +20,5 @@ struct Deleter {
 
 } // namespace impl
 
-/**
- * @brief A unique pointer to a PyObject, which is cleaned up automatically.
- */
+/// A unique pointer to a PyObject, which is cleaned up automatically.
 using uref = std::unique_ptr<PyObject, impl::Deleter>;
-static_assert(sizeof(uref) == sizeof(ref), "overload: C++ compiler failed to optimize the unique pointer");
