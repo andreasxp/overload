@@ -19,10 +19,10 @@ uref nameFromQualname(ref qualname) {
 }
 
 void implMethodOverloadErrorInit(ref self, ref module, ref qualname, ref args, ref kwargs) {
-	PyObject_SetAttrString(self, "module", module);
-	PyObject_SetAttrString(self, "qualname", qualname);
-	PyObject_SetAttrString(self, "args", args);
-	PyObject_SetAttrString(self, "kwargs", kwargs);
+	setattr(self, "module", module);
+	setattr(self, "qualname", qualname);
+	setattr(self, "args", args);
+	setattr(self, "kwargs", kwargs);
 }
 
 extern "C" {
@@ -40,8 +40,8 @@ ref methodOverloadErrorInit(ref, ref _a, ref _kw) {
 ref methodOverloadErrorStr(ref, ref _a, ref _kw) {
 	PARSEARGS(self);
 
-	uref module {PyObject_GetAttrString(self, "module")};
-	uref qualname {PyObject_GetAttrString(self, "qualname")};
+	uref module = getattr(self, "module");
+	uref qualname = getattr(self, "qualname");
 
 	return PyUnicode_FromFormat("overload error during call to %U.%U", &*module, &*qualname);
 }
@@ -57,7 +57,7 @@ ref methodAmbiguousOverloadErrorInit(ref, ref _a, ref _kw) {
 	PARSEARGS(self, module, qualname, args, kwargs, candidates);
 
 	implMethodOverloadErrorInit(self, module, qualname, args, kwargs);
-	PyObject_SetAttrString(self, "candidates", candidates);
+	setattr(self, "candidates", candidates);
 
 	Py_RETURN_NONE;
 }
@@ -65,13 +65,12 @@ ref methodAmbiguousOverloadErrorInit(ref, ref _a, ref _kw) {
 ref methodAmbiguousOverloadErrorStr(ref, ref _a, ref _kw) {
 	PARSEARGS(self);
 
-	uref module {PyObject_GetAttrString(self, "module")};
-	uref qualname {PyObject_GetAttrString(self, "qualname")};
-	uref candidates {PyObject_GetAttrString(self, "candidates")};
+	uref module = getattr(self, "module");
+	uref qualname = getattr(self, "qualname");
+	uref candidates = getattr(self, "candidates");
 	uref name {nameFromQualname(&*qualname)};
 
-	uref moduleInspect {PyImport_ImportModule("inspect")};
-	uref methodInspectSignature {PyObject_GetAttrString(&*moduleInspect, "signature")};
+	uref methodInspectSignature = import_from("inspect", "signature");
 
 	ssize candidates_size = PyList_Size(&*candidates);
 	std::vector<uref> candidates_str_vec;
@@ -110,8 +109,8 @@ ref methodNoMatchingOverloadErrorInit(ref, ref _a, ref _kw) {
 	PARSEARGS(self, module, qualname, args, kwargs, candidates, fail_reasons);
 
 	implMethodOverloadErrorInit(self, module, qualname, args, kwargs);
-	PyObject_SetAttrString(self, "candidates", candidates);
-	PyObject_SetAttrString(self, "fail_reasons", fail_reasons);
+	setattr(self, "candidates", candidates);
+	setattr(self, "fail_reasons", fail_reasons);
 
 	Py_RETURN_NONE;
 }
@@ -119,14 +118,13 @@ ref methodNoMatchingOverloadErrorInit(ref, ref _a, ref _kw) {
 ref methodNoMatchingOverloadErrorStr(ref, ref _a, ref _kw) {
 	PARSEARGS(self);
 
-	uref module {PyObject_GetAttrString(self, "module")};
-	uref qualname {PyObject_GetAttrString(self, "qualname")};
-	uref candidates {PyObject_GetAttrString(self, "candidates")};
-	uref fail_reasons {PyObject_GetAttrString(self, "fail_reasons")};
+	uref module = getattr(self, "module");
+	uref qualname = getattr(self, "qualname");
+	uref candidates = getattr(self, "candidates");
+	uref fail_reasons = getattr(self, "fail_reasons");
 	uref name = nameFromQualname(&*qualname);
 
-	uref moduleInspect {PyImport_ImportModule("inspect")};
-	uref methodInspectSignature {PyObject_GetAttrString(&*moduleInspect, "signature")};
+	uref methodInspectSignature = import_from("inspect", "signature");
 
 	ssize size = PyList_Size(&*candidates);
 	std::vector<uref> reasons_str_vec;

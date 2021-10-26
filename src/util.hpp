@@ -27,20 +27,20 @@ struct Deleter {
 using uref = std::unique_ptr<PyObject, impl::Deleter>;
 
 // Function wrappers ===================================================================================================
-uref getattr(ref object, ref attrname) {
-	return uref{PyObject_GetAttr(object, attrname)};
-}
-
-uref getattr(const uref& object, ref attrname) {
-	return uref{PyObject_GetAttr(object.get(), attrname)};
-}
-
 uref getattr(ref object, const char* attrname) {
 	return uref{PyObject_GetAttrString(object, attrname)};
 }
 
 uref getattr(const uref& object, const char* attrname) {
 	return uref{PyObject_GetAttrString(object.get(), attrname)};
+}
+
+void setattr(ref object, const char* attrname, ref value) {
+	PyObject_SetAttrString(object, attrname, value);
+}
+
+void setattr(const uref& object, const char* attrname, ref value) {
+	PyObject_SetAttrString(object.get(), attrname, value);
 }
 
 uref import(const char* modulename) {
