@@ -4,6 +4,7 @@
 #include <vector>
 #include "exceptions.hpp"
 #include "hello.hpp"
+#include "signature.hpp"
 #include "util/ref.hpp"
 #include "util/macros.hpp"
 #include "util/submodules.hpp"
