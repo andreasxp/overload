@@ -3,8 +3,7 @@
 #include <Python.h>
 #include <iostream>
 #include <vector>
-#include "util/ref.hpp"
-#include "util/macros.hpp"
+#include "util.hpp"
 
 namespace {
 extern "C" {

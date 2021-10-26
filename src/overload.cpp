@@ -5,9 +5,7 @@
 #include "exceptions.hpp"
 #include "hello.hpp"
 #include "signature.hpp"
-#include "util/ref.hpp"
-#include "util/macros.hpp"
-#include "util/submodules.hpp"
+#include "util.hpp"
 
 namespace {
 extern "C" {
@@ -24,7 +22,7 @@ PyMODINIT_FUNC PyInit_overload() {
     // Developer note:
     // To simplify project structure, all functions and exceptions are compiled to a single python module, "overload".
     // To make code more manageable, this module is split into so-called "submodules" - hpp files.
-    // Each hpp file is wrapped in unnamed namespace, and contains a statement like this:
+    // Each hpp submodule is wrapped in an unnamed namespace, and contains a statement like this:
     // AT_SUBMODULE_INIT(ref module) { ... };
     // The code in AT_SUBMODULE_INIT is similar in purpose to top-level code in python files. It performs initialization
     // for the functions and other things contained in that (sub)module.

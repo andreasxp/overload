@@ -2,8 +2,7 @@
 #define PY_SSIZE_T_CLEAN
 #include <Python.h>
 #include <unordered_map>
-#include "util/ref.hpp"
-#include "util/helpers.hpp"
+#include "util.hpp"
 
 struct parameter {
 	long int kind;

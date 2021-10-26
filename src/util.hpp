@@ -1,6 +1,58 @@
+/// Various helper methods and macros for simplifying writing python extensions.
 #pragma once
-#include "ref.hpp"
+#define PY_SSIZE_T_CLEAN
+#include <Python.h>
+#include <memory>
 
+using ssize = Py_ssize_t;
+
+// Memory management ===================================================================================================
+using ref = PyObject*;
+
+namespace impl {
+
+/**
+ * @brief Custom deleter for PyObject, for use in uref.
+ * @see https://docs.python.org/3/c-api/refcounting.html#c.Py_DECREF
+ */
+struct Deleter {
+	void operator()(ref ptr) const noexcept {
+		Py_DECREF(ptr);
+	}
+};
+
+} // namespace impl
+
+/// A unique pointer to a PyObject, which is cleaned up automatically.
+using uref = std::unique_ptr<PyObject, impl::Deleter>;
+
+// Function wrappers ===================================================================================================
+uref getattr(ref object, ref attrname) {
+	return uref{PyObject_GetAttr(object, attrname)};
+}
+
+uref getattr(const uref& object, ref attrname) {
+	return uref{PyObject_GetAttr(object.get(), attrname)};
+}
+
+uref getattr(ref object, const char* attrname) {
+	return uref{PyObject_GetAttrString(object, attrname)};
+}
+
+uref getattr(const uref& object, const char* attrname) {
+	return uref{PyObject_GetAttrString(object.get(), attrname)};
+}
+
+uref import(const char* modulename) {
+	return uref{PyImport_ImportModule(modulename)};
+}
+
+uref import_from(const char* modulename, const char* name) {
+	uref mod = import(modulename);
+	return getattr(mod, name);
+}
+
+// PARSEARGS macro =====================================================================================================
 #define PP_NARG(...) PP_NARG_(__VA_ARGS__, PP_RSEQ_N())
 #define PP_NARG_(...) PP_ARG_N(__VA_ARGS__)
 
@@ -102,3 +154,44 @@ const char* format = FOR_EACH(O_STRING, __VA_ARGS__); \
 if (!PyArg_ParseTupleAndKeywords(_a, _kw, format, (char**)argnames FOR_EACH(ADDRESS, __VA_ARGS__))) \
 	{return nullptr;} \
 }
+
+// Submodules ==========================================================================================================
+namespace {
+
+struct submodules {
+    using initfunc = void (*)(ref module);
+
+    static initfunc initfunctions[32];
+    static int n;
+
+    /**
+     * @brief Execute all registered AT_SUBMODULE_INIT functions in order of declaration.
+     */
+    static void init(ref module) {
+        for (int i = 0; i < n; i++) initfunctions[i](module);
+    }
+};
+
+submodules::initfunc submodules::initfunctions[] = {};
+int submodules::n = 0;
+
+int operator+=(submodules, submodules::initfunc f) {
+	assert(submodules::n < 32);
+    submodules::initfunctions[submodules::n] = f;
+    return submodules::n++;
+}
+
+#define AT_SUBMODULE_INIT3(counter) int _dummy_var_ ## counter = submodules{} += []
+#define AT_SUBMODULE_INIT2(counter) AT_SUBMODULE_INIT3(counter)
+
+/**
+ * @brief Define a function that will run during module initialization.
+ * @example ```
+ * AT_SUBMODULE_INIT(ref module) {
+ *     PyModule_AddObject(&*module, "Object", ...)
+ * };
+ * ```
+ */
+#define AT_SUBMODULE_INIT AT_SUBMODULE_INIT2(__COUNTER__)
+
+} // namespace

@@ -3,9 +3,7 @@
 #include <Python.h>
 #include <iostream>
 #include <vector>
-#include "util/ref.hpp"
-#include "util/macros.hpp"
-#include "util/submodules.hpp"
+#include "util.hpp"
 
 namespace {
 
@@ -31,7 +29,6 @@ extern "C" {
 
 // Exceptions ==========================================================================================================
 // OverloadError -------------------------------------------------------------------------------------------------------
-
 ref methodOverloadErrorInit(ref, ref _a, ref _kw) {
 	PARSEARGS(self, module, qualname, args, kwargs);
 
@@ -168,7 +165,7 @@ PyMethodDef defNoMatchingOverloadErrorMethods[] = {
 
 AT_SUBMODULE_INIT(ref module) {
 	// Pre-load inspect module
-	uref moduleInspect {PyImport_ImportModule("inspect")};
+	uref moduleInspect = import("inspect");
 
 	// OverloadError ---------------------------------------------------------------------------------------------------
 	static const char* docOverloadError =
