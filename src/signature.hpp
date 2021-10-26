@@ -4,6 +4,7 @@
 #include <unordered_map>
 #include "util.hpp"
 
+/// A simplifier parameter object, created from inspect.Parameter.
 struct parameter {
 	long int kind;
 	uref name;
@@ -21,6 +22,7 @@ struct parameter {
 	}
 };
 
+/// A simplifier signature object, created from inspect.Signature.
 struct signature {
 	std::vector<parameter> parameters;
 
@@ -52,3 +54,8 @@ struct py_unicode_equal {
 };
 
 std::unordered_map<ref, signature, py_unicode_hash, py_unicode_equal> signatures;
+
+AT_SUBMODULE_INIT(ref module) {
+	// Pre-load inspect module
+	import("inspect");
+};

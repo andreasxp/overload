@@ -163,7 +163,7 @@ PyMethodDef defNoMatchingOverloadErrorMethods[] = {
 
 AT_SUBMODULE_INIT(ref module) {
 	// Pre-load inspect module
-	uref moduleInspect = import("inspect");
+	import("inspect");
 
 	// OverloadError ---------------------------------------------------------------------------------------------------
 	static const char* docOverloadError =
