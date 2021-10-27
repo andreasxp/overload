@@ -1,11 +1,10 @@
-#define PY_SSIZE_T_CLEAN
-#include <Python.h>
 #include <iostream>
 #include <vector>
+#include "base.hpp"
 #include "exceptions.hpp"
 #include "hello.hpp"
 #include "signature.hpp"
-#include "util.hpp"
+#include "bind_with.hpp"
 
 namespace {
 extern "C" {

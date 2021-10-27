@@ -1,15 +1,13 @@
 #pragma once
-#define PY_SSIZE_T_CLEAN
-#include <Python.h>
 #include <unordered_map>
-#include "util.hpp"
+#include "base.hpp"
 
 /// A simplifier parameter object, created from inspect.Parameter.
 struct parameter {
 	long int kind;
 	uref name;
 	uref annotation;
-	bool hasdefault;
+	bool has_default;
 
 	parameter() = delete;
 	parameter(ref py_parameter) {
@@ -18,7 +16,7 @@ struct parameter {
 		annotation = getattr(py_parameter, "annotation");
 
 		uref empty = import_from("inspect", "_empty");
-		hasdefault = py_parameter != &*empty;
+		has_default = py_parameter != &*empty;
 	}
 };
 
@@ -37,19 +35,6 @@ struct signature {
 		while (PyDict_Next(&*py_parameters, &pos, &key, &value)) {
 			parameters.emplace_back(value);
 		}
-	}
-};
-
-
-struct py_unicode_hash {
-	size_t operator()(ref k) {
-		return PyObject_Hash(k);
-	}
-};
-
-struct py_unicode_equal {
-	bool operator()(ref lhs, ref rhs) {
-		return PyUnicode_RichCompare(lhs, rhs, Py_EQ) == Py_True;
 	}
 };
 

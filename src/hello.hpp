@@ -1,9 +1,7 @@
 #pragma once
-#define PY_SSIZE_T_CLEAN
-#include <Python.h>
 #include <iostream>
 #include <vector>
-#include "util.hpp"
+#include "base.hpp"
 
 namespace {
 extern "C" {

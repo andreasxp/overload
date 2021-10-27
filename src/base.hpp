@@ -2,7 +2,11 @@
 #pragma once
 #define PY_SSIZE_T_CLEAN
 #include <Python.h>
+#include <array>
 #include <memory>
+
+// Include ciso646 because for whatever reason MSVC does not enable "and" and "or" keywords by default
+#include <ciso646>
 
 using ssize = Py_ssize_t;
 
@@ -195,3 +199,16 @@ int operator+=(submodules, submodules::initfunc f) {
 #define AT_SUBMODULE_INIT AT_SUBMODULE_INIT2(__COUNTER__)
 
 } // namespace
+
+// std::unordered_map and set support ==================================================================================
+struct py_unicode_hash {
+	size_t operator()(ref k) const noexcept {
+		return PyObject_Hash(k);
+	}
+};
+
+struct py_unicode_equal {
+	bool operator()(ref lhs, ref rhs) const noexcept {
+		return PyUnicode_RichCompare(lhs, rhs, Py_EQ) == Py_True;
+	}
+};
