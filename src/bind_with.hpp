@@ -10,25 +10,47 @@ int VAR_KEYWORD = 0;
 
 using bind_function = bool(*)(ref value, ref annotation);
 
-void bind_with(const signature& sig, bind_function bind, ref args, ref kwargs) {
+struct bind_result {
+	enum status_t {
+		success,
+		unexpected_type,
+		missing_value,
+		multiple_values,
+		too_many_positional,
+		too_many_keyword,
+		positional_as_keyword,
+	};
+	status_t status = success;
+
+	uref param_name = nullptr;
+	uref arg_type = nullptr;
+
+	bind_result(status_t status, ref param_name = nullptr, ref arg_type = nullptr) :
+		status(status),	param_name(param_name), arg_type(arg_type) {
+		Py_XINCREF(param_name);
+		Py_XINCREF(arg_type);
+	}
+};
+
+bind_result bind_with(const signature& sig, bind_function bind, ref args, ref kwargs) {
 	uref empty = import_from("inspect", "_empty");
 	uref object = import_from("builtins", "object");
 
-	ssize iArgs = 0;
-	ssize lenArgs = PyTuple_Size(args);
-	int iParams = 0;
+	ssize i_args = 0;
+	ssize len_args = PyTuple_Size(args);
+	int i_params = 0;
 
 	while (true) {
 		// Let's iterate through the positional arguments and corresponding
 		// parameters
-		if (iArgs < lenArgs) {
-			ref argVal = PyTuple_GetItem(args, iArgs);
-			iArgs++;
+		if (i_args < len_args) {
+			ref arg_val = PyTuple_GetItem(args, i_args);
+			i_args++;
 
 			// We have a positional argument to process
-			if (iParams < sig.parameters.size()) {
-				const parameter& param = sig.parameters[iParams];
-				iParams++;
+			if (i_params < sig.parameters.size()) {
+				const parameter& param = sig.parameters[i_params];
+				i_params++;
 
 				ref annotation = &*param.annotation;
 				if (annotation == &*empty) annotation = &*object;
@@ -36,28 +58,34 @@ void bind_with(const signature& sig, bind_function bind, ref args, ref kwargs) {
 				if (param.kind == VAR_KEYWORD or param.kind == KEYWORD_ONLY) {
 					// Looks like we have no parameter for this positional
 					// argument
-					return; // TypeError('too many positional arguments')
+					return bind_result{bind_result::too_many_positional};
+					// TypeError('too many positional arguments')
 				}
 
 				if (param.kind == VAR_POSITIONAL) break;
 
 				if (PyDict_Contains(kwargs, &*param.name) and param.kind != POSITIONAL_ONLY) {
-					return; // TypeError(f'multiple values for argument {<object> param.name!r}')
+					return bind_result{bind_result::multiple_values, &*param.name};
+					// TypeError(f'multiple values for argument {<object> param.name!r}')
 				}
 
-				if (not bind(argVal, annotation)) {
-					return; // TypeError(f"argument '{<object> param.name!r}' has unexpected type '{type(arg_val).__qualname__}'")
+				if (not bind(arg_val, annotation)) {
+					uref type_arg_val {PyObject_Type(&*arg_val)};
+					uref type_qualname = getattr(type_arg_val, "__qualname__");
+					return bind_result{bind_result::unexpected_type, &*param.name, &*type_qualname};
+					// TypeError(f"argument '{<object> param.name!r}' has unexpected type '{type(arg_val).__qualname__}'")
 				}
 			}
 			else {
-				return; // TypeError('too many positional arguments')
+				return bind_result{bind_result::too_many_positional};
+				// TypeError('too many positional arguments')
 			}
 		}
 		else {
 			// No more positional arguments
-			if (iParams < sig.parameters.size()) {
-				const parameter& param = sig.parameters[iParams];
-				iParams++;
+			if (i_params < sig.parameters.size()) {
+				const parameter& param = sig.parameters[i_params];
+				i_params++;
 
 				ref annotation = &*param.annotation;
 				if (annotation == &*empty) annotation = &*object;
@@ -69,22 +97,24 @@ void bind_with(const signature& sig, bind_function bind, ref args, ref kwargs) {
 				}
 				else if (PyDict_Contains(kwargs, &*param.name)) {
 					if (param.kind == POSITIONAL_ONLY) {
-						return; // TypeError(f'{<object> param.name!r} parameter is positional only, but was passed as a keyword')
+						return bind_result{bind_result::positional_as_keyword, &*param.name};
+						// TypeError(f'{<object> param.name!r} parameter is positional only, but was passed as a keyword')
 					}
-					iParams--;
+					i_params--;
 					break;
 				}
 				else if (param.kind == VAR_KEYWORD or param.has_default) {
 					// That's fine too - we have a default value for this
 					// parameter.  So, lets start parsing `kwargs`, starting
 					// with the current parameter
-					iParams--;
+					i_params--;
 					break;
 				}
 				else {
 					// No default, not VAR_KEYWORD, not VAR_POSITIONAL,
 					// not in `kwargs`
-					return; // TypeError(f'missing a required argument: {<object> param.name!r}')
+					return bind_result{bind_result::missing_value, &*param.name};
+					// TypeError(f'missing a required argument: {<object> param.name!r}')
 				}
 			}
 			else break;
@@ -104,9 +134,9 @@ void bind_with(const signature& sig, bind_function bind, ref args, ref kwargs) {
 	// -----------------------------------------------------------------------------------------------------------------
 
 	bool have_kwargs_param = false;
-	while (iParams < sig.parameters.size()) {
-		const parameter& param = sig.parameters[iParams];
-		iParams++;
+	while (i_params < sig.parameters.size()) {
+		const parameter& param = sig.parameters[i_params];
+		i_params++;
 
 		if (param.kind == VAR_KEYWORD) {
 			have_kwargs_param = true;
@@ -127,7 +157,8 @@ void bind_with(const signature& sig, bind_function bind, ref args, ref kwargs) {
 			// parameter, left alone by the processing of positional
 			// arguments.
 			if (param.kind != VAR_POSITIONAL and not param.has_default) {
-				return; // TypeError(f'missing a required argument: {<object> param.name!r}')
+				return bind_result{bind_result::missing_value, &*param.name};
+				// TypeError(f'missing a required argument: {<object> param.name!r}')
 			}
 		}
 		else {
@@ -135,23 +166,30 @@ void bind_with(const signature& sig, bind_function bind, ref args, ref kwargs) {
 				// This should never happen in case of a properly built
 				// Signature object (but let's have this check here
 				// to ensure correct behaviour just in case)
-				return; // TypeError(f'{<object> param.name!r} parameter is positional only, but was passed as a keyword')
+				return bind_result{bind_result::positional_as_keyword, &*param.name};
+				// TypeError(f'{<object> param.name!r} parameter is positional only, but was passed as a keyword')
 			}
 
-			ref argVal = PyDict_GetItem(kwargs, &*param.name);
+			ref arg_val = PyDict_GetItem(kwargs, &*param.name);
 
 			ref annotation = &*param.annotation;
 			if (annotation == &*empty) annotation = &*object;
 
-			if (not bind(argVal, annotation)) {
-				return; // TypeError(f"argument '{<object> param.name!r}' has unexpected type '{type(arg_val).__qualname__}'")
+			if (not bind(arg_val, annotation)) {
+				uref type_arg_val {PyObject_Type(&*arg_val)};
+				uref type_qualname = getattr(type_arg_val, "__qualname__");
+				return bind_result{bind_result::unexpected_type, &*param.name, &*type_qualname};
+				// TypeError(f"argument '{<object> param.name!r}' has unexpected type '{type(arg_val).__qualname__}'")
 			}
 		}
 	}
 
 	if (not kwarg_keys.empty() and not have_kwargs_param) {
-		return; // TypeError(f'got an unexpected keyword argument {next(iter(kwargs_))!r}')
+		return bind_result{bind_result::too_many_keyword, *kwarg_keys.begin()};
+		// TypeError(f'got an unexpected keyword argument {next(iter(kwargs_))!r}')
 	}
+
+	return bind_result{bind_result::success};
 }
 
 AT_SUBMODULE_INIT(ref module) {
