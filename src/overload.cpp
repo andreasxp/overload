@@ -4,7 +4,7 @@
 #include "exceptions.hpp"
 #include "hello.hpp"
 #include "signature.hpp"
-#include "bind_with.hpp"
+#include "bind.hpp"
 
 namespace {
 extern "C" {

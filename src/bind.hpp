@@ -1,15 +1,39 @@
 #pragma once
 #include <unordered_set>
+#include <vector>
 #include "base.hpp"
 #include "signature.hpp"
 
+// per-argument bind functions =========================================================================================
+using arg_bind_t = bool(*)(ref value, ref annotation);
+
+bool arg_bind_strict(ref value, ref annotation) {
+	return PyObject_IsInstance(value, annotation);
+}
+
+// function_bind ===========================================================================================================
 int POSITIONAL_ONLY = 0;
 int VAR_POSITIONAL = 0;
 int KEYWORD_ONLY = 0;
 int VAR_KEYWORD = 0;
 
-using bind_function = bool(*)(ref value, ref annotation);
-
+/**
+ * @brief Data structure returned from function_bind
+ * When binding was successful, returns bind_result with `status` set to `success`.
+ * On errors, `status` is set to one of the error codes and param_name and arg_type may
+ * hold relevant information:
+ *
+ * | Status Code           | param_name | arg_type  |
+ * | :-------------------- | :--------: | :-------: |
+ * | success               | ❌         | ❌       |
+ * | unexpected_type       | ✅         | ✅       |
+ * | missing_value         | ✅         | ❌       |
+ * | multiple_values       | ✅         | ❌       |
+ * | too_many_positional   | ❌         | ❌       |
+ * | unexpected_keyword    | ✅         | ❌       |
+ * | positional_as_keyword | ✅         | ❌       |
+ *
+ */
 struct bind_result {
 	enum status_t {
 		success,
@@ -17,7 +41,7 @@ struct bind_result {
 		missing_value,
 		multiple_values,
 		too_many_positional,
-		too_many_keyword,
+		unexpected_keyword,
 		positional_as_keyword,
 	};
 	status_t status = success;
@@ -32,7 +56,24 @@ struct bind_result {
 	}
 };
 
-bind_result bind_with(const signature& sig, bind_function bind, ref args, ref kwargs) {
+/**
+ * @brief Bind a set of arguments to a function signature.
+ * This function performs the core of overload resolution, by checking if a function signature can accept the set of
+ * args and kwargs passed in. This check is performed by checking that:
+ *
+ * 1. Passed arguments match the amount of parameters, including positional-only and keyword-only parameters;
+ * 2. Arguments have a type that is compatible with the corresponding parameter, as specified in the param. annotation.
+ *
+ * The type compatibility is checked using the `bind` parameter - a `arg_bind_t` function that has an interface similar
+ * to python's `isinstance`.
+ *
+ * @param sig Function signature
+ * @param bind Bind function to perform binding per parameter
+ * @param args Positional arguments
+ * @param kwargs Keyword arguments
+ * @return An instance of bind_result, possibly containing information about an error.
+ */
+bind_result function_bind(const signature& sig, ref args, ref kwargs, arg_bind_t bind) {
 	uref empty = import_from("inspect", "_empty");
 	uref object = import_from("builtins", "object");
 
@@ -185,12 +226,43 @@ bind_result bind_with(const signature& sig, bind_function bind, ref args, ref kw
 	}
 
 	if (not kwarg_keys.empty() and not have_kwargs_param) {
-		return bind_result{bind_result::too_many_keyword, *kwarg_keys.begin()};
+		return bind_result{bind_result::unexpected_keyword, *kwarg_keys.begin()};
 		// TypeError(f'got an unexpected keyword argument {next(iter(kwargs_))!r}')
 	}
 
 	return bind_result{bind_result::success};
 }
+
+// perform_overload_resolution =========================================================================================
+ref perform_overload_resolution(ref args, ref kwargs, std::vector<ref>& functions, ref module, ref qualname) {
+	std::vector<ref> candidates;
+	std::vector<bind_result> fail_reasons;
+
+	for (ref& func : functions) {
+		signature& sig = signatures.find(func)->second;
+		bind_result result = function_bind(sig, args, kwargs, arg_bind_strict);
+
+		if (result.status == bind_result::success) {
+			candidates.push_back(func);
+		}
+		else {
+			fail_reasons.push_back(std::move(result));
+		}
+	}
+
+	if (candidates.empty()) {
+		// raise ovl_module.NoMatchingOverloadError(
+        //     module, qualname, (args, kwargs), functions, fail_reasons
+        // )
+	}
+
+	if (candidates.size() > 1) {
+		// raise ovl_module.AmbiguousOverloadError(module, qualname, (args, kwargs), candidates)
+	}
+
+	return candidates[0];
+}
+
 
 AT_SUBMODULE_INIT(ref module) {
 	// Pre-load inspect module
