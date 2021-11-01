@@ -104,11 +104,10 @@ PyMethodDef defAmbiguousOverloadErrorMethods[] = {
 
 // NoMatchingOverloadError ---------------------------------------------------------------------------------------------
 ref methodNoMatchingOverloadErrorInit(ref, ref _a, ref _kw) {
-	PARSEARGS(self, module, qualname, args, kwargs, candidates, fail_reasons);
+	PARSEARGS(self, module, qualname, args, kwargs, reasons);
 
 	implMethodOverloadErrorInit(self, module, qualname, args, kwargs);
-	setattr(self, "candidates", candidates);
-	setattr(self, "fail_reasons", fail_reasons);
+	setattr(self, "reasons", reasons);
 
 	Py_RETURN_NONE;
 }
@@ -118,23 +117,22 @@ ref methodNoMatchingOverloadErrorStr(ref, ref _a, ref _kw) {
 
 	uref module = getattr(self, "module");
 	uref qualname = getattr(self, "qualname");
-	uref candidates = getattr(self, "candidates");
-	uref fail_reasons = getattr(self, "fail_reasons");
+	uref reasons = getattr(self, "reasons");
 	uref name = nameFromQualname(&*qualname);
 
 	uref methodInspectSignature = import_from("inspect", "signature");
 
-	ssize size = PyList_Size(&*candidates);
+	ssize size = PyDict_Size(&*reasons);
 	std::vector<uref> reasons_str_vec;
 	reasons_str_vec.reserve(size);
-	for (ssize i = 0; i < size; i++) {
-		ref candidate = PyList_GetItem(&*candidates, i);
-		ref reason = PyList_GetItem(&*fail_reasons, i);
 
-		uref candidate_sig_args {PyTuple_Pack(1, candidate)};
-		uref candidate_sig {PyObject_Call(&*methodInspectSignature, &*candidate_sig_args, nullptr)};
+	ref candidate = nullptr;
+	ref reason = nullptr;
+	ssize pos = 0;
 
-		reasons_str_vec.emplace_back(PyUnicode_FromFormat("  %U%S: %S", &*name, &*candidate_sig, reason));
+	while (PyDict_Next(&*reasons, &pos, &candidate, &reason)) {
+		uref candidate_sig {PyObject_CallFunctionObjArgs(&*methodInspectSignature, candidate, nullptr)};
+		reasons_str_vec.emplace_back(PyUnicode_FromFormat("  %U%S: %U", &*name, &*candidate_sig, reason));
 	}
 
 	uref newline {PyUnicode_FromString("\n")};
@@ -169,7 +167,7 @@ AT_SUBMODULE_INIT(ref module) {
 		"This exception is not raised - it serves as a base class for AmbiguousOverloadError and"
 		"NoMatchingOverloadError.\n";
 	uref OverloadError {PyErr_NewExceptionWithDoc(
-		"overload.OverloadError", docOverloadError, PyExc_TypeError, nullptr
+		"overload.core.OverloadError", docOverloadError, PyExc_TypeError, nullptr
 	)};
 
 	for (PyMethodDef* iDefMethod = defOverloadErrorMethods; iDefMethod->ml_name != nullptr; iDefMethod++) {
@@ -178,14 +176,16 @@ AT_SUBMODULE_INIT(ref module) {
 		PyObject_SetAttrString(&*OverloadError, iDefMethod->ml_name, &*method);
 	}
 
-	PyModule_AddObjectRef(module, "OverloadError", &*OverloadError);
+	// PyModule_AddObject steals a reference
+	Py_INCREF(&*OverloadError);
+	PyModule_AddObject(module, "OverloadError", &*OverloadError);
 
 	// AmbiguousOverloadError ------------------------------------------------------------------------------------------
 	static const char* docAmbiguousOverloadError =
 		"An exception that is raised when arguments passed to a function match more that one overload.\n";
 
 	uref AmbiguousOverloadError {PyErr_NewExceptionWithDoc(
-		"overload.AmbiguousOverloadError", docAmbiguousOverloadError, &*OverloadError, nullptr
+		"overload.core.AmbiguousOverloadError", docAmbiguousOverloadError, &*OverloadError, nullptr
 	)};
 
 	for (PyMethodDef* iDefMethod = defAmbiguousOverloadErrorMethods; iDefMethod->ml_name != nullptr; iDefMethod++) {
@@ -194,14 +194,15 @@ AT_SUBMODULE_INIT(ref module) {
 		PyObject_SetAttrString(&*AmbiguousOverloadError, iDefMethod->ml_name, &*method);
 	}
 
-	PyModule_AddObjectRef(module, "AmbiguousOverloadError", &*AmbiguousOverloadError);
+	Py_INCREF(&*AmbiguousOverloadError);
+	PyModule_AddObject(module, "AmbiguousOverloadError", &*AmbiguousOverloadError);
 
 	// NoMatchingOverloadError -----------------------------------------------------------------------------------------
 	static const char* docNoMatchingOverloadError =
 		"An exception that is raised when arguments passed to a function match none of the overloads.\n";
 
 	uref NoMatchingOverloadError {PyErr_NewExceptionWithDoc(
-		"overload.NoMatchingOverloadError", docNoMatchingOverloadError, &*OverloadError, nullptr
+		"overload.core.NoMatchingOverloadError", docNoMatchingOverloadError, &*OverloadError, nullptr
 	)};
 
 	for (PyMethodDef* iDefMethod = defNoMatchingOverloadErrorMethods; iDefMethod->ml_name != nullptr; iDefMethod++) {
@@ -210,7 +211,8 @@ AT_SUBMODULE_INIT(ref module) {
 		PyObject_SetAttrString(&*NoMatchingOverloadError, iDefMethod->ml_name, &*method);
 	}
 
-	PyModule_AddObjectRef(module, "NoMatchingOverloadError", &*NoMatchingOverloadError);
+	Py_INCREF(&*NoMatchingOverloadError);
+	PyModule_AddObject(module, "NoMatchingOverloadError", &*NoMatchingOverloadError);
 };
 
 } // namespace

@@ -7,5 +7,5 @@ setup(
     author="Andrey Zhukov",
     author_email="andres.zhukov@gmail.com",
     license="MIT",
-    ext_modules=[Extension("overload", ["src/overload.cpp"], language="c++")]
+    ext_modules=[Extension("overload.core", ["overload/core/module.cpp"], language="c++")]
 )

@@ -5,22 +5,38 @@
 #include "hello.hpp"
 #include "signature.hpp"
 #include "bind.hpp"
+#include "por.hpp"
 
 namespace {
 extern "C" {
 
+/**
+ * @brief Prepare `function` for overload resolution. If `function` is already prepared, does nothing.
+ * At the moment, just creates a `signature` instance in the cache.
+ */
+ref methodPrepare(ref, ref _a, ref _kw) {
+    PARSEARGS(function);
+
+	signatures.emplace(function, signature{function});
+
+    Py_RETURN_NONE;
+}
+
 // Module Declaration ==================================================================================================
 PyMethodDef defModuleMethods[] = {
     {"hello", (PyCFunction)methodHello, METH_VARARGS | METH_KEYWORDS, "Prints hello"},
+    {"por", (PyCFunction)methodPor, METH_VARARGS | METH_KEYWORDS, "Perform overload resolution"},
+    {"call", (PyCFunction)methodCall, METH_VARARGS | METH_KEYWORDS, "Perform overload resolution"},
+    {"prepare", (PyCFunction)methodPrepare, METH_VARARGS | METH_KEYWORDS, "Prepare `function` for overload resolution"},
     {nullptr, nullptr, 0, nullptr}
 };
 
-PyModuleDef defModule = {PyModuleDef_HEAD_INIT, "overload", "Overloading functions module", -1, defModuleMethods};
+PyModuleDef defModule = {PyModuleDef_HEAD_INIT, "overload.core", "Overloading functions module", -1, defModuleMethods};
 
-PyMODINIT_FUNC PyInit_overload() {
+PyMODINIT_FUNC PyInit_core() {
     // Developer note:
-    // To simplify project structure, all functions and exceptions are compiled to a single python module, "overload".
-    // To make code more manageable, this module is split into so-called "submodules" - hpp files.
+    // To simplify project structure, all functions and exceptions are compiled to a single python module,
+    // "overload.core". To make code more manageable, this module is split into so-called "submodules" - hpp files.
     // Each hpp submodule is wrapped in an unnamed namespace, and contains a statement like this:
     // AT_SUBMODULE_INIT(ref module) { ... };
     // The code in AT_SUBMODULE_INIT is similar in purpose to top-level code in python files. It performs initialization

@@ -1,5 +1,5 @@
 import sys
-from overload import overload_strict as overload
+from overload import overload
 from random import randint
 import timeit
 from cProfile import Profile
@@ -28,7 +28,7 @@ def func_normal(*args):
         raise TypeError
 
 def main():
-    N = 100000  # Number of tests
+    N = 1000000  # Number of tests
 
     # Different argument types
     variants = [
@@ -41,15 +41,15 @@ def main():
 
     for i in range(N):
         args.append(variants[randint(0, len(variants)-1)])
-    
+
     def run_ovl():
         for arg in args:
             func_ovl(*arg)
-    
+
     def run_normal():
         for arg in args:
             func_normal(*arg)
-    
+
     print("Running benchmark...")
 
     time_ovl = timeit.timeit(run_ovl, number=1) / N

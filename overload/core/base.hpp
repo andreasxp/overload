@@ -56,6 +56,37 @@ uref import_from(const char* modulename, const char* name) {
 	return getattr(mod, name);
 }
 
+void print(const char* text) {
+	uref methodPrint = import_from("builtins", "print");
+	uref result {PyObject_CallFunction(&*methodPrint, "s", text)};
+}
+
+void print(ref object) {
+	uref methodPrint = import_from("builtins", "print");
+	uref result {PyObject_CallFunction(&*methodPrint, "O", object)};
+}
+
+// Conversion ==========================================================================================================
+uref to_list(std::vector<ref>& vec) {
+	uref result {PyList_New(vec.size())};
+
+	for (size_t i = 0; i < vec.size(); i++) {
+		// Note: PyList_SET_ITEM steals a reference
+		Py_INCREF(vec[i]);
+		PyList_SET_ITEM(&*result, i, vec[i]);
+	}
+
+	return result;
+}
+
+std::vector<ref> from_list(ref seq) {
+	uref seq_fast {PySequence_Fast(seq, "error")};
+	ssize size = PySequence_Fast_GET_SIZE(&*seq_fast);
+	ref* begin = PySequence_Fast_ITEMS(&*seq_fast);
+
+	return std::vector<ref>{begin, begin + size};
+}
+
 // PARSEARGS macro =====================================================================================================
 #define PP_NARG(...) PP_NARG_(__VA_ARGS__, PP_RSEQ_N())
 #define PP_NARG_(...) PP_ARG_N(__VA_ARGS__)
@@ -152,10 +183,10 @@ uref import_from(const char* modulename, const char* name) {
 #define PARSEARGS(...) \
 FOR_EACH(CREATE_POINTER, __VA_ARGS__); \
 { \
-const int argcount = VA_SIZE(__VA_ARGS__); \
-static const char* argnames[argcount+1] = {FOR_EACH(TO_STRING, __VA_ARGS__) nullptr}; \
-const char* format = FOR_EACH(O_STRING, __VA_ARGS__); \
-if (!PyArg_ParseTupleAndKeywords(_a, _kw, format, (char**)argnames FOR_EACH(ADDRESS, __VA_ARGS__))) \
+const int _parseargs_argcount = VA_SIZE(__VA_ARGS__); \
+static const char* _parseargs_argnames[_parseargs_argcount+1] = {FOR_EACH(TO_STRING, __VA_ARGS__) nullptr}; \
+const char* _parseargs_format = FOR_EACH(O_STRING, __VA_ARGS__); \
+if (!PyArg_ParseTupleAndKeywords(_a, _kw, _parseargs_format, (char**)_parseargs_argnames FOR_EACH(ADDRESS, __VA_ARGS__))) \
 	{return nullptr;} \
 }
 
