@@ -1,9 +1,18 @@
 import sys
-from overload import overload
+from overload import overload, hello, call, prepare
 from random import randint
 import timeit
 from cProfile import Profile
 from pyprof2calltree import convert, visualize
+
+def func_ovl1(x, y):
+    pass
+
+def func_ovl2(val: tuple):
+    pass
+
+def func_ovl3(val: str):
+    pass
 
 @overload
 def func_ovl(x, y):
@@ -28,6 +37,7 @@ def func_normal(*args):
         raise TypeError
 
 def main():
+    hello("")
     N = 1000000  # Number of tests
 
     # Different argument types
@@ -46,6 +56,15 @@ def main():
         for arg in args:
             func_ovl(*arg)
 
+    prepare(func_ovl1)
+    prepare(func_ovl2)
+    prepare(func_ovl3)
+    kwargs = {}
+    funcs = [func_ovl1, func_ovl2, func_ovl3]
+    def run_ovlraw():
+        for arg in args:
+            call(arg, kwargs, funcs, "module", "qualname")
+
     def run_normal():
         for arg in args:
             func_normal(*arg)
@@ -53,6 +72,7 @@ def main():
     print("Running benchmark...")
 
     time_ovl = timeit.timeit(run_ovl, number=1) / N
+    time_ovlraw = timeit.timeit(run_ovlraw, number=1) / N
     time_normal = timeit.timeit(run_normal, number=1) / N
 
     profiler = Profile()
@@ -61,6 +81,7 @@ def main():
 
     print(f"Average over {N} runs:")
     print(f"Overloaded function:     {time_ovl * 1000000:.2f} mcs ({time_ovl / time_normal:.2f}x)")
+    print(f"Overloaded function raw: {time_ovlraw * 1000000:.2f} mcs ({time_ovlraw / time_normal:.2f}x)")
     print(f"Non-overloaded function: {time_normal * 1000000:.2f} mcs")
 
 

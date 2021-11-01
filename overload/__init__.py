@@ -1,11 +1,11 @@
-from overload.core import call, prepare, hello, por, OverloadError, AmbiguousOverloadError, NoMatchingOverloadError
+from overload.core import call, prepare, hello, resolve, OverloadError, AmbiguousOverloadError, NoMatchingOverloadError
 
 __all__ = [
     "make_overloaded",
     "hello",
     "call",
     "prepare",
-    "por",
+    "resolve",
 
     # Decorators
     "overload",

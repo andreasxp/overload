@@ -2,8 +2,8 @@
 #include "base.hpp"
 #include "bind.hpp"
 
-// perform_overload_resolution =========================================================================================
-inline uref perform_overload_resolution(ref args, ref kwargs, std::vector<ref>& functions, ref module, ref qualname) {
+// resolve =========================================================================================
+inline uref resolve(ref args, ref kwargs, span<ref> functions, ref module, ref qualname) {
 	std::vector<ref> candidates;
 	std::vector<bind_result> fail_reasons;
 
@@ -52,23 +52,4 @@ inline uref perform_overload_resolution(ref args, ref kwargs, std::vector<ref>& 
 
 	Py_INCREF(candidates[0]);
 	return uref{candidates[0]};
-}
-
-ref methodPor(ref, ref _a, ref _kw) {
-    PARSEARGS(args, kwargs, functions, module, qualname);
-	// std::vector<ref> functions_vec = from_list(functions);
-
-	// // Releasing reference because this is the gateway to external python code
-	// return perform_overload_resolution(args, kwargs, functions_vec, module, qualname).release();
-	Py_RETURN_NONE;
-}
-
-/// Perform overload resoulution and call the selected function.
-ref methodCall(ref, ref _a, ref _kw) {
-    PARSEARGS(args, kwargs, functions, module, qualname);
-	std::vector<ref> functions_vec = from_list(functions);
-
-	uref func = perform_overload_resolution(args, kwargs, functions_vec, module, qualname);
-	if (!func) return nullptr;
-	return PyObject_Call(&*func, args, kwargs);
 }

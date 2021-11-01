@@ -1,5 +1,4 @@
 #pragma once
-#include <unordered_set>
 #include <vector>
 #include "base.hpp"
 #include "signature.hpp"
@@ -16,6 +15,9 @@ int POSITIONAL_ONLY = 0;
 int VAR_POSITIONAL = 0;
 int KEYWORD_ONLY = 0;
 int VAR_KEYWORD = 0;
+
+uref empty = nullptr;
+uref object = nullptr;
 
 /**
  * @brief Data structure returned from function_bind
@@ -99,10 +101,6 @@ struct bind_result {
  */
 inline bind_result function_bind(const signature& sig, ref args, ref kwargs, arg_bind_t bind) {
 	//std::cout << "Enter\n";
-
-	uref empty = import_from("inspect", "_empty");
-	uref object = import_from("builtins", "object");
-
 	ssize i_args = 0;
 	ssize len_args = PyTuple_Size(args);
 	int i_params = 0;
@@ -199,7 +197,7 @@ inline bind_result function_bind(const signature& sig, ref args, ref kwargs, arg
 	ref value = nullptr;
 	ssize pos = 0;
 
-	std::unordered_set<ref, py_unicode_hash, py_unicode_equal> kwarg_keys;
+	flat_hash_set<ref, py_unicode_hash, py_unicode_equal> kwarg_keys;
 
 	while (PyDict_Next(kwargs, &pos, &key, &value)) {
 		kwarg_keys.insert(key);
@@ -276,6 +274,9 @@ inline bind_result function_bind(const signature& sig, ref args, ref kwargs, arg
 AT_SUBMODULE_INIT(ref module) {
 	// Pre-load inspect module
 	uref moduleInspect = import("inspect");
+	empty = std::move(import_from("inspect", "_empty"));
+	object = std::move(import_from("builtins", "object"));
+
 	POSITIONAL_ONLY = PyLong_AsLong(&*getattr(moduleInspect, "_POSITIONAL_ONLY"));
 	VAR_POSITIONAL = PyLong_AsLong(&*getattr(moduleInspect, "_VAR_POSITIONAL"));
 	KEYWORD_ONLY = PyLong_AsLong(&*getattr(moduleInspect, "_KEYWORD_ONLY"));

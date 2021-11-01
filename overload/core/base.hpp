@@ -8,6 +8,13 @@
 // Include ciso646 because for whatever reason MSVC does not enable "and" and "or" keywords by default
 #include <ciso646>
 
+#include "flat_hash_map.hpp"
+using ska::flat_hash_map;
+using ska::flat_hash_set;
+
+#include "span.hpp"
+using tcb::span;
+
 using ssize = Py_ssize_t;
 
 // Memory management ===================================================================================================
@@ -77,14 +84,6 @@ uref to_list(std::vector<ref>& vec) {
 	}
 
 	return result;
-}
-
-std::vector<ref> from_list(ref seq) {
-	uref seq_fast {PySequence_Fast(seq, "error")};
-	ssize size = PySequence_Fast_GET_SIZE(&*seq_fast);
-	ref* begin = PySequence_Fast_ITEMS(&*seq_fast);
-
-	return std::vector<ref>{begin, begin + size};
 }
 
 // PARSEARGS macro =====================================================================================================
