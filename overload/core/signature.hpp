@@ -2,6 +2,9 @@
 #include "flat_hash_map.hpp"
 #include "base.hpp"
 
+uref methodInspectSignature = nullptr;
+uref empty = nullptr;
+
 /// A simplifier parameter object, created from inspect.Parameter.
 struct parameter {
 	long int kind;
@@ -24,7 +27,6 @@ struct signature {
 	std::vector<parameter> parameters;
 
 	signature(ref function) {
-		uref methodInspectSignature = import_from("inspect", "signature");
 		uref py_signature {PyObject_CallFunctionObjArgs(&*methodInspectSignature, function, nullptr)};
 
 		uref py_parameters_mapping = getattr(py_signature, "parameters");
@@ -41,6 +43,8 @@ struct signature {
 ska::flat_hash_map<ref, signature> signatures;
 
 AT_SUBMODULE_INIT(ref module) {
-	// Pre-load inspect module
-	import("inspect");
+	uref inspect = import("inspect");
+
+	methodInspectSignature = std::move(getattr(inspect, "signature"));
+	empty = std::move(getattr(inspect, "_empty"));
 };

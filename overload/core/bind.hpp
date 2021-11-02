@@ -16,7 +16,6 @@ int VAR_POSITIONAL = 0;
 int KEYWORD_ONLY = 0;
 int VAR_KEYWORD = 0;
 
-uref empty = nullptr;
 uref object = nullptr;
 
 /**
@@ -48,24 +47,25 @@ struct bind_result {
 	};
 	status_t status = success;
 
-	/// Parameter name, if applicable
-	uref param_name = nullptr;
+	/**
+	 * @brief Parameter name, if applicable.
+	 * The signature object holds a reference to param name until module destruction, so inreasing reference count is
+	 * not required.
+	 */
+	ref param_name = nullptr;
 
-	/// Argument type's __qualname__, for unexpected_type
-	uref arg_type = nullptr;
-
-	bind_result(status_t status, ref param_name = nullptr, ref arg_type = nullptr) :
-		status(status),	param_name(param_name), arg_type(arg_type) {
-		Py_XINCREF(param_name);
-		Py_XINCREF(arg_type);
-	}
+	/**
+	 * @brief Argument type, for unexpected_type.
+	 * bind_result is not intended to live longer than the arguments, so increasing reference count is not required.
+	 */
+	PyTypeObject* arg_type = nullptr;
 
 	uref message() const {
 		switch(status) {
 			case success:
 				return uref {PyUnicode_FromString("success")};
 			case unexpected_type:
-				return uref {PyUnicode_FromFormat("argument %R has unexpected type %U", &*param_name, &*arg_type)};
+				return uref {PyUnicode_FromFormat("argument %R has unexpected type %R", &*param_name, &*arg_type)};
 			case missing_value:
 				return uref {PyUnicode_FromFormat("missing a required argument: %R", &*param_name)};
 			case multiple_values:
@@ -102,14 +102,14 @@ struct bind_result {
 inline bind_result function_bind(const signature& sig, ref args, ref kwargs, arg_bind_t bind) {
 	//std::cout << "Enter\n";
 	ssize i_args = 0;
-	ssize len_args = PyTuple_Size(args);
+	ssize len_args = PyTuple_GET_SIZE(args);
 	int i_params = 0;
 
 	while (true) {
 		// Let's iterate through the positional arguments and corresponding
 		// parameters
 		if (i_args < len_args) {
-			ref arg_val = PyTuple_GetItem(args, i_args);
+			ref arg_val = PyTuple_GET_ITEM(args, i_args);
 			i_args++;
 
 			// We have a positional argument to process
@@ -124,7 +124,7 @@ inline bind_result function_bind(const signature& sig, ref args, ref kwargs, arg
 					// Looks like we have no parameter for this positional
 					// argument
 					//std::cout << "Leave 1\n";
-					return bind_result{bind_result::too_many_positional};
+					return {bind_result::too_many_positional};
 					// TypeError('too many positional arguments')
 				}
 
@@ -132,21 +132,19 @@ inline bind_result function_bind(const signature& sig, ref args, ref kwargs, arg
 
 				if (PyDict_Contains(kwargs, &*param.name) and param.kind != POSITIONAL_ONLY) {
 					//std::cout << "Leave 2\n";
-					return bind_result{bind_result::multiple_values, &*param.name};
+					return {bind_result::multiple_values, &*param.name};
 					// TypeError(f'multiple values for argument {<object> param.name!r}')
 				}
 
 				if (not bind(arg_val, annotation)) {
-					uref type_arg_val {PyObject_Type(&*arg_val)};
-					uref type_qualname = getattr(type_arg_val, "__qualname__");
 					//std::cout << "Leave 3\n";
-					return bind_result{bind_result::unexpected_type, &*param.name, &*type_qualname};
+					return {bind_result::unexpected_type, &*param.name, arg_val->ob_type};
 					// TypeError(f"argument '{<object> param.name!r}' has unexpected type '{type(arg_val).__qualname__}'")
 				}
 			}
 			else {
 				//std::cout << "Leave 4\n";
-				return bind_result{bind_result::too_many_positional};
+				return {bind_result::too_many_positional};
 				// TypeError('too many positional arguments')
 			}
 		}
@@ -167,7 +165,7 @@ inline bind_result function_bind(const signature& sig, ref args, ref kwargs, arg
 				else if (PyDict_Contains(kwargs, &*param.name)) {
 					if (param.kind == POSITIONAL_ONLY) {
 						//std::cout << "Leave 5\n";
-						return bind_result{bind_result::positional_as_keyword, &*param.name};
+						return {bind_result::positional_as_keyword, &*param.name};
 						// TypeError(f'{<object> param.name!r} parameter is positional only, but was passed as a keyword')
 					}
 					i_params--;
@@ -184,7 +182,7 @@ inline bind_result function_bind(const signature& sig, ref args, ref kwargs, arg
 					// No default, not VAR_KEYWORD, not VAR_POSITIONAL,
 					// not in `kwargs`
 					//std::cout << "Leave 6\n";
-					return bind_result{bind_result::missing_value, &*param.name};
+					return {bind_result::missing_value, &*param.name};
 					// TypeError(f'missing a required argument: {<object> param.name!r}')
 				}
 			}
@@ -232,7 +230,7 @@ inline bind_result function_bind(const signature& sig, ref args, ref kwargs, arg
 			//std::cout << "Data: " << (param.kind == VAR_POSITIONAL) << " and " << (param.has_default) << "\n";
 			if (param.kind != VAR_POSITIONAL and not param.has_default) {
 				//std::cout << "Leave 7\n";
-				return bind_result{bind_result::missing_value, &*param.name};
+				return {bind_result::missing_value, &*param.name};
 				// TypeError(f'missing a required argument: {<object> param.name!r}')
 			}
 		}
@@ -242,7 +240,7 @@ inline bind_result function_bind(const signature& sig, ref args, ref kwargs, arg
 				// Signature object (but let's have this check here
 				// to ensure correct behaviour just in case)
 				//std::cout << "Leave 8\n";
-				return bind_result{bind_result::positional_as_keyword, &*param.name};
+				return {bind_result::positional_as_keyword, &*param.name};
 				// TypeError(f'{<object> param.name!r} parameter is positional only, but was passed as a keyword')
 			}
 
@@ -252,10 +250,8 @@ inline bind_result function_bind(const signature& sig, ref args, ref kwargs, arg
 			if (annotation == &*empty) annotation = &*object;
 
 			if (not bind(arg_val, annotation)) {
-				uref type_arg_val {PyObject_Type(&*arg_val)};
-				uref type_qualname = getattr(type_arg_val, "__qualname__");
 				//std::cout << "Leave 9\n";
-				return bind_result{bind_result::unexpected_type, &*param.name, &*type_qualname};
+				return {bind_result::unexpected_type, &*param.name, arg_val->ob_type};
 				// TypeError(f"argument '{<object> param.name!r}' has unexpected type '{type(arg_val).__qualname__}'")
 			}
 		}
@@ -263,18 +259,17 @@ inline bind_result function_bind(const signature& sig, ref args, ref kwargs, arg
 
 	if (not kwarg_keys.empty() and not have_kwargs_param) {
 		//std::cout << "Leave 10\n";
-		return bind_result{bind_result::unexpected_keyword, *kwarg_keys.begin()};
+		return {bind_result::unexpected_keyword, *kwarg_keys.begin()};
 		// TypeError(f'got an unexpected keyword argument {next(iter(kwargs_))!r}')
 	}
 
 	//std::cout << "Leave 11\n";
-	return bind_result{bind_result::success};
+	return {bind_result::success};
 }
 
 AT_SUBMODULE_INIT(ref module) {
 	// Pre-load inspect module
 	uref moduleInspect = import("inspect");
-	empty = std::move(import_from("inspect", "_empty"));
 	object = std::move(import_from("builtins", "object"));
 
 	POSITIONAL_ONLY = PyLong_AsLong(&*getattr(moduleInspect, "_POSITIONAL_ONLY"));

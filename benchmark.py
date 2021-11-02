@@ -2,8 +2,6 @@ import sys
 from overload import overload, hello, call, prepare
 from random import randint
 import timeit
-from cProfile import Profile
-from pyprof2calltree import convert, visualize
 
 def func_ovl1(x, y):
     pass
@@ -38,7 +36,7 @@ def func_normal(*args):
 
 def main():
     hello("")
-    N = 1000000  # Number of tests
+    N = 10000000  # Number of tests
 
     # Different argument types
     variants = [
@@ -75,9 +73,14 @@ def main():
     time_ovlraw = timeit.timeit(run_ovlraw, number=1) / N
     time_normal = timeit.timeit(run_normal, number=1) / N
 
-    profiler = Profile()
-    profiler.runctx("run_ovl()", globals(), locals())
-    convert(profiler.getstats(), "C:/Users/andreasxp/Desktop/callgrind.profile")
+    try:
+        from cProfile import Profile
+        from pyprof2calltree import convert, visualize
+        profiler = Profile()
+        profiler.runctx("run_ovl()", globals(), locals())
+        convert(profiler.getstats(), "C:/Users/andreasxp/Desktop/callgrind.profile")
+    except ImportError:
+        pass
 
     print(f"Average over {N} runs:")
     print(f"Overloaded function:     {time_ovl * 1000000:.2f} mcs ({time_ovl / time_normal:.2f}x)")
